@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <style>
+    body { font-family: monospace; background: #0f172a; color: #e2e8f0; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; }
+    .tree { display: flex; flex-direction: column; align-items: center; gap: 0; }
+    .node { border: 2px solid; border-radius: 10px; padding: 14px 24px; text-align: left; min-width: 340px; }
+    .node h3 { margin: 0 0 6px 0; font-size: 15px; }
+    .node ul { margin: 6px 0 0 0; padding-left: 18px; font-size: 12px; color: #94a3b8; }
+    .node li { margin-bottom: 3px; }
+    .server { border-color: #60a5fa; background: #1e3a5f; }
+    .server h3 { color: #60a5fa; }
+    .client { border-color: #34d399; background: #0d3b2e; }
+    .client h3 { color: #34d399; }
+    .child { border-color: #a78bfa; background: #2d1f4e; }
+    .child h3 { color: #a78bfa; }
+    .arrow { display: flex; flex-direction: column; align-items: center; margin: 4px 0; }
+    .arrow-line { width: 2px; height: 24px; background: #475569; }
+    .arrow-head { width: 0; height: 0; border-left: 7px solid transparent; border-right: 7px solid transparent; border-top: 10px solid #475569; }
+    .arrow-label { font-size: 11px; color: #64748b; margin: 2px 0; }
+    .badge { display: inline-block; font-size: 10px; padding: 2px 7px; border-radius: 99px; margin-left: 8px; vertical-align: middle; }
+    .badge-server { background: #1e3a5f; color: #60a5fa; border: 1px solid #60a5fa; }
+    .badge-client { background: #0d3b2e; color: #34d399; border: 1px solid #34d399; }
+    .siblings { display: flex; gap: 24px; align-items: flex-start; }
+    .siblings-arrow { display: flex; flex-direction: column; align-items: center; }
+    .h-line-wrap { display: flex; align-items: flex-start; justify-content: center; width: 100%; }
+    .h-line { height: 2px; background: #475569; flex: 1; margin-top: 24px; }
+    .v-down { display: flex; flex-direction: column; align-items: center; }
+    .v-line { width: 2px; height: 24px; background: #475569; }
+    .prop { color: #fbbf24; font-weight: bold; }
+  </style>
+</head>
+<body>
+  <div class="tree">
+
+    <!-- page.tsx -->
+    <div class="node server">
+      <h3>page.tsx <span class="badge badge-server">Server Component</span></h3>
+      <ul>
+        <li>Fetches all jobs from the API</li>
+        <li>Passes <span class="prop">initialRows</span> down</li>
+        <li>Cannot hold interactive state</li>
+      </ul>
+    </div>
+
+    <!-- arrow down -->
+    <div class="arrow">
+      <div class="arrow-line"></div>
+      <div class="arrow-label">initialRows: Job[]</div>
+      <div class="arrow-head"></div>
+    </div>
+
+    <!-- JobsBoard -->
+    <div class="node client">
+      <h3>JobsBoard <span class="badge badge-client">Client Component</span></h3>
+      <ul>
+        <li>Owns <span class="prop">statusFilter</span> state (useState)</li>
+        <li>Owns <span class="prop">STATUS_FILTER_OPTIONS</span> constant</li>
+        <li>Derives <span class="prop">filteredRows</span> via useMemo</li>
+        <li>Passes props down to children</li>
+      </ul>
+    </div>
+
+    <!-- two arrows down to siblings -->
+    <div style="display:flex; flex-direction:column; align-items:center; width:400px;">
+      <div style="display:flex; width:60%; justify-content:space-between;">
+        <div class="arrow" style="align-items:center;">
+          <div class="arrow-line"></div>
+        </div>
+        <div class="arrow" style="align-items:center;">
+          <div class="arrow-line"></div>
+        </div>
+      </div>
+      <div style="display:flex; width:60%; height:2px; background:#475569;"></div>
+      <div style="display:flex; width:60%; justify-content:space-between;">
+        <div class="arrow"><div class="arrow-line"></div><div class="arrow-head"></div></div>
+        <div class="arrow"><div class="arrow-line"></div><div class="arrow-head"></div></div>
+      </div>
+    </div>
+
+    <!-- children side by side -->
+    <div class="siblings">
+      <div style="display:flex;flex-direction:column;align-items:center;">
+        <div class="arrow-label" style="font-size:11px;color:#64748b;margin-bottom:4px;">statusOptions, statusFilter, onStatusChange</div>
+        <div class="node child">
+          <h3>JobFilterBar <span class="badge badge-client">Client Component</span></h3>
+          <ul>
+            <li>Renders filter &lt;select&gt; (controlled)</li>
+            <li>Renders sort &lt;select&gt;</li>
+            <li>Renders AddJobButton</li>
+            <li>Calls <span class="prop">onStatusChange</span> on change</li>
+          </ul>
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;align-items:center;">
+        <div class="arrow-label" style="font-size:11px;color:#64748b;margin-bottom:4px;">rows: filteredRows</div>
+        <div class="node child">
+          <h3>JobTable <span class="badge badge-client">Client Component</span></h3>
+          <ul>
+            <li>Renders the filtered job rows</li>
+            <li>No filter logic — just displays</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</body>
+</html>
