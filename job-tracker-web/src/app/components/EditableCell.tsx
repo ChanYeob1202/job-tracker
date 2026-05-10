@@ -1,23 +1,10 @@
-/* 
-this component will turns read-only table into an editable one
-ui needed to be changed when values (passed from its parent component)
-==> Updatable values should be stored in useState(); 
-*/
 "use client";
 import { useState } from "react";
 type EditableCellProps = {
-  /** The current value stored in the row. */
   value: string;
-  /** What kind of editor to show when clicked. */
   type?: "text" | "select" | "date";
-  /** Options for the <select> (only used when type === "select"). */
   options?: readonly string[];
-  /** Optional override for what's shown when NOT editing (e.g. formatted date). */
   display?: string;
-  /**
-   * Called when the user commits a new value.
-   * Return a promise so the cell can show a "saving" state and handle errors.
-   */
   onSave: (newValue: string) => Promise<void>;
 };
 

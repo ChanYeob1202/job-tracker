@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { API_BASE } from "@/lib/api";
 import type { Job } from "@/types/job";
@@ -30,6 +30,10 @@ const tdClass =
 function JobTable({ rows: initialRows }: JobTableProps) {
   const router = useRouter();
   const [rows, setRows] = useState<Job[]>(initialRows);
+
+  useEffect(() => {
+    setRows(initialRows);
+  }, [initialRows]);
 
   async function updateField(
     id: number,

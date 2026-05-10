@@ -3,7 +3,6 @@ import type { Job } from "@/types/job";
 import { API_BASE } from "@/lib/api";
 
 async function page() {
-
   const base = API_BASE
 
   let rows: Job[] = [];
@@ -13,6 +12,7 @@ async function page() {
     if (res.ok) {
       const data = (await res.json()) as { rows?: Job[] };
       rows = data.rows ?? [];
+      console.log(rows);
     } else {
       console.error("Jobs API returned error", res.status, await res.text().catch(() => ""));
     }
@@ -21,7 +21,6 @@ async function page() {
     console.error("Failed to fetch job rows", err);
     // e.g. API not running, wrong host, or network error — avoid breaking the whole route
   }
-
   return (
     <div className="">
       <div className = "mt-8 p-4">

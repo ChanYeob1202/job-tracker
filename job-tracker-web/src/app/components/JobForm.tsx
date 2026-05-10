@@ -33,7 +33,6 @@ function JobForm({ statusOptions, initialJob }: FormType) {
     }
 
     try {
-
       const url = initialJob 
         ? `${API_BASE}/jobs/${initialJob.id}`
         : `${API_BASE}/jobs`;
@@ -53,8 +52,10 @@ function JobForm({ statusOptions, initialJob }: FormType) {
         const text = await res.text();
         throw new Error(`Failed to create job: ${res.status} ${text}`);
       }
-      router.refresh();
+      // router.refresh();
+      alert("Job created successfully!");
       router.push("/");
+
     } catch (err) {
       console.error(err);
     }
