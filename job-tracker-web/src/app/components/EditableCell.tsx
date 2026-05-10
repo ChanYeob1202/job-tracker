@@ -1,4 +1,5 @@
 "use client";
+
 import { useState } from "react";
 type EditableCellProps = {
   value: string;
@@ -14,6 +15,7 @@ function EditableCell({
   options,
   display,
   onSave,
+
 }: EditableCellProps) {
   const stored = value ?? "";
   const [editing, setEditing] = useState(false);

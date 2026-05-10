@@ -11,6 +11,7 @@ import EditableCell from "./EditableCell";
 const TABLE_COLUMNS: readonly { key: string; label: string }[] = [
   { key: "company", label: "Company" },
   { key: "role", label: "Role" },
+  { key: "source", label: "Source"},
   { key: "status", label: "Status" },
   { key: "applied_at", label: "Applied Date" },
   { key: "notes", label: "Notes" },
@@ -107,6 +108,12 @@ function JobTable({ rows: initialRows }: JobTableProps) {
                   <EditableCell
                     value={row.role}
                     onSave={(v) => updateField(row.id, "role", v)}
+                  />
+                </td>
+                <td className = {tdClass}>
+                  <EditableCell 
+                    value = {row.job_url}
+                    onSave= {(v) => updateField(row.id, "job_url", v)}
                   />
                 </td>
                 <td className={tdClass}>
