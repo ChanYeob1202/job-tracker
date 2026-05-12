@@ -22,16 +22,9 @@ function JobForm({ statusOptions, initialJob }: FormType) {
   const [appliedAt, setAppliedAt] = useState<string>(
     initialJob?.applied_at ? initialJob.applied_at.slice (0, 10) : "" 
   );
-  const [ website, setWebsite ] = useState<string>(
-    initialJob?.website ? initialJob.website : ""
-  )
-  const [ location, setLocation ]  = useState<string>(
-    initialJob?.location ? initialJob.location : ""
-  )
-
-  const [notes, setNotes] = useState(
-    initialJob?.notes ? initialJob.notes : ""
-  );
+  const [ website, setWebsite ] = useState<string>(initialJob?.website ? initialJob.website : "")
+  const [ location, setLocation ]  = useState<string>(initialJob?.location ? initialJob.location : "")
+  const [notes, setNotes] = useState(initialJob?.notes ? initialJob.notes : "");
 
   const handleSubmit: FormEventHandler<HTMLFormElement> = async (e) => {
     e.preventDefault();
@@ -109,10 +102,10 @@ function JobForm({ statusOptions, initialJob }: FormType) {
           Source
         </label>
         <input
-          id ="job-url"
-          type="url" 
+          id ="source"
+          type="text" 
           className = {fieldClass} 
-          placeholder = { initialJob ? `${initialJob.source}` : "job url"}
+          placeholder = { initialJob ? `${initialJob.source}` : "job source"}
           value = {source}
           onChange = {(e) => setSource(e.target.value)}
           />
