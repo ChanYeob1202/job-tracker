@@ -15,12 +15,20 @@ function JobForm({ statusOptions, initialJob }: FormType) {
   const router = useRouter();
   const [company, setCompany] = useState<string>(initialJob?.company ?? "");
   const [role, setRole] = useState<string>(initialJob?.role ?? "");
+  const [ source, setSource ] = useState<string>(initialJob?.source ?? "");
   const [status, setStatus] = useState<JobStatus>(
     initialJob?.status ?? statusOptions[0]
   );
   const [appliedAt, setAppliedAt] = useState<string>(
-    initialJob?.applied_at ? initialJob.applied_at.slice (0, 10) : " " 
+    initialJob?.applied_at ? initialJob.applied_at.slice (0, 10) : "" 
   );
+  const [ website, setWebsite ] = useState<string>(
+    initialJob?.website ? initialJob.website : ""
+  )
+  const [ location, setLocation ]  = useState<string>(
+    initialJob?.location ? initialJob.location : ""
+  )
+
   const [notes, setNotes] = useState(
     initialJob?.notes ? initialJob.notes : ""
   );
@@ -43,7 +51,10 @@ function JobForm({ statusOptions, initialJob }: FormType) {
           company,
           role,
           status,
+          source,
           applied_at: appliedAt,
+          website,
+          location,
           notes,
         }),
       });
@@ -94,6 +105,18 @@ function JobForm({ statusOptions, initialJob }: FormType) {
           onChange={(e) => setRole(e.target.value)}
         />
 
+        <label htmlFor="job-url" className = "text-sm font-medium">
+          Source
+        </label>
+        <input
+          id ="job-url"
+          type="url" 
+          className = {fieldClass} 
+          placeholder = { initialJob ? `${initialJob.source}` : "job url"}
+          value = {source}
+          onChange = {(e) => setSource(e.target.value)}
+          />
+
         <label htmlFor="job-status" className="text-sm font-medium">
           Status
         </label>
@@ -121,6 +144,28 @@ function JobForm({ statusOptions, initialJob }: FormType) {
           onChange={(e) => setAppliedAt(e.target.value)}
         />
 
+        <label htmlFor="job-website" className = "text-sm font-medium">
+          Website
+        </label>
+        <input 
+          id="webiste"
+          type="url"
+          className = {fieldClass}
+          value={website}
+          placeholder= {initialJob ? `${initialJob.website}` : "website"}
+          onChange = {(e) => setWebsite(e.target.value)}
+        />
+        <label htmlFor="job-location" className = "text-sm font-medium">
+          Location
+        </label>
+        <input 
+          id="location"
+          type="text"
+          className = {fieldClass}
+          value={location}
+          placeholder= { initialJob ? `${initialJob.location}` : "location"}
+          onChange = {(e) => setLocation(e.target.value)}
+        />
         <label
           htmlFor="job-notes"
           className="self-start pt-2 text-sm font-medium"

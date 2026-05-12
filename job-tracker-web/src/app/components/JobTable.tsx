@@ -14,6 +14,8 @@ const TABLE_COLUMNS: readonly { key: string; label: string }[] = [
   { key: "source", label: "Source"},
   { key: "status", label: "Status" },
   { key: "applied_at", label: "Applied Date" },
+  { key: "website", label: "website"},
+  { key: "location", label: "location"},
   { key: "notes", label: "Notes" },
 ];
 
@@ -99,9 +101,7 @@ function JobTable({ rows: initialRows }: JobTableProps) {
                 <td className={tdClass}>
                   <EditableCell
                     value={row.company}
-                  
                     onSave={(v) => updateField(row.id, "company", v)}
-            
                   />
                 </td>
                 <td className={tdClass}>
@@ -112,8 +112,8 @@ function JobTable({ rows: initialRows }: JobTableProps) {
                 </td>
                 <td className = {tdClass}>
                   <EditableCell 
-                    value = {row.job_url}
-                    onSave= {(v) => updateField(row.id, "job_url", v)}
+                    value = {row.source}
+                    onSave= {(v) => updateField(row.id, "source", v)}
                   />
                 </td>
                 <td className={tdClass}>
@@ -136,6 +136,21 @@ function JobTable({ rows: initialRows }: JobTableProps) {
                     onSave={(v) => updateField(row.id, "applied_at", v)}
                   />
                 </td>
+                <td className = {tdClass}>
+                  <EditableCell 
+                    value={row.website ?? ""}
+                    display = {row.website ?? ""}
+                    onSave = {(v) => updateField(row.id, "website", v)}
+                  />
+                </td>
+                <td className = {tdClass}>
+                  <EditableCell 
+                    value = {row.location ?? ""}
+                    display = {row.location ?? ""}
+                    onSave = {(v) => updateField(row.id, "location", v)}
+                  />
+                </td>
+
                 <td className={tdClass}>
                   <EditableCell
                     value={row.notes ?? ""}

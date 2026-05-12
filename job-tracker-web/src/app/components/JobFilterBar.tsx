@@ -51,7 +51,7 @@ function JobFilterBar({ statusOptions, statusFilter, onStatusChange }: JobFilter
             aria-haspopup="listbox"
             aria-expanded={open}
             aria-controls="job-filter-listbox"
-            className="min-w-40 rounded-md border border-neutral-200 bg-gray-50 px-3 py-2 text-left text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/30"
+            className="min-w-40 rounded-md border border-neutral-200 bg-gray-50 px-3 py-2 text-left text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/30 hover:cursor-pointer"
             onClick={() => setOpen((v) => !v)}
           >
             {selectedLabel}

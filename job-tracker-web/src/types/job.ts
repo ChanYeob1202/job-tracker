@@ -23,8 +23,10 @@ export interface Job {
   company: string;
   title: string;
   status: JobStatus;
-  job_url: string; 
+  source: string; 
   role: string;
   notes: string | null;
   applied_at: string;
+  website: string;
+  location: string;
 }
