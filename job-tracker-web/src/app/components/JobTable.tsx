@@ -14,9 +14,10 @@ const TABLE_COLUMNS: readonly { key: string; label: string }[] = [
   { key: "source", label: "Source"},
   { key: "status", label: "Status" },
   { key: "applied_at", label: "Applied Date" },
-  { key: "website", label: "website"},
-  { key: "location", label: "location"},
+  { key: "website", label: "Website" },
+  { key: "location", label: "Location" },
   { key: "notes", label: "Notes" },
+  { key: "actions", label: ""}
 ];
 
 
@@ -137,8 +138,9 @@ function JobTable({ rows: initialRows }: JobTableProps) {
                   />
                 </td>
                 <td className = {tdClass}>
-                  <EditableCell 
+                  <EditableCell
                     value={row.website ?? ""}
+                    type="url"
                     display = {row.website ?? ""}
                     onSave = {(v) => updateField(row.id, "website", v)}
                   />

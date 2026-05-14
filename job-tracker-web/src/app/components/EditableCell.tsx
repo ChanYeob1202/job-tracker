@@ -3,7 +3,7 @@
 import { useState } from "react";
 type EditableCellProps = {
   value: string;
-  type?: "text" | "select" | "date";
+  type?: "text" | "select" | "date" | "url";
   options?: readonly string[];
   display?: string;
   onSave: (newValue: string) => Promise<void>;
@@ -52,6 +52,28 @@ function EditableCell({
 
   if (!editing) {
     const readLabel = display || stored || "-";
+    if (type === "url" && stored) {
+      return (
+        <span className="flex items-center gap-1">
+          <a
+            href={stored}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-blue-600 underline hover:text-blue-800 truncate"
+          >
+            {readLabel}
+          </a>
+          <button
+            type="button"
+            onClick={startEdit}
+            aria-label="Edit"
+            className="text-gray-400 hover:text-gray-700 cursor-pointer px-1"
+          >
+            ✎
+          </button>
+        </span>
+      );
+    }
     return (
       <button
         type="button"
@@ -92,7 +114,7 @@ function EditableCell({
     <input
       autoFocus
       disabled={saving}
-      type={type === "date" ? "date" : "text"}
+      type={type === "date" ? "date" : type === "url" ? "url" : "text"}
       value={draft}
       onChange={(e) => setDraft(e.target.value)}
       onBlur={() => commit(draft)}

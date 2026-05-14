@@ -98,11 +98,11 @@ function JobForm({ statusOptions, initialJob }: FormType) {
           onChange={(e) => setRole(e.target.value)}
         />
 
-        <label htmlFor="job-url" className = "text-sm font-medium">
+        <label htmlFor="job-source" className = "text-sm font-medium">
           Source
         </label>
         <input
-          id ="source"
+          id ="job-source"
           type="text" 
           className = {fieldClass} 
           placeholder = { initialJob ? `${initialJob.source}` : "job source"}
@@ -140,13 +140,13 @@ function JobForm({ statusOptions, initialJob }: FormType) {
         <label htmlFor="job-website" className = "text-sm font-medium">
           Website
         </label>
-        <input 
-          id="webiste"
+        <input
+          id="job-website"
           type="url"
-          className = {fieldClass}
+          className={fieldClass}
           value={website}
-          placeholder= {initialJob ? `${initialJob.website}` : "website"}
-          onChange = {(e) => setWebsite(e.target.value)}
+          placeholder={initialJob ? initialJob.website : "website"}
+          onChange={(e) => setWebsite(e.target.value)}
         />
         <label htmlFor="job-location" className = "text-sm font-medium">
           Location

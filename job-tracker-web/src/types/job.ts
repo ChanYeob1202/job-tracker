@@ -21,7 +21,6 @@ export const JOB_STATUS_OPTIONS: readonly JobStatus[] = [
 export interface Job {
   id: number;
   company: string;
-  title: string;
   status: JobStatus;
   source: string; 
   role: string;
