@@ -21,3 +21,6 @@ out/
 # Editor
 .vscode/
 .idea/
+
+# Claude / Cursor worktrees (nested git repos; do not track)
+.claude/
