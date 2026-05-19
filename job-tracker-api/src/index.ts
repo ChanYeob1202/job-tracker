@@ -4,6 +4,8 @@ import dotenv from "dotenv";
 import { pool } from "./db/pool.js";
 import jobsRouter from './routes/jobs.js'
 import authRouter from './routes/auth.js'
+import authMiddleWare from "./middleware/auth.js";
+
 dotenv.config();
   
 const  app = express();
@@ -33,7 +35,7 @@ app.get("/db-health", async (_req, res) => {
   }
 });
 
-app.use("/jobs", jobsRouter)
+app.use("/jobs", authMiddleWare, jobsRouter)
 app.use("/auth", authRouter)
 
 

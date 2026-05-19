@@ -7,6 +7,7 @@ import { z } from "zod";
 
 const router = Router();
 
+
 const registerSchema = z.object({
   email: z.email(),
   password: z.string().min(8),
@@ -28,15 +29,13 @@ router.post("/register", async (req: Request, res: Response) => {
 
   const password_hash = await bcrypt.hash(password, 12);
 
-  //store in DB
   try {
     const result = await pool.query(
       `INSERT INTO users ( email, password_hash ) VALUES ($1, $2) RETURNING id, email, created_at`,
       [ email, password_hash ]
     );
-    res.status(201).json({ user: result.rows[0] });
+    return res.status(201).json({ user: result.rows[0]})
   } catch (err:any){
-    // duplicated email
     if(err.code === "23505"){
       return res.status(409).json({ error: "Email already exists "});
     }
@@ -83,7 +82,6 @@ router.post("/login", async (req: Request, res:Response)=> {
       return res.status(401).json( { error: "server error"})
     }
   });
-
 
 
 
