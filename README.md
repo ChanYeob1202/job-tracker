@@ -11,30 +11,40 @@ See each folder's README for setup and run instructions.
 
 ## What's built so far
 
-- **CRUD for job applications** — create, view, edit, delete entries via a REST API (`/jobs` endpoints).
-- **Dashboard** — server-rendered job list on the home page.
-- **Inline editing** — edit any cell directly in the table (`EditableCell`).
+### Jobs (CRUD)
+- REST API at `/jobs` — create, view, edit, delete entries.
+- Server-rendered dashboard listing all jobs.
+- **Inline editing** — edit any cell directly in the table (`EditableCell`), including a URL-type cell that renders as a clickable link.
 - **Add / Edit forms** — dedicated pages at `/jobs/new` and `/jobs/[id]/edit`, sharing one `JobForm` component.
 - **Status filter** — filter the table by application status (client-side).
 - **Tracked fields** — company, role, title, status, notes, applied date, job URL, source, website, location.
 - **Safe writes** — backend whitelists updatable fields and uses parameterized SQL queries.
 
+### Authentication (backend)
+- `POST /auth/register` — bcrypt-hashed passwords, zod-validated input, stored in a `users` table.
+- `POST /auth/login` — issues a short-lived JWT (15 min).
+- **`authMiddleware`** — verifies the Bearer token and injects `req.user` into downstream handlers.
+- **Per-user data scoping** — every `/jobs` query is filtered by `user_id`, so users only see their own jobs.
+
 ## What I'm building right now
 
-- **Auth** — the app is currently fully public (no login, no user scoping). Adding authentication so each user sees only their own jobs is the next major piece.
-- Known smaller gaps I want to clean up next:
+- **Frontend auth wiring** — `/auth/signin` and `/auth/signup` pages exist as UI shells; the next step is hooking up `handleSubmit`, persisting the JWT, and attaching it to subsequent `/jobs` requests.
+- **Auth-aware navigation / route guarding** — redirecting unauthenticated users away from the dashboard.
+- Smaller cleanups on the list:
   - `/jobs` placeholder page (currently just renders text)
   - Edit form's submit flow (POST vs PATCH bug)
-  - No DB migration file — the `Jobs` table was created manually in Neon
+  - No DB migration files yet — the `Jobs` and `users` tables were created manually in Neon.
+  - JWT refresh flow (15 min token expiry is too short without one).
 
 ## Tech stack
 
-| Layer    | Stack                                              |
-|----------|----------------------------------------------------|
-| Frontend | Next.js 16, React 19, Tailwind CSS v4, TypeScript  |
-| Backend  | Express 5, TypeScript, `pg` (node-postgres)        |
-| Database | PostgreSQL on Neon                                 |
-| Tooling  | Turbopack, ESLint                                  |
+| Layer    | Stack                                                |
+|----------|------------------------------------------------------|
+| Frontend | Next.js 16, React 19, Tailwind CSS v4, TypeScript    |
+| Backend  | Express 5, TypeScript, `pg` (node-postgres), Zod     |
+| Auth     | bcryptjs (password hashing), jsonwebtoken (JWT)      |
+| Database | PostgreSQL on Neon                                   |
+| Tooling  | Turbopack, ESLint                                    |
 
 ## Project structure
 
