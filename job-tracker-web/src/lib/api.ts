@@ -1,3 +1,5 @@
+// a route to send HTTP request to backend
+
 export const API_BASE =
 process.env.NEXT_PUBLIC_API_URL ??
 process.env.API_URL ??

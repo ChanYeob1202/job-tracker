@@ -29,6 +29,7 @@ export default function authMiddleWare(req: Request, res: Response, next: NextFu
   }
 
   try {
+    // Verify the token is valid and not tampered with
     const decoded = jwt.verify(token, secret);
     if (typeof decoded === "string") {
       return res.status(401).json({ error: "Invalid or expired token" });
