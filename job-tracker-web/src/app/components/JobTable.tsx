@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { API_BASE } from "@/lib/api";
 import type { Job } from "@/types/job";
-import { JOB_STATUS_OPTIONS, JobStatus } from "@/types/job";
+import { JOB_STATUS_OPTIONS } from "@/types/job";
 import ActionButton from "./ui/ActionButton";
 import EditableCell from "./EditableCell";
 
@@ -36,6 +36,7 @@ function JobTable({ rows: initialRows }: JobTableProps) {
   const [rows, setRows] = useState<Job[]>(initialRows);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setRows(initialRows);
   }, [initialRows]);
 
