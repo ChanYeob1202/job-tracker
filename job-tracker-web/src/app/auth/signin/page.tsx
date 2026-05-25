@@ -1,33 +1,18 @@
 "use client";
-
-import { useState } from "react";
-import { useRouter } from "next/navigation";
-import { apiFetch } from "@/lib/api";
-import { setToken } from "@/lib/auth";
+import { useState} from "react";
+import { useAuth } from "@/context/AuthContext";
 
 function Page() {
+  const [ email, setEmail ] = useState<string>("");
+  const [ pw, setPw ] = useState<string>("");
+  const { login } = useAuth();
 
-  const [email, setEmail] = useState<string>("");
-  const [pw, setPw] = useState<string>("");
-  const router = useRouter();
-
-  const handleSubmit = async (evt: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit =  (evt: React.FormEvent<HTMLFormElement>) => {
     evt.preventDefault();
+    const res = login(email, pw);
 
-    const res = await apiFetch("/auth/login", {
-      method: "POST",
-      body: JSON.stringify({ email, password: pw }),
-    });
-
-    if (res?.ok) {
-      const data = await res.json();
-      setToken(data.token);
-      router.push("/");
-    }
+    return res;
   };
-
-  
-
 
   return (
     <form className="flex flex-col" onSubmit={handleSubmit}>

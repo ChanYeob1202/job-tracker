@@ -63,7 +63,7 @@ function JobFilterBar({ statusOptions, statusFilter, onStatusChange }: JobFilter
               aria-labelledby="job-filter-label"
               className="absolute left-0 top-full z-50 mt-1 max-h-60 min-w-full overflow-auto rounded-md border border-neutral-200 bg-white py-1 shadow-lg"
             >
-              {statusOptions.map(({ value, label }) => (
+              {statusOptions.map(({value, label }) => (
                 <li key={value} role="presentation">
                   <button
                     type="button"

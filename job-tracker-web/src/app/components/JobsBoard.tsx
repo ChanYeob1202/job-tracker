@@ -1,5 +1,4 @@
 "use client";
-
 import { useMemo, useState } from "react";
 import { type JobStatus, JOB_STATUS_OPTIONS } from "@/types/job";
 import type { Job } from "@/types/job";
@@ -14,12 +13,11 @@ const STATUS_FILTER_OPTIONS: readonly { value: StatusFilterValue; label: string 
     value,
     label: value.replace(/\b\w/g, (c) => c.toUpperCase()),
   })),
-];
+];  
 
 type JobsBoardProps = {
   initialRows: Job[];
 };
-
 
 function JobsBoard({ initialRows }: JobsBoardProps) {
   const [statusFilter, setStatusFilter] = useState<StatusFilterValue>("all");

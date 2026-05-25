@@ -15,7 +15,6 @@ function EditableCell({
   options,
   display,
   onSave,
-
 }: EditableCellProps) {
   const stored = value ?? "";
   const [editing, setEditing] = useState(false);

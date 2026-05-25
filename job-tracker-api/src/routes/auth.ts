@@ -24,7 +24,6 @@ router.post("/register", async (req: Request, res: Response) => {
   }
 
   const { email, password } = parsed.data;
-
   const password_hash = await bcrypt.hash(password, 12);
 
   try {

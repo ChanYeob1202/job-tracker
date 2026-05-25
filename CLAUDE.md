@@ -2,37 +2,30 @@
 
 **JobTracker** — Next.js 16 + React 19 frontend (`job-tracker-web/`) + Express 5 + Neon PostgreSQL backend (`job-tracker-api/`). See [workflows.md](workflows.md) for behavioral details.
 
----
+Folder-specific rules:
 
-## Critical Rules
-
-1. All `"Jobs"` queries **must** be scoped by `req.user.id` (injected by `authMiddleware`).
-2. **Never interpolate user input into SQL** — use `$1, $2, ...` parameterized queries. `"Jobs"` must be double-quoted.
-3. POST/PATCH `/jobs` must filter body through `UPDATABLE_FIELDS`; return 400 if nothing valid remains.
-4. Passwords are **bcrypt-hashed**. Never log/return plaintext. JWT secret from env only.
-5. JWT required on all `/jobs` routes — attach `Authorization: Bearer <token>`. Never bypass `authMiddleware`.
-6. Validate auth route bodies with **Zod**.
-7. `API_BASE` lives in `src/lib/api.ts` — import it, don't redefine.
-8. Server-side App Router fetches use `cache: "no-store"`.
-9. No secrets in repo — read `DATABASE_URL`, `JWT_SECRET`, etc. from `process.env`.
-10. Don't create DB tables in code — schema lives in Neon. Surface schema changes to user first.
-11. `JobForm` edit mode: **PATCH** (not POST), seed `useState` from `initialJob`.
-12. Keep `JobStatus` and `JOB_STATUS_OPTIONS` in sync.
+- Frontend: `job-tracker-web/CLAUDE.md`
+- Backend: `job-tracker-api/CLAUDE.md`
 
 ---
 
-## Remaining MVP TODOs (frontend)
+## Communication Style
 
-- Wire up sign-in / sign-up `handleSubmit` → POST to API
-- Persist JWT + attach `Authorization` header to `/jobs` fetches
-- Route guard: redirect unauthenticated users from dashboard
+- 한국어로 답변, 기술 용어는 영어 그대로 (useState, PATCH, JWT 등)
+- 기본은 짧고 실용적으로. 코드 + 1-3줄 설명이 default.
+- "자세히", "왜", "explain deeper" 라고 하면 그때만 깊게 설명
+- 내가 틀린 방향이면 직접 지적, 우회 표현 금지
+- Trade-off는 비교 질문일 때만 명시
+- 공식 문서 링크는 새로운 라이브러리·문법일 때만
+- 답변 끝 요약, 6단계 설명 강제 없음
+- 영어/한국어는 내가 쓴 언어 따라감
 
 ---
 
 ## Data Model
 
-`"Jobs"`: `company`, `role`, `title`, `status`, `notes`, `applied_at`, + URL/source/website/location fields.  
-`users`: `id`, `email`, `password_hash`, `created_at`.  
+`"Jobs"`: `company`, `role`, `title`, `status`, `notes`, `applied_at`, + URL/source/website/location fields.
+`users`: `id`, `email`, `password_hash`, `created_at`.
 `JobStatus`: `"applied" | "interview" | "interview 1" | "interview 2" | "interview 3" | "waiting" | "offer" | "rejected"`
 
 ---
