@@ -1,110 +1,123 @@
 "use client";
 import { useState } from "react";
-import { useRouter } from 'next/navigation'
-import { Job } from "@/types/job";
-import type { FormEventHandler } from "react";
-import type { JobStatus } from "@/types/job";
-import { API_BASE } from "@/lib/api";
+import { useRouter } from "next/navigation";
+import type { Job, JobStatus } from "@/types/job";
 import { apiFetch } from "@/lib/api";
 
 type FormType = {
   statusOptions: readonly JobStatus[];
-  initialJob? : Job; // when present -> edit mode
+  initialJob?: Job; // when present -> edit mode
 };
+
+const fieldClass =
+  "w-full min-w-0 rounded-lg border px-2 py-1 text-black placeholder:text-black";
+
+type TextFieldProps = {
+  id: string;
+  label: string;
+  type?: "text" | "url" | "date";
+  value: string;
+  onChange: (v: string) => void;
+  placeholder?: string;
+  inputClassName?: string;
+};
+
+function TextField({
+  id,
+  label,
+  type = "text",
+  value,
+  onChange,
+  placeholder,
+  inputClassName,
+}: TextFieldProps) {
+  return (
+    <>
+      <label htmlFor={id} className="text-sm font-medium">
+        {label}
+      </label>
+      <input
+        id={id}
+        type={type}
+        className={inputClassName ?? fieldClass}
+        value={value}
+        placeholder={placeholder}
+        onChange={(e) => onChange(e.target.value)}
+      />
+    </>
+  );
+}
 
 function JobForm({ statusOptions, initialJob }: FormType) {
   const router = useRouter();
-  const [company, setCompany] = useState<string>(initialJob?.company ?? "");
-  const [role, setRole] = useState<string>(initialJob?.role ?? "");
-  const [ source, setSource ] = useState<string>(initialJob?.source ?? "");
+  const [company, setCompany] = useState(initialJob?.company ?? "");
+  const [role, setRole] = useState(initialJob?.role ?? "");
+  const [source, setSource] = useState(initialJob?.source ?? "");
   const [status, setStatus] = useState<JobStatus>(
     initialJob?.status ?? statusOptions[0]
   );
-  const [appliedAt, setAppliedAt] = useState<string>(
-    initialJob?.applied_at ? initialJob.applied_at.slice (0, 10) : "" 
+  const [appliedAt, setAppliedAt] = useState(
+    initialJob?.applied_at?.slice(0, 10) ?? ""
   );
-  const [ website, setWebsite ] = useState<string>(initialJob?.website ? initialJob.website : "")
-  const [ location, setLocation ]  = useState<string>(initialJob?.location ? initialJob.location : "")
-  const [notes, setNotes] = useState(initialJob?.notes ? initialJob.notes : "");
-
-  const handleSubmit: FormEventHandler<HTMLFormElement> = async (e) => {
-    e.preventDefault();
-    if (company.trim() === "" || role.trim() === ""){
-      alert("Please fill in both the company and role fields.");
-      return;
-    }
-
-    try {
-      const url = initialJob 
-        ? `/jobs/${initialJob.id}`
-        : `/jobs`;
-      const res = await apiFetch(url, {
-        method: initialJob ? "PATCH" : "POST",
-        body: JSON.stringify({
-          company,
-          role,
-          status,
-          source,
-          applied_at: appliedAt,
-          website,
-          location,
-          notes,
-        }),
-      });
-
-      if(res) 
-      alert("Job created successfully!");
-      router.push("/");
-
-    } catch (err) {
-      console.error(err);
-    }
-  };
-
-  const fieldClass =
-    "w-full min-w-0 rounded-lg border px-2 py-1 text-black placeholder:text-black";
+  const [website, setWebsite] = useState(initialJob?.website ?? "");
+  const [location, setLocation] = useState(initialJob?.location ?? "");
+  const [notes, setNotes] = useState(initialJob?.notes ?? "");
 
   return (
     <form
       className="mx-auto flex w-full max-w-xl flex-col gap-4"
-      onSubmit={handleSubmit}
+      onSubmit={async (e) => {
+        e.preventDefault();
+        if (company.trim() === "" || role.trim() === "") {
+          alert("Please fill in both the company and role fields.");
+          return;
+        }
+
+        try {
+          const url = initialJob ? `/jobs/${initialJob.id}` : `/jobs`;
+          const res = await apiFetch(url, {
+            method: initialJob ? "PATCH" : "POST",
+            body: JSON.stringify({
+              company,
+              role,
+              status,
+              source,
+              applied_at: appliedAt,
+              website,
+              location,
+              notes,
+            }),
+          });
+          if (res) {
+            router.push("/");
+          }
+        } catch (err) {
+          console.error(err);
+        }
+      }}
     >
       <div className="grid grid-cols-[9rem_1fr] items-center gap-x-4 gap-y-3">
-        <label htmlFor="job-company" className="text-sm font-medium">
-          Company
-        </label>
-        <input
+        <TextField
           id="job-company"
-          type="text"
-          className={fieldClass}
-          placeholder={initialJob ? initialJob.company : "company name"}
+          label="Company"
           value={company}
-          onChange={(e) => setCompany(e.target.value)}
+          onChange={setCompany}
+          placeholder={initialJob?.company ?? "company name"}
         />
-
-        <label htmlFor="job-role" className="text-sm font-medium">
-          Role
-        </label>
-        <input
+        <TextField
           id="job-role"
-          type="text"
-          className={fieldClass}
-          placeholder={initialJob ? initialJob.role : "position"}
+          label="Role"
           value={role}
-          onChange={(e) => setRole(e.target.value)}
+          onChange={setRole}
+          placeholder={initialJob?.role ?? "position"}
         />
-
-        <label htmlFor="job-source" className = "text-sm font-medium">
-          Source
-        </label>
-        <input
-          id ="job-source"
-          type="text" 
-          className = {fieldClass} 
-          placeholder = { initialJob ? `${initialJob.source}` : "job source"}
-          value = {source}
-          onChange = {(e) => setSource(e.target.value)}
-          />
+        <TextField
+          id="job-source"
+          label="Source"
+          value={source}
+          onChange={setSource}
+          placeholder={initialJob?.source ?? "job source"}
+        />
 
         <label htmlFor="job-status" className="text-sm font-medium">
           Status
@@ -122,39 +135,30 @@ function JobForm({ statusOptions, initialJob }: FormType) {
           ))}
         </select>
 
-        <label htmlFor="job-applied" className="text-sm font-medium">
-          Applied date
-        </label>
-        <input
+        <TextField
           id="job-applied"
+          label="Applied date"
           type="date"
-          className={`${fieldClass} max-w-[12rem]`}
-          value= {appliedAt}
-          onChange={(e) => setAppliedAt(e.target.value)}
+          value={appliedAt}
+          onChange={setAppliedAt}
+          inputClassName={`${fieldClass} max-w-[12rem]`}
+        />
+        <TextField
+          id="job-website"
+          label="Website"
+          type="url"
+          value={website}
+          onChange={setWebsite}
+          placeholder={initialJob?.website ?? "website"}
+        />
+        <TextField
+          id="job-location"
+          label="Location"
+          value={location}
+          onChange={setLocation}
+          placeholder={initialJob?.location ?? "location"}
         />
 
-        <label htmlFor="job-website" className = "text-sm font-medium">
-          Website
-        </label>
-        <input
-          id="job-website"
-          type="url"
-          className={fieldClass}
-          value={website}
-          placeholder={initialJob ? initialJob.website : "website"}
-          onChange={(e) => setWebsite(e.target.value)}
-        />
-        <label htmlFor="job-location" className = "text-sm font-medium">
-          Location
-        </label>
-        <input 
-          id="location"
-          type="text"
-          className = {fieldClass}
-          value={location}
-          placeholder= { initialJob ? `${initialJob.location}` : "location"}
-          onChange = {(e) => setLocation(e.target.value)}
-        />
         <label
           htmlFor="job-notes"
           className="self-start pt-2 text-sm font-medium"
@@ -174,12 +178,12 @@ function JobForm({ statusOptions, initialJob }: FormType) {
             type="submit"
             className="rounded-lg bg-blue-400 px-4 py-2 text-white font-bold transition-transform duration-150 hover:scale-95 hover:cursor-pointer"
           >
-            { initialJob ? "Edit" : "Add" }
+            {initialJob ? "Edit" : "Add"}
           </button>
           <button
-            type="button" 
-            onClick = {() => router.back()}
-            className = "rounded-lg bg-red-400 px-4 py-2 text-white font-bold transition-transform duration-150 hover:scale-95 hover:cursor-pointer"
+            type="button"
+            onClick={() => router.back()}
+            className="rounded-lg bg-red-400 px-4 py-2 text-white font-bold transition-transform duration-150 hover:scale-95 hover:cursor-pointer"
           >
             Cancel
           </button>
