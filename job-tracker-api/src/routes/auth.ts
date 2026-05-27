@@ -42,6 +42,7 @@ router.post("/register", async (req: Request, res: Response) => {
 });
 
 router.post("/login", async (req: Request, res: Response) => {
+  // req takes decoded from middleware => req.user 
   const parsed = loginSchema.safeParse(req.body);
 
   if (!parsed.success) {
@@ -80,5 +81,10 @@ router.post("/login", async (req: Request, res: Response) => {
     return res.status(401).json({ error: "server error" });
   }
 });
+
+
+router.get("/me", async (req: Request, res: Response) => {
+  return res.status(200).json({ user: req.user })
+})
 
 export default router;

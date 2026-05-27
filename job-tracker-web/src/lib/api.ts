@@ -1,15 +1,13 @@
-import { getToken } from "./auth";
+/*  
+  A fetch wrapper that automatically attaches the JWT token to request headers. 
+*/
 
-// a route to send HTTP request to backend
+import { getToken, clearToken  } from "./auth";
 
 export const API_BASE =
   process.env.NEXT_PUBLIC_API_URL ??
   process.env.API_URL ??
   "http://localhost:3001";
-
-/*  
-  A fetch wrapper that automatically attaches the JWT token to request headers. 
-  */
 
 export const apiFetch = async (path: string, options?: RequestInit) => {
   const token = getToken();
@@ -28,6 +26,15 @@ export const apiFetch = async (path: string, options?: RequestInit) => {
       ...options,
       headers,
     });
+
+    if(response.status === 401 ){
+      // server 가 token_expired / token_invalid / token dose not exist sends 401 error
+      // for now handle them same way: clear token & navigate to sign in page
+      clearToken();
+      if( typeof window !== "undefined"){
+        window.location.href = "/auth/signin"
+      }
+    }
     if (!response.ok) {
       console.log(`Http error: ${response.status}`);
     }
