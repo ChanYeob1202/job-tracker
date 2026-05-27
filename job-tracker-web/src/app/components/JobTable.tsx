@@ -1,12 +1,12 @@
 "use client";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { API_BASE } from "@/lib/api";
 import type { Job } from "@/types/job";
 import { apiFetch } from "@/lib/api";
 import { JOB_STATUS_OPTIONS } from "@/types/job";
 import ActionButton from "./ui/ActionButton";
 import EditableCell from "./EditableCell";
+import { useAuth } from "@/context/AuthContext";
 
 
 const TABLE_COLUMNS: readonly { key: string; label: string }[] = [
@@ -21,7 +21,6 @@ const TABLE_COLUMNS: readonly { key: string; label: string }[] = [
   { key: "actions", label: ""}
 ];
 
-
 type JobTableProps = {
   rows: Job[];
 };
@@ -33,8 +32,11 @@ const tdClass =
   "border-b border-gray-200 px-4 py-3 text-sm text-gray-800 align-top whitespace-nowrap max-w-[200px] truncate";
 
 function JobTable({ rows: initialRows }: JobTableProps) {
-  const router = useRouter();
+  
   const [rows, setRows] = useState<Job[]>(initialRows);
+  const router = useRouter();
+  const isLoading = useAuth();
+
 
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
@@ -68,7 +70,7 @@ function JobTable({ rows: initialRows }: JobTableProps) {
     console.log(res);
     setRows((prev) => prev.filter((r)=> r.id !== id));
   }
-  
+
   return (
     <div className="mt-4 -mx-4 overflow-x-auto px-4 sm:mx-0 sm:px-0">
       <table className="w-full min-w-max table-auto border-collapse">
@@ -88,7 +90,7 @@ function JobTable({ rows: initialRows }: JobTableProps) {
                 colSpan={TABLE_COLUMNS.length}
                 className="px-4 py-6 text-center text-sm text-gray-500"
               >
-                No applications yet.
+                { isLoading ? "Loading..."  : "No application yet"}
               </td>
             </tr>
           ) : (
