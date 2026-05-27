@@ -5,6 +5,7 @@ import { Job } from "@/types/job";
 import type { FormEventHandler } from "react";
 import type { JobStatus } from "@/types/job";
 import { API_BASE } from "@/lib/api";
+import { apiFetch } from "@/lib/api";
 
 type FormType = {
   statusOptions: readonly JobStatus[];
@@ -35,11 +36,10 @@ function JobForm({ statusOptions, initialJob }: FormType) {
 
     try {
       const url = initialJob 
-        ? `${API_BASE}/jobs/${initialJob.id}`
-        : `${API_BASE}/jobs`;
-      const res = await fetch(url, {
+        ? `/jobs/${initialJob.id}`
+        : `/jobs`;
+      const res = await apiFetch(url, {
         method: initialJob ? "PATCH" : "POST",
-        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           company,
           role,
@@ -52,11 +52,7 @@ function JobForm({ statusOptions, initialJob }: FormType) {
         }),
       });
 
-      if (!res.ok) {
-        const text = await res.text();
-        throw new Error(`Failed to create job: ${res.status} ${text}`);
-      }
-      // router.refresh();
+      if(res) 
       alert("Job created successfully!");
       router.push("/");
 
