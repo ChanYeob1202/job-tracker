@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { API_BASE } from "@/lib/api";
 import type { Job } from "@/types/job";
+import { apiFetch } from "@/lib/api";
 import { JOB_STATUS_OPTIONS } from "@/types/job";
 import ActionButton from "./ui/ActionButton";
 import EditableCell from "./EditableCell";
@@ -63,13 +64,11 @@ function JobTable({ rows: initialRows }: JobTableProps) {
   }
 
   async function deleteField(id: number):Promise<void>{
-    const res = await fetch(`${API_BASE}/jobs/${id}`, {
+    const res = await apiFetch(`/jobs/${id}`, {
       method:"DELETE",
     });
 
-    if(!res.ok){
-      throw new Error ("Failed to delete job");
-    }
+    if(res)
     console.log(res);
     setRows((prev) => prev.filter((r)=> r.id !== id));
     router.refresh()

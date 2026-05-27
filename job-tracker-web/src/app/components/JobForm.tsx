@@ -6,7 +6,7 @@ import { apiFetch } from "@/lib/api";
 
 type FormType = {
   statusOptions: readonly JobStatus[];
-  initialJob?: Job; // when present -> edit mode
+  initialJob?: Job; 
 };
 
 const fieldClass =
