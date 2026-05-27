@@ -46,20 +46,17 @@ function JobTable({ rows: initialRows }: JobTableProps) {
     field: keyof Job,
     newValue: string
   ): Promise<void> {
-    const res = await fetch(`${API_BASE}/jobs/${id}`, {
+    const res = await apiFetch(`/jobs/${id}`, {
       method: "PATCH",
-      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ [field]: newValue }),
     });
 
-    if (!res.ok) {
-      throw new Error("Failed to update job");
+    if(res){
+      const data = (await res.json()) as { row: Job };
+      setRows((prev) =>
+        prev.map((r) => (r.id === id ? { ...r, ...data.row } : r))
+      );
     }
-
-    const data = (await res.json()) as { row: Job };
-    setRows((prev) =>
-      prev.map((r) => (r.id === id ? { ...r, ...data.row } : r))
-    );
     router.refresh();
   }
 
@@ -67,11 +64,9 @@ function JobTable({ rows: initialRows }: JobTableProps) {
     const res = await apiFetch(`/jobs/${id}`, {
       method:"DELETE",
     });
-
     if(res)
     console.log(res);
     setRows((prev) => prev.filter((r)=> r.id !== id));
-    router.refresh()
   }
   
   return (
