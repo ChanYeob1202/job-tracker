@@ -1,11 +1,27 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useAuth } from "@/context/AuthContext";
+import { apiFetch } from "@/lib/api";
+
+/* 
+  TODO: accessible even if already user signed in
+  ? may be 1. get token from localstorage and verifies it. if not expired => redirect with alert (you are already signed in!);
+*/
 
 function Page() {
   const [email, setEmail] = useState<string>("");
   const [pw, setPw] = useState<string>("");
   const { login } = useAuth();
+
+  useEffect(()=> {
+    (async() => {
+      const res = await apiFetch("/auth/me")
+      if(res){
+        alert("You are already signed in!")
+        window.location.href = "/"
+      }
+    })()
+  }, [])
 
   const handleSubmit = (evt: React.FormEvent<HTMLFormElement>) => {
     evt.preventDefault();

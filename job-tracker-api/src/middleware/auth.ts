@@ -17,7 +17,7 @@ export default function authMiddleWare(
   const authHeader = req.get("Authorization");
   if (!authHeader) {
     console.log("[auth] ❌ no header");
-    return res.status(401).json({ error: "toekn dose not exist" });
+    return res.status(401).json({ error: "toekn does not exist" });
   }
 
   const parts = authHeader.split(" ");
@@ -54,6 +54,6 @@ export default function authMiddleWare(
     if( error instanceof jwt.JsonWebTokenError){
       return res.status(401).json({ error: "token_invalid"});
     }
-    return res.status(401).json({ error: "auth_failed "});
+    return res.status(401).json({ error: "auth_failed"});
   }
 }
