@@ -3,6 +3,7 @@ import type { Request, Response } from "express";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
 import { pool } from "../db/pool.js";
+import authMiddleWare from "../middleware/auth.js";
 import { z } from "zod";
 
 const router = Router();
@@ -83,8 +84,16 @@ router.post("/login", async (req: Request, res: Response) => {
 });
 
 
-router.get("/me", async (req: Request, res: Response) => {
-  return res.status(200).json({ user: req.user })
+router.get("/me", authMiddleWare, async (req: Request, res: Response) => {
+  const userID = (req.user as { userID: string }).userID;
+  const result = await pool.query(
+    'SELECT id, email FROM users WHERE id = $1',
+    [userID]
+  );
+  if (!result.rows[0]) {
+    return res.status(404).json({ error: "user not found" });
+  }
+  return res.status(200).json({ user: result.rows[0] });
 })
 
 export default router;

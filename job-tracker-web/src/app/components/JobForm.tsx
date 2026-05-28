@@ -10,7 +10,7 @@ import { apiFetch } from "@/lib/api";
 
 type FormType = {
   statusOptions: readonly JobStatus[];
-  initialJob?: Job; 
+  initialJob?: Job;
 };
 
 const fieldClass =
