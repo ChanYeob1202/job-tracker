@@ -36,7 +36,7 @@ app.get("/db-health", async (_req, res) => {
 });
 
 app.use("/jobs", authMiddleWare, jobsRouter)
-app.use("/auth", authMiddleWare, authRouter)
+app.use("/auth", authRouter)
 
 
 const PORT = process.env.PORT || 3001;

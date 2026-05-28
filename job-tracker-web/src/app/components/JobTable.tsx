@@ -90,6 +90,9 @@ function JobTable({ rows: initialRows }: JobTableProps) {
                 colSpan={TABLE_COLUMNS.length}
                 className="px-4 py-6 text-center text-sm text-gray-500"
               >
+                {/* !TODO: does not hanlding empty array => 
+                  list none -> displaying Loading...
+                */}
                 {isLoading ? "Loading..." : "No application yet"}
               </td>
             </tr>

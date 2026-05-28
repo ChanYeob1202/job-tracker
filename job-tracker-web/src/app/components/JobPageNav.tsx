@@ -1,6 +1,7 @@
 "use client";
 import { useRouter } from "next/navigation" 
 import { useAuth } from "@/context/AuthContext";
+import { clearToken } from "@/lib/auth";
 /* 
   *Todo
 - [ ] : add sign out button if user logged in 
@@ -10,7 +11,7 @@ import { useAuth } from "@/context/AuthContext";
 
 export default function JobPageNav() {
   const { user, isLoading } = useAuth();
-  console.log(`loading status is: ${isLoading}, and user data is: ${user.email}`)
+
   const router = useRouter();
 
   return (
@@ -31,11 +32,15 @@ export default function JobPageNav() {
             Add Job
           </div>
         </div>
-        {/* auth controller */}
-
-        <div>
-          sign in 
-        </div>
+        {/* auth controller  if user sign out if not sign in*/}
+        { user ? 
+          <div
+            onClick = {() => {
+              clearToken();
+              router.push("/auth/signin")
+            }}>Sign out</div> 
+            : 
+          <div onClick = {() => router.push("/auth/signin")}>Sign In</div>}
     </nav>
   );
 }

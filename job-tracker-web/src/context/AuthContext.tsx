@@ -34,7 +34,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         */
         const token = getToken();
         if (!token) {
-            setIsLoading(false);
             return;
         }
         (async () => {
