@@ -22,7 +22,10 @@ const AuthContext = createContext<AuthContextType | null>(null);
 export function AuthProvider({ children }: { children: ReactNode }) {
     const router = useRouter();
     const [user, setUser] = useState<UserType | null>(null)
-    const [isLoading, setIsLoading] = useState<boolean>(true);
+    const [isLoading, setIsLoading] = useState<boolean>(() => {
+        if (typeof window === "undefined") return true;
+        return Boolean(getToken());
+    });
 
     useEffect(() => {
         /* Goal : useEffect will be re-rendered if app is re-mounted
@@ -31,7 +34,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         */
         const token = getToken();
         if (!token) {
-            // if token exists retrive user by verifying JWT in server
             return;
         }
         (async () => {
@@ -49,6 +51,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
                 setIsLoading(false);
             }
         })()
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
     const login = async (email: string, password: string) => {

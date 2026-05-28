@@ -21,6 +21,7 @@ Next.js 16 + React 19. See root `CLAUDE.md` for project-wide rules.
 - Wire up sign-in / sign-up `handleSubmit` → POST to API
 - Persist JWT + attach `Authorization` header to `/jobs` fetches
 - Route guard: redirect unauthenticated users from dashboard
+- Proactive token expiry handling: decode JWT `exp` in protected layout, redirect to /auth/signin before token expires (currently only detected on submit → form data loss risk in JobForm)
 
 ---
 

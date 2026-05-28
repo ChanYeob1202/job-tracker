@@ -4,6 +4,10 @@ import { useRouter } from "next/navigation";
 import type { Job, JobStatus } from "@/types/job";
 import { apiFetch } from "@/lib/api";
 
+/* 
+  TODO : when navigating to edit page, the initial input value disappears at /jobs/edit
+*/
+
 type FormType = {
   statusOptions: readonly JobStatus[];
   initialJob?: Job; 

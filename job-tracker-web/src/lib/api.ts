@@ -27,14 +27,16 @@ export const apiFetch = async (path: string, options?: RequestInit) => {
       headers,
     });
 
-    if(response.status === 401 ){
-      // server 가 token_expired / token_invalid / token dose not exist sends 401 error
-      // for now handle them same way: clear token & navigate to sign in page
+    if (response.status === 401) {
+      // token_expired / token_invalid / token missing — clear & redirect, but
+      // only when not already on the signin page (avoid redirect loops).
       clearToken();
-      if( typeof window !== "undefined"){
-        window.location.href = "/auth/signin"
+      if (typeof window !== "undefined" && window.location.pathname !== "/auth/signin") {
+        window.location.href = "/auth/signin";
       }
+      return undefined;
     }
+  
     if (!response.ok) {
       console.log(`Http error: ${response.status}`);
     }
