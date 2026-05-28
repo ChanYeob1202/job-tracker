@@ -10,7 +10,7 @@ import { clearToken } from "@/lib/auth";
 */
 
 export default function JobPageNav() {
-  const { user, isLoading } = useAuth();
+  const { user} = useAuth();
 
   const router = useRouter();
 
@@ -37,10 +37,10 @@ export default function JobPageNav() {
           <div
             onClick = {() => {
               clearToken();
-              router.push("/auth/signin")
+              router.push("/signin")
             }}>Sign out</div> 
             : 
-          <div onClick = {() => router.push("/auth/signin")}>Sign In</div>}
+          <div onClick = {() => router.push("/signin")}>Sign In</div>}
     </nav>
   );
 }

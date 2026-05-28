@@ -42,7 +42,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
                 if (!res) return;
                 if (res.status === 401) {
                     clearToken();
-                    router.push("/auth/signin")
+                    router.push("/signin")
                     return;
                 }
                 const data = await res.json();
@@ -82,7 +82,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const logOut = () => {
         setUser(null);
         clearToken();
-        router.push("/auth/signin");
+        router.push("/signin");
     }
     return (
         <AuthContext.Provider value={{ user, isLoading, login, setUser, logOut }}>
