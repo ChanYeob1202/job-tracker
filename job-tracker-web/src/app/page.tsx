@@ -1,15 +1,15 @@
 "use client"
 import { useState, useEffect } from "react";
-import { useAuth } from "@/context/AuthContext"
 import JobsBoard from "./components/JobsBoard";
 import type { Job } from "@/types/job";
 import { apiFetch } from "@/lib/api";
-import SignInForm from "./components/ui/SignInForm";
+import { useAuth } from "@/context/AuthContext";
 
 
 export default function Page() {
   const [ rows, setRows ] = useState<Job[]>([])
-  const { user, isLoading } = useAuth();
+  const { user } = useAuth();
+  const [ isLoadingJobs, setIsLoadingJobs ] = useState(true);
 
   useEffect(() => {
     (async () => {
@@ -20,6 +20,7 @@ export default function Page() {
         const data = await res.json();
         setRows(data.rows ?? []);
       }
+      setIsLoadingJobs(false);
     })();
   }, []);
 
@@ -27,7 +28,15 @@ export default function Page() {
     <div className="">
       <div className="mt-8 p-4">
         <h1 className="text-4xl font-semibold">Job Applications</h1>
-          { user ? <JobsBoard initialRows={rows}/ > : null}
+          { 
+            user ? 
+              <JobsBoard 
+                initialRows={rows} 
+                jobLoadingStatus = {isLoadingJobs}
+                / > 
+              : 
+              null
+          }
       </div>
     </div>
   );

@@ -6,8 +6,7 @@ import { apiFetch } from "@/lib/api";
 import { JOB_STATUS_OPTIONS } from "@/types/job";
 import ActionButton from "./ui/ActionButton";
 import EditableCell from "./EditableCell";
-import { useAuth } from "@/context/AuthContext";
-
+;
 
 const TABLE_COLUMNS: readonly { key: string; label: string }[] = [
   { key: "company", label: "Company" },
@@ -23,6 +22,8 @@ const TABLE_COLUMNS: readonly { key: string; label: string }[] = [
 
 type JobTableProps = {
   rows: Job[];
+  jobLoadingStatus: boolean;
+  
 };
 
 const thClass =
@@ -31,11 +32,10 @@ const thClass =
 const tdClass =
   "border-b border-gray-200 px-4 py-3 text-sm text-gray-800 align-top whitespace-nowrap max-w-[200px] truncate";
 
-function JobTable({ rows: initialRows }: JobTableProps) {
+function JobTable({ rows: initialRows, jobLoadingStatus }: JobTableProps) {
 
   const [rows, setRows] = useState<Job[]>(initialRows);
   const router = useRouter();
-  const isLoading = useAuth();
 
 
   useEffect(() => {
@@ -90,10 +90,7 @@ function JobTable({ rows: initialRows }: JobTableProps) {
                 colSpan={TABLE_COLUMNS.length}
                 className="px-4 py-6 text-center text-sm text-gray-500"
               >
-                {/* !TODO: does not hanlding empty array => 
-                  list none -> displaying Loading...
-                */}
-                {isLoading ? "Loading..." : "No application yet"}
+                {jobLoadingStatus ? "getting data..." : "No application yet"}
               </td>
             </tr>
           ) : (

@@ -17,9 +17,11 @@ const STATUS_FILTER_OPTIONS: readonly { value: StatusFilterValue; label: string 
 
 type JobsBoardProps = {
   initialRows: Job[];
+  jobLoadingStatus: boolean;
+  
 };
 
-function JobsBoard({ initialRows }: JobsBoardProps) {
+function JobsBoard({ initialRows, jobLoadingStatus}: JobsBoardProps) {
   const [statusFilter, setStatusFilter] = useState<StatusFilterValue>("all");
 
   const filteredRows = useMemo(
@@ -37,7 +39,10 @@ function JobsBoard({ initialRows }: JobsBoardProps) {
         statusFilter={statusFilter}
         onStatusChange={setStatusFilter}
       />
-      <JobTable rows={filteredRows} />
+      <JobTable 
+        rows={filteredRows} 
+        jobLoadingStatus = {jobLoadingStatus}
+        />
     </div>
   );
 }
