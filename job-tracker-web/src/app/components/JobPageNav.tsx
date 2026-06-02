@@ -1,16 +1,9 @@
 "use client";
 import { useRouter } from "next/navigation" 
 import { useAuth } from "@/context/AuthContext";
-import { clearToken } from "@/lib/auth";
-/* 
-  *Todo
-- [ ] : add sign out button if user logged in 
-- [ ] change layout - display Header (Job, add job) only when signed in 
-- [ ] figure out how to handle home page ( signed in || guest )
-*/
 
 export default function JobPageNav() {
-  const { user} = useAuth();
+  const { user, logOut} = useAuth();
 
   const router = useRouter();
 
@@ -26,7 +19,13 @@ export default function JobPageNav() {
             </div>
           </h1>
           <div
-            onClick={() => router.push("/jobs/new")}
+            onClick={() => {
+              if(!user){
+                alert("please sign in to create a job list")
+                router.push("/jobs")
+              }
+              router.push("/jobs/new")
+            }}
             className="hover:cursor-pointer hover:opacity-70"
           >
             Add Job
@@ -36,7 +35,7 @@ export default function JobPageNav() {
         { user ? 
           <div
             onClick = {() => {
-              clearToken();
+              logOut();
               router.push("/signin")
             }}>Sign out</div> 
             : 

@@ -49,7 +49,7 @@ export default function authMiddleWare(
   } catch (error) {
     console.log("[auth] ❌ caught", error)
     if( error instanceof jwt.TokenExpiredError ){
-      return res.status(401).json({ error: "token_expired"})
+      return res.status(401).json({ error: "token_expired. Browser will navigate to sign in page."})
     }
     if( error instanceof jwt.JsonWebTokenError){
       return res.status(401).json({ error: "token_invalid"});

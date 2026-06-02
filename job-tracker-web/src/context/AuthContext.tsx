@@ -22,27 +22,17 @@ const AuthContext = createContext<AuthContextType | null>(null);
 export function AuthProvider({ children }: { children: ReactNode }) {
     const router = useRouter();
     const [user, setUser] = useState<UserType | null>(null)
-    const [isLoading, setIsLoading] = useState<boolean>(() => {
-        if (typeof window === "undefined") return true;
-        return Boolean(getToken());
-    });
+    const [isLoading, setIsLoading] = useState<boolean>(true);
 
     useEffect(() => {
-        /* Goal : useEffect will be re-rendered if app is re-mounted
-            1) verify token
-            2) refetch user information
-        */
-        const token = getToken();
-        if (!token) {
-            return;
-        }
         (async () => {
             try {
+                const token = getToken();
+                console.log(`[AuthContext] token fetched ${token}`)
+                if (!token) return;
                 const res = await apiFetch("/auth/me")
-                if (!res) return;
-                if (res.status === 401) {
+                if (!res) {
                     clearToken();
-                    router.push("/signin")
                     return;
                 }
                 const data = await res.json();
@@ -51,7 +41,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
                 setIsLoading(false);
             }
         })()
-        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
     const login = async (email: string, password: string) => {
@@ -82,7 +71,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const logOut = () => {
         setUser(null);
         clearToken();
-        router.push("/signin");
+        router.push("/");
     }
     return (
         <AuthContext.Provider value={{ user, isLoading, login, setUser, logOut }}>

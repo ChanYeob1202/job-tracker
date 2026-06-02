@@ -28,13 +28,9 @@ export const apiFetch = async (path: string, options?: RequestInit) => {
     });
 
     if (response.status === 401) {
-      // token_expired / token_invalid / token missing — clear & redirect, but
-      // only when not already on the signin page (avoid redirect loops).
       clearToken();
-      if (typeof window !== "undefined" && window.location.pathname !== "/signin") {
-        window.location.href = "/signin";
-      }
       return undefined;
+
     }
   
     if (!response.ok) {

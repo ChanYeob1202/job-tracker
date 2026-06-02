@@ -171,7 +171,7 @@ function JobForm({ statusOptions, initialJob }: FormType) {
         </label>
         <textarea
           id="job-notes"
-          className={`${fieldClass} min-h-[6rem] resize-y`}
+          className={`${fieldClass} min-h-24 resize-y`}
           maxLength={600}
           value={notes}
           onChange={(e) => setNotes(e.target.value)}

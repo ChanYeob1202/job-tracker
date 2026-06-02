@@ -18,7 +18,6 @@ const STATUS_FILTER_OPTIONS: readonly { value: StatusFilterValue; label: string 
 type JobsBoardProps = {
   initialRows: Job[];
   jobLoadingStatus: boolean;
-  
 };
 
 function JobsBoard({ initialRows, jobLoadingStatus}: JobsBoardProps) {

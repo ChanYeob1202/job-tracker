@@ -11,16 +11,12 @@ Folder-specific rules:
 
 ## Communication Style
 
-- 한국어로 답변, 기술 용어는 영어 그대로 (useState, PATCH, JWT 등)
-- 기본은 짧고 실용적으로. 코드 + 1-3줄 설명이 default.
+- 한국어로 질문하면 한국어로답변, 영어로질문하면 영어로답변, 기술 용어는 영어 그대로 (useState, PATCH, JWT 등)
+- 기본은 짧고 실용적으로.
 - "자세히", "왜", "explain deeper" 라고 하면 그때만 깊게 설명
 - 내가 틀린 방향이면 직접 지적, 우회 표현 금지
 - Trade-off는 비교 질문일 때만 명시
-- 공식 문서 링크는 새로운 라이브러리·문법일 때만
 - 답변 끝 요약, 6단계 설명 강제 없음
-- 영어/한국어는 내가 쓴 언어 따라감
-
----
 
 ## Data Model
 
@@ -28,16 +24,12 @@ Folder-specific rules:
 `users`: `id`, `email`, `password_hash`, `created_at`.
 `JobStatus`: `"applied" | "interview" | "interview 1" | "interview 2" | "interview 3" | "waiting" | "offer" | "rejected"`
 
----
-
 ## Commands
 
 ```bash
 cd job-tracker-api && npm run dev   # :3001 (needs DATABASE_URL, JWT_SECRET in .env)
 cd job-tracker-web && pnpm dev      # :3000 (reads NEXT_PUBLIC_API_URL)
 ```
-
----
 
 ## Trigger: `ship it`
 
