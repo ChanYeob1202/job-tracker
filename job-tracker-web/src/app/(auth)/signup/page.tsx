@@ -1,11 +1,18 @@
+"use client"
+import { useState  } from 'react' 
+
 function Page() {
-  
-  
+
+  const [ email, setEmail ] = useState<string>("");
+  const [ password, setPassword ] = useState<string>("");
+  const [ confirmPassword, setConfirmPassword ] = useState< string> ("");
+
+
   return (
-    <div>
+    <form className = "flex flex-col">
       
-    </div>
-  );
+    </form>
+  )
 }
 
-export default Page;
+export default Page

@@ -13,6 +13,7 @@ type AuthContextType = {
     user: UserType | null;
     isLoading: boolean;
     setUser: (u: UserType | null) => void;
+    register: (email: string, password: string) => Promise<void>
     login: (email: string, password: string) => Promise<void>;
     logOut: () => void;
 }
@@ -42,6 +43,30 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             }
         })()
     }, [])
+
+    const register = async ( email:string, password: string) => {
+        const path = "/auth/register"
+        const options = {
+            method: "POST",
+            body: JSON.stringify( { email, password })
+        }
+
+        try {
+            const res = await apiFetch(path, options);
+            if(!res || !res.ok){
+                throw new Error("Register failed");
+            } 
+            const data = res.json();
+            console.log(data);
+            } catch (error){
+                if( error instanceof Error){
+                    console.error(`Register failed: `, error.message);
+                }
+                throw error;
+            }finally {
+                setIsLoading(false);
+            }
+        }
 
     const login = async (email: string, password: string) => {
         const path = "/auth/login"
@@ -74,7 +99,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         router.push("/");
     }
     return (
-        <AuthContext.Provider value={{ user, isLoading, login, setUser, logOut }}>
+        <AuthContext.Provider value={{ user, isLoading, login, setUser, logOut, register }}>
             {children}
         </AuthContext.Provider>
     )
