@@ -4,8 +4,9 @@ import { useAuth } from "@/context/AuthContext";
 
 export default function JobPageNav() {
   const { user, logOut} = useAuth();
-
   const router = useRouter();
+
+  const authButtonClass = "hover:cursor-pointer hover:opacity-70 text-sm font-light"
 
   return (
     <nav className="relative z-10 flex flex-wrap flex-flow justify-between items-center gap-4 pb-4 border-b font-bold">
@@ -21,25 +22,26 @@ export default function JobPageNav() {
           <div
             onClick={() => {
               if(!user){
-                alert("please sign in to create a job list")
-                router.push("/jobs")
+                alert("please sign in to create a job list");
+                router.push("/signin")
+                return;
               }
-              router.push("/jobs/new")
+              router.push("/jobs/new");
             }}
             className="hover:cursor-pointer hover:opacity-70"
           >
             Add Job
           </div>
         </div>
-        {/* auth controller  if user sign out if not sign in*/}
         { user ? 
           <div
+            className = {authButtonClass}
             onClick = {() => {
               logOut();
-              router.push("/signin")
+              router.push("/jobs")
             }}>Sign out</div> 
             : 
-          <div onClick = {() => router.push("/signin")}>Sign In</div>}
+          <div className= {authButtonClass} onClick = {() => router.push("/signin")}>Sign In</div>}
     </nav>
   );
 }
