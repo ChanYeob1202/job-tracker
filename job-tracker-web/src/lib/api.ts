@@ -36,6 +36,7 @@ export const apiFetch = async (path: string, options?: RequestInit) => {
     if (!response.ok) {
       console.log(`Http error: ${response.status}`);
     }
+    
     return response;
   } catch (error) {
     console.error(`An error occured during request ${error} `);

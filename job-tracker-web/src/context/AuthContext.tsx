@@ -50,16 +50,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             method: "POST",
             body: JSON.stringify( { email, password })
         }
-
         try {
             const res = await apiFetch(path, options);
+            const data = await res?.json().catch(() => null);
             if(!res || !res.ok){
-                throw new Error("Register failed");
-            } 
-            const data = res.json();
-            console.log(data);
+                throw new Error(data?.error ?? "Register failed");
+            }
             } catch (error){
-                if( error instanceof Error){
+                if( error instanceof Error ){
                     console.error(`Register failed: `, error.message);
                 }
                 throw error;

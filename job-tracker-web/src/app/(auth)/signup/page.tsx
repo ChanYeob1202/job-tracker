@@ -9,12 +9,18 @@ type SignUpForm = {
   confirmPassword: string
 }
 
-type SignUpErrors = Partial<Record<keyof SignUpForm, string>>
+/* 
+signUpErrors' format = {
+  email?: string,
+  password?: string,
+  confirmPassword?: string,
+} 
+*/ 
 
+type SignUpErrors = Partial<Record<keyof SignUpForm, string>>
 
 function Page() {
   const { user, isLoading:authLoading , register } = useAuth();
-  const [ errors, setErrors ] = useState<SignUpErrors>({})
   const router = useRouter()
   
   useEffect(() => {
@@ -24,28 +30,29 @@ function Page() {
     }
   }, [user, authLoading, router])
 
-
   const [formData, setFormData] = useState({
     email: "",
     password: "",
     confirmPassword: "",
   })
+  const [errors, setErrors] = useState<SignUpErrors>({})
+  const [serverError, setServerError] = useState("")
 
   const validate = (form: SignUpForm): SignUpErrors => {
-    const errors: SignUpErrors = {};
-      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const nextErrors: SignUpErrors = {};
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-    if(!emailRegex.test(formData.email)){
-      errors.email = "invalid email"
+    if(!emailRegex.test(form.email)){
+      nextErrors.email = "invalid email"
     }
 
     if(form.password !== form.confirmPassword){
-      errors.confirmPassword = "Password do not match";
+      nextErrors.confirmPassword = "Password do not match";
     }
     if(form.password.length < 8 ) {
-      errors.password = "Password must be at least 8 characters";
-    } 
-    return errors; 
+      nextErrors.password = "Password must be at least 8 characters";
+    }
+    return nextErrors;
   }
 
   const handleChange = (evt: React.ChangeEvent<HTMLInputElement>) => {
@@ -53,17 +60,21 @@ function Page() {
     setFormData({ ...formData, [name]: value });
   }
 
-  const handleSubmit = (evt: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (evt: React.FormEvent<HTMLFormElement>) => {
     evt.preventDefault();
-    const errors = validate(formData);
-    if(errors){
-      setErrors(errors)
-      console.log(errors);
-      return;
+    setServerError(""); // clear any stale server error from a previous attempt
+    const nextErrors = validate(formData);
+    setErrors(nextErrors);
+    if (Object.keys(nextErrors).length > 0) {
+      return; // stop: don't call register while the form is invalid
     }
-    register(formData.email, formData.password)
+    try {
+      await register(formData.email, formData.password)
+      router.push("/")
+    } catch (err) {
+      if (err instanceof Error) setServerError(err.message); // e.g. "Email already exists"
+    }
   }
-
 
   const inputClass = "rounded-lg bg-gray-300 hover:cursor-pointer"
 
@@ -105,6 +116,8 @@ function Page() {
         required
       />
       {errors.confirmPassword && <p className = "text-red-500">{errors.confirmPassword}</p>}
+
+      {serverError && <p className = "text-red-500">{serverError}</p>}
 
       <p>have an account? <span><button onClick = {() => router.push("/signin")}>sign in</button></span></p>
       <button type = "submit">Sign up</button>

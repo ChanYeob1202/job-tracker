@@ -2,6 +2,7 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
+import Link from "next/link";
 
 function Page() {
   const router = useRouter();
@@ -21,27 +22,35 @@ function Page() {
   };
 
   return (
-    <form className="flex flex-col" onSubmit={handleSubmit}>
-      <label>Email: </label>
-      <input
-        type="email"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-        title="Enter a valid email"
-        required
-      />
+    <>
+      <form className="flex flex-col" onSubmit={handleSubmit}>
+        <label>Email: </label>
+        <input
+          type="email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          title="Enter a valid email"
+          required
+        />
 
-      <label>Password: </label>
-      <input
-        type="password"
-        value={pw}
-        onChange={(e) => setPw(e.target.value)}
-        title="Enter password"
-        required
-      />
+        <label>Password: </label>
+        <input
+          type="password"
+          value={pw}
+          onChange={(e) => setPw(e.target.value)}
+          title="Enter password"
+          required
+        />
+        <button type="submit">Sign In</button>
+      </form>
+      <Link
+        href = "/signup"
+        className = "text-center underline font-light text-sm text-gray-400 hover:text-blue-500 hover:cursor-pointerr"
+        >
+          Don&apos;t have an account? 
+      </Link>
+    </>
 
-      <button type="submit">Sign In</button>
-    </form>
   );
 }
 
