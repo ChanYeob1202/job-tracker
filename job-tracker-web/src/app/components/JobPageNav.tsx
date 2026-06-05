@@ -38,7 +38,7 @@ export default function JobPageNav() {
             className = {authButtonClass}
             onClick = {() => {
               logOut();
-              router.push("/jobs")
+              router.push("/")
             }}>Sign out</div> 
             : 
           <div className= {authButtonClass} onClick = {() => router.push("/signin")}>Sign In</div>}

@@ -39,7 +39,7 @@ export default function Page() {
               <JobsBoard
                 initialRows={rows ?? []}
                 jobLoadingStatus = {isLoadingJobs}
-                / >
+                />
       </div>
     </div>
   );
