@@ -2,6 +2,7 @@
 import { useState, useEffect } from 'react'
 import { useAuth } from '@/context/AuthContext';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 
 type SignUpForm = {
   email: string;
@@ -15,16 +16,16 @@ signUpErrors' format = {
   password?: string,
   confirmPassword?: string,
 } 
-*/ 
+*/
 
 type SignUpErrors = Partial<Record<keyof SignUpForm, string>>
 
 function Page() {
-  const { user, isLoading:authLoading , register } = useAuth();
+  const { user, isLoading: authLoading, register } = useAuth();
   const router = useRouter()
-  
+
   useEffect(() => {
-    if(!authLoading && user) {
+    if (!authLoading && user) {
       alert("you are already signed in!")
       router.replace("/");
     }
@@ -42,14 +43,14 @@ function Page() {
     const nextErrors: SignUpErrors = {};
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-    if(!emailRegex.test(form.email)){
+    if (!emailRegex.test(form.email)) {
       nextErrors.email = "invalid email"
     }
 
-    if(form.password !== form.confirmPassword){
+    if (form.password !== form.confirmPassword) {
       nextErrors.confirmPassword = "Password do not match";
     }
-    if(form.password.length < 8 ) {
+    if (form.password.length < 8) {
       nextErrors.password = "Password must be at least 8 characters";
     }
     return nextErrors;
@@ -70,7 +71,9 @@ function Page() {
     }
     try {
       await register(formData.email, formData.password)
-      router.push("/")
+      // register only returns { user } (no token), so we can't auto-login.
+      // Send them to /signin to enter their credentials once.
+      router.push("/signin")
     } catch (err) {
       if (err instanceof Error) setServerError(err.message); // e.g. "Email already exists"
     }
@@ -79,49 +82,54 @@ function Page() {
   const inputClass = "rounded-lg bg-gray-300 hover:cursor-pointer"
 
   return (
-    <form className="flex flex-col" onSubmit={handleSubmit}>
-      <label htmlFor="email">Email: </label>
-      <input
-        type="email"
-        name="email"
-        value={formData.email}
-        onChange={handleChange}
-        title='Enter your email'
-        className = {inputClass}
-        required
-      />
-      {errors.email && <p className = "text-red-500">{errors.email}</p>}
+    <>
+      <form className="flex flex-col" onSubmit={handleSubmit}>
+        <label htmlFor="email">Email: </label>
+        <input
+          type="email"
+          name="email"
+          value={formData.email}
+          onChange={handleChange}
+          title='Enter your email'
+          className={inputClass}
+          required
+        />
+        {errors.email && <p className="text-red-500">{errors.email}</p>}
+        {serverError && <p className="text-red-500">{serverError}</p>}
+        <label>Password: </label>
+        <input
+          type='password'
+          name='password'
+          value={formData.password}
+          onChange={handleChange}
+          title='Enter your password'
+          className={inputClass}
+          required
+        />
 
-      <label>Password: </label>
-      <input
-        type='password'
-        name='password'
-        value={formData.password}
-        onChange={handleChange}
-        title='Enter your password'
-        className = {inputClass}
-        required
-      />
+        {errors.password && <p className="text-red-500">{errors.password}</p>}
 
-      {errors.password &&<p className = "text-red-500">{errors.password}</p> }
+        <label>Comfirm Password:</label>
+        <input
+          type='password'
+          name='confirmPassword'
+          value={formData.confirmPassword}
+          onChange={handleChange}
+          title='Confirm password'
+          className={inputClass}
+          required
+        />
+        {errors.confirmPassword && <p className="text-red-500">{errors.confirmPassword}</p>}
 
-      <label>Comfirm Password:</label>
-      <input
-        type='password'
-        name='confirmPassword'
-        value={formData.confirmPassword}
-        onChange = {handleChange}
-        title='Confirm password'
-        className = {inputClass}
-        required
-      />
-      {errors.confirmPassword && <p className = "text-red-500">{errors.confirmPassword}</p>}
-
-      {serverError && <p className = "text-red-500">{serverError}</p>}
-
-      <p>have an account? <span><button onClick = {() => router.push("/signin")}>sign in</button></span></p>
-      <button type = "submit">Sign up</button>
-    </form>
+        <button type="submit">Sign up</button>
+      </form>
+      <Link
+        href="/signin"
+        className = "text-center underline font-light text-sm text-gray-400 hover:text-blue-500 hover:cursor-pointer"
+      >
+        Already have an account? 
+      </Link>
+    </>
   )
 }
 

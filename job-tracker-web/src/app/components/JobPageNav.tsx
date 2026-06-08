@@ -23,7 +23,7 @@ export default function JobPageNav() {
             onClick={() => {
               if(!user){
                 alert("please sign in to create a job list");
-                router.push("/signin")
+                router.push("/signin");
                 return;
               }
               router.push("/jobs/new");

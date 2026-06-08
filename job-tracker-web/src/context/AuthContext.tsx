@@ -74,10 +74,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         }
         try {
             const res = await apiFetch(path, options);
+            // Read the body once — both success (token+user) and failure ({error}) live here.
+            const data = await res?.json().catch(() => null);
             if (!res || !res.ok) {
-                throw new Error("Log in failed")
+                // Surface the server's actual message (e.g. "user dosen't exist")
+                // instead of a generic "Log in failed" so the UI can show it.
+                throw new Error(data?.error ?? "Log in failed");
             }
-            const data = await res.json();
             setUser(data.user);
             persistToken(data.token);
             router.push("/");

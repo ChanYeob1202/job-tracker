@@ -4,21 +4,39 @@ import { useRouter } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
 import Link from "next/link";
 
+
 function Page() {
   const router = useRouter();
   const { user, isLoading, login } = useAuth();
-  const [email, setEmail] = useState<string>("");
-  const [pw, setPw] = useState<string>("");
+  const [ formData, setFormData ] = useState({
+    email: "",
+    password: ""
+  })
+
+  const { email, password } = formData 
 
   useEffect(() => {
     if (!isLoading && user) {
       router.replace("/");
     }
   }, [user, isLoading, router]);
+  
+  const handleChange = (evt: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = evt.target;
+    setFormData({ ...formData, [name]: value });
+  }
 
-  const handleSubmit = (evt: React.FormEvent<HTMLFormElement>) => {
+
+  const handleSubmit = async (evt: React.FormEvent<HTMLFormElement>) => {
     evt.preventDefault();
-    return login(email, pw);
+    try {
+      await login(email, password);
+      router.push("/");
+    } catch (error) {
+      if (error instanceof Error) {
+        console.log("[server error in sign in]: ", error.message);
+      }
+    }
   };
 
   return (
@@ -27,8 +45,9 @@ function Page() {
         <label>Email: </label>
         <input
           type="email"
+          name = "email"
           value={email}
-          onChange={(e) => setEmail(e.target.value)}
+          onChange = { handleChange }
           title="Enter a valid email"
           required
         />
@@ -36,8 +55,9 @@ function Page() {
         <label>Password: </label>
         <input
           type="password"
-          value={pw}
-          onChange={(e) => setPw(e.target.value)}
+          name = "password"
+          value={password}
+          onChange={handleChange}
           title="Enter password"
           required
         />
@@ -45,12 +65,11 @@ function Page() {
       </form>
       <Link
         href = "/signup"
-        className = "text-center underline font-light text-sm text-gray-400 hover:text-blue-500 hover:cursor-pointerr"
+        className = "text-center underline font-light text-sm text-gray-400 hover:text-blue-500 hover:cursor-pointer"
         >
           Don&apos;t have an account? 
       </Link>
     </>
-
   );
 }
 
