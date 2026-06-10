@@ -80,6 +80,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
                 // instead of a generic "Log in failed" so the UI can show it.
                 throw new Error(data?.error ?? "Log in failed");
             }
+            
             setUser(data.user);
             persistToken(data.token);
             router.push("/");
