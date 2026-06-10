@@ -87,7 +87,7 @@ router.post("/login", async (req: Request, res: Response) => {
       [email],
     );
     if (!userResult.rows[0]) {
-      return res.status(401).json({ error: "user dosen't exist" });
+      return res.status(401).json({ error: "user doesn't exist" });
     }
 
     const user = userResult.rows[0];
@@ -95,7 +95,7 @@ router.post("/login", async (req: Request, res: Response) => {
     if (!ok) {
       return res
         .status(401)
-        .json({ error: "email and password dosen't match" });
+        .json({ error: "email and password don't match" });
     }
 
     const token = jwt.sign({ userID: user.id }, process.env.JWT_SECRET!, {

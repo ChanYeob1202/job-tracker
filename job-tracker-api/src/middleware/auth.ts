@@ -17,7 +17,7 @@ export default function authMiddleWare(
   const authHeader = req.get("Authorization");
   if (!authHeader) {
     console.log("[auth] ❌ no header");
-    return res.status(401).json({ error: "toekn does not exist" });
+    return res.status(401).json({ error: "token does not exist" });
   }
 
   const parts = authHeader.split(" ");

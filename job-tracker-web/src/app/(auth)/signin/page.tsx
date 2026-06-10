@@ -13,7 +13,8 @@ function Page() {
     password: ""
   })
 
-  const { email, password } = formData 
+  const { email, password } = formData
+  const [serverError, setServerError] = useState("")
 
   useEffect(() => {
     if (!isLoading && user) {
@@ -29,13 +30,12 @@ function Page() {
 
   const handleSubmit = async (evt: React.FormEvent<HTMLFormElement>) => {
     evt.preventDefault();
+    setServerError(""); // clear any stale error from a previous attempt
     try {
+      // login() redirects to "/" on success; on failure it throws the server's message.
       await login(email, password);
-      router.push("/");
     } catch (error) {
-      if (error instanceof Error) {
-        console.log("[server error in sign in]: ", error.message);
-      }
+      if (error instanceof Error) setServerError(error.message);
     }
   };
 
@@ -61,6 +61,7 @@ function Page() {
           title="Enter password"
           required
         />
+        {serverError && <p className="text-red-500">{serverError}</p>}
         <button type="submit">Sign In</button>
       </form>
       <Link

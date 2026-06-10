@@ -1,11 +1,3 @@
-/* 
-  token storage helper - abstract over localstorage
-  so the rest app never touches storage APIs directly
-
-  token 을 localstorage 에 저장/조회/삭제하는 helper.
-  다른파일은 localStorage를 직접 만지지 말고 이 함수들을 통해접근
-*/
-
 export function setToken(token: string) {
   return localStorage.setItem("token", token);
 }
@@ -16,4 +8,14 @@ export function getToken(): string | null {
 
 export function clearToken() {
   return localStorage.removeItem("token");
+}
+
+//proactive jwt: returns token expiry in ms (Date.now() units) or null if unparseable.
+export function getTokenExp(token: string): number | null {
+  try {
+    const payload = JSON.parse(atob(token.split(".")[1]));
+    return typeof payload.exp === "number" ? payload.exp * 1000 : null;
+  } catch {
+    return null;
+  }
 }
