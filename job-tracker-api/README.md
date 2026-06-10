@@ -12,14 +12,21 @@ npm install
 **2. Create a `.env` file** in this directory with your database URL:
 ```
 DATABASE_URL=your_neon_connection_string_here
+JWT_SECRET=any_long_random_string
 ```
 
-**3. Start the dev server**
+**3. Create the database tables** (run once, on a fresh Neon database):
+```bash
+psql "your_neon_connection_string_here" -f src/db/schema.sql
+```
+This applies [`src/db/schema.sql`](src/db/schema.sql) — the database blueprint — creating the empty `users` and `"Jobs"` tables. The tables start empty; data is added later through the API. Run this only once per database.
+
+**4. Start the dev server**
 ```bash
 npm run dev
 ```
 
-The server runs on `http://localhost:3001` by default.
+The server runs on `http://localhost:3001` by default. Visit `http://localhost:3001/db-health` to confirm the database connection works.
 
 ## Scripts
 
@@ -33,15 +40,20 @@ The server runs on `http://localhost:3001` by default.
 
 Base URL: `http://localhost:3001`
 
-| Method | Path         | Description              |
-|--------|--------------|--------------------------|
-| GET    | `/health`    | Health check             |
-| GET    | `/db-health` | Database connection check|
-| GET    | `/jobs`      | Get all job entries      |
-| GET    | `/jobs/:id`  | Get a single job entry   |
-| POST   | `/jobs`      | Create a new job entry   |
-| PATCH  | `/jobs/:id`  | Update a job entry       |
-| DELETE | `/jobs/:id`  | Delete a job entry       |
+Endpoints marked 🔒 require an `Authorization: Bearer <token>` header (get a token from `/auth/login`).
+
+| Method | Path             | Auth   | Description                  |
+|--------|------------------|--------|------------------------------|
+| GET    | `/health`        | Public | Server health check          |
+| GET    | `/db-health`     | Public | Database connection check    |
+| POST   | `/auth/register` | Public | Create a new user            |
+| POST   | `/auth/login`    | Public | Get a JWT and user data      |
+| GET    | `/auth/me`       | 🔒 JWT | Get the current logged-in user |
+| GET    | `/jobs`          | 🔒 JWT | Get all job entries          |
+| GET    | `/jobs/:id`      | 🔒 JWT | Get a single job entry       |
+| POST   | `/jobs`          | 🔒 JWT | Create a new job entry       |
+| PATCH  | `/jobs/:id`      | 🔒 JWT | Update a job entry           |
+| DELETE | `/jobs/:id`      | 🔒 JWT | Delete a job entry           |
 
 ## Job Fields
 
