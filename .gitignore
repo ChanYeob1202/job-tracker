@@ -24,3 +24,7 @@ out/
 
 # Claude / Cursor worktrees (nested git repos; do not track)
 .claude/
+
+
+# env files (can opt-in for committing if needed)
+.env*
