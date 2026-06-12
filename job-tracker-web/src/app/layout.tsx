@@ -29,7 +29,7 @@ export default function RootLayout({
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col px-4 sm:px-6 lg:px-8 py-6 max-w-6xl mx-auto">
+      <body className="min-h-full flex flex-col px-4 sm:px-6 lg:px-8 py-6 max-w-10xl mx-auto">
         <AuthProvider>
           <JobPageNav />
           {children}
