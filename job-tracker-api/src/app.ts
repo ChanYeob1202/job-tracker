@@ -10,8 +10,15 @@ dotenv.config();
 
 const app = express();
 
+// Only allow our own frontend(s) to call this API.
+// Prod origin can be overridden via FRONTEND_ORIGIN env (no code change needed).
+const allowedOrigins = [
+  "http://localhost:3000", // local dev
+  process.env.FRONTEND_ORIGIN ?? "https://job-tracker-application23.vercel.app",
+];
+
 // middleware
-app.use(cors());
+app.use(cors({ origin: allowedOrigins }));
 app.use(express.json());
 
 app.get("/", (_req, res)=> {
