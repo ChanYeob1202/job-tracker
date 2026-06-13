@@ -1,7 +1,12 @@
+/* 
+  TODO: email verification
+*/
+
 "use client"
 import { useState, useEffect } from 'react'
 import { useAuth } from '@/context/AuthContext';
 import { useRouter } from 'next/navigation';
+import AuthForm from '@/app/components/ui/AuthForm';
 import Link from 'next/link';
 
 type SignUpForm = {
@@ -9,14 +14,6 @@ type SignUpForm = {
   password: string;
   confirmPassword: string
 }
-
-/* 
-signUpErrors' format = {
-  email?: string,
-  password?: string,
-  confirmPassword?: string,
-} 
-*/
 
 type SignUpErrors = Partial<Record<keyof SignUpForm, string>>
 
@@ -35,7 +32,8 @@ function Page() {
     email: "",
     password: "",
     confirmPassword: "",
-  })
+  });
+  const { email, password, confirmPassword } = formData
   const [errors, setErrors] = useState<SignUpErrors>({})
   const [serverError, setServerError] = useState("")
 
@@ -82,54 +80,18 @@ function Page() {
   const inputClass = "rounded-lg bg-gray-300 hover:cursor-pointer"
 
   return (
-    <>
-      <form className="flex flex-col" onSubmit={handleSubmit}>
-        <label htmlFor="email">Email: </label>
-        <input
-          type="email"
-          name="email"
-          value={formData.email}
-          onChange={handleChange}
-          title='Enter your email'
-          className={inputClass}
-          required
-        />
-        {errors.email && <p className="text-red-500">{errors.email}</p>}
-        {serverError && <p className="text-red-500">{serverError}</p>}
-        <label>Password: </label>
-        <input
-          type='password'
-          name='password'
-          value={formData.password}
-          onChange={handleChange}
-          title='Enter your password'
-          className={inputClass}
-          required
-        />
-
-        {errors.password && <p className="text-red-500">{errors.password}</p>}
-
-        <label>Comfirm Password:</label>
-        <input
-          type='password'
-          name='confirmPassword'
-          value={formData.confirmPassword}
-          onChange={handleChange}
-          title='Confirm password'
-          className={inputClass}
-          required
-        />
-        {errors.confirmPassword && <p className="text-red-500">{errors.confirmPassword}</p>}
-
-        <button type="submit">Sign up</button>
-      </form>
-      <Link
-        href="/signin"
-        className = "text-center underline font-light text-sm text-gray-400 hover:text-blue-500 hover:cursor-pointer"
-      >
-        Already have an account? 
-      </Link>
-    </>
+     <AuthForm 
+      email = {email}
+      password ={password}
+      onSubmit = {handleSubmit}
+      onChange = {handleChange}
+      emailTitle = "Type your eamil: "
+      passwordTitle = "Type your password"
+      confirmPassword= 'Confirm Password'
+      buttonText = "Sign In"
+      link = "/signin"
+      linkText = "Already signed up?"
+    />
   )
 }
 

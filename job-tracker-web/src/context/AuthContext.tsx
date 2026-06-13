@@ -20,6 +20,18 @@ type AuthContextType = {
 
 const AuthContext = createContext<AuthContextType | null>(null);
 
+// The API returns `error` as either a string ("email and password don't match")
+// or a Zod field-error object ({ email: ["Invalid email"], password: [...] }).
+// Normalize both into a single human-readable message for the UI.
+function toErrorMessage(error: unknown, fallback: string): string {
+    if (typeof error === "string") return error;
+    if (error && typeof error === "object") {
+        const firstField = Object.values(error as Record<string, string[]>)[0];
+        if (Array.isArray(firstField) && firstField[0]) return firstField[0];
+    }
+    return fallback;
+}
+
 export function AuthProvider({ children }: { children: ReactNode }) {
     const router = useRouter();
     const [user, setUser] = useState<UserType | null>(null)
@@ -53,7 +65,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             const res = await apiFetch(path, options);
             const data = await res?.json().catch(() => null);
             if (!res || !res.ok) {
-                throw new Error(data?.error ?? "Register failed");
+                throw new Error(toErrorMessage(data?.error, "Register failed"));
             }
         } catch (error) {
             if (error instanceof Error) {
@@ -76,9 +88,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             // Read the body once — both success (token+user) and failure ({error}) live here.
             const data = await res?.json().catch(() => null);
             if (!res || !res.ok) {
-                // Surface the server's actual message (e.g. "user dosen't exist")
+                // Surface the server's actual message (e.g. "user doesn't exist")
                 // instead of a generic "Log in failed" so the UI can show it.
-                throw new Error(data?.error ?? "Log in failed");
+                throw new Error(toErrorMessage(data?.error, "Log in failed"));
             }
             
             setUser(data.user);
