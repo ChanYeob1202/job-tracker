@@ -25,9 +25,6 @@ function Page({ params }: Props) {
 
   return (
     <div>
-      <h1 className="text-md font-semibold text-center mb-2">
-        Edit job
-      </h1>
       <JobForm 
       statusOptions={JOB_STATUS_OPTIONS} 
       initialJob={job} />

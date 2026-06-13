@@ -4,17 +4,14 @@ import { useRouter } from "next/navigation";
 import type { Job, JobStatus } from "@/types/job";
 import { apiFetch } from "@/lib/api";
 
-/* 
-  TODO : when navigating to edit page, the initial input value disappears at /jobs/edit
-*/
-
 type FormType = {
   statusOptions: readonly JobStatus[];
   initialJob?: Job;
 };
 
 const fieldClass =
-  "w-full min-w-0 rounded-lg border px-2 py-1 text-black placeholder:text-black";
+  "w-full min-w-0 rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 " +
+  "placeholder:text-gray-400 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-200";
 
 type TextFieldProps = {
   id: string;
@@ -37,7 +34,7 @@ function TextField({
 }: TextFieldProps) {
   return (
     <>
-      <label htmlFor={id} className="text-sm font-medium">
+      <label htmlFor={id} className="text-sm font-medium text-gray-700">
         {label}
       </label>
       <input
@@ -69,7 +66,7 @@ function JobForm({ statusOptions, initialJob }: FormType) {
 
   return (
     <form
-      className="mx-auto flex w-full max-w-xl flex-col gap-4"
+      className="mx-auto mt-10 flex w-full max-w-xl flex-col gap-6 rounded-2xl border border-gray-100 bg-white p-8 shadow-sm"
       onSubmit={async (e) => {
         e.preventDefault();
         if (company.trim() === "" || role.trim() === "") {
@@ -100,6 +97,10 @@ function JobForm({ statusOptions, initialJob }: FormType) {
         }
       }}
     >
+      <h2 className="text-xl font-bold tracking-tight text-gray-900">
+        {initialJob ? "Edit Job" : "Add a Job"}
+      </h2>
+
       <div className="grid grid-cols-[9rem_1fr] items-center gap-x-4 gap-y-3">
         <TextField
           id="job-company"
@@ -123,7 +124,7 @@ function JobForm({ statusOptions, initialJob }: FormType) {
           placeholder={initialJob?.source ?? "job source"}
         />
 
-        <label htmlFor="job-status" className="text-sm font-medium">
+        <label htmlFor="job-status" className="text-sm font-medium text-gray-700">
           Status
         </label>
         <select
@@ -165,7 +166,7 @@ function JobForm({ statusOptions, initialJob }: FormType) {
 
         <label
           htmlFor="job-notes"
-          className="self-start pt-2 text-sm font-medium"
+          className="self-start pt-2 text-sm font-medium text-gray-700"
         >
           Notes (optional)
         </label>
@@ -179,17 +180,17 @@ function JobForm({ statusOptions, initialJob }: FormType) {
 
         <div className="col-span-2 flex justify-end gap-2 pt-2">
           <button
-            type="submit"
-            className="rounded-lg bg-blue-400 px-4 py-2 text-white font-bold transition-transform duration-150 hover:scale-95 hover:cursor-pointer"
-          >
-            {initialJob ? "Edit" : "Add"}
-          </button>
-          <button
             type="button"
             onClick={() => router.back()}
-            className="rounded-lg bg-red-400 px-4 py-2 text-white font-bold transition-transform duration-150 hover:scale-95 hover:cursor-pointer"
+            className="rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 transition hover:bg-gray-50 hover:cursor-pointer"
           >
             Cancel
+          </button>
+          <button
+            type="submit"
+            className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-blue-700 hover:cursor-pointer"
+          >
+            {initialJob ? "Save changes" : "Add Job"}
           </button>
         </div>
       </div>
