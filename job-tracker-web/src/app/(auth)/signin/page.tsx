@@ -1,6 +1,3 @@
-
-
-
 "use client";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
@@ -23,7 +20,7 @@ function Page() {
     password: ""
   })
 
-  const { email, password } = formData
+  const { email,  password } = formData
   const [ errors, setErrors ] = useState<SignInErrors>({}); //client, pre-field
   const [serverError, setServerError] = useState("") //server, one string 
   
@@ -73,6 +70,7 @@ function Page() {
   return (
     <AuthForm 
       email = {email}
+      showUsername = {false}
       password ={password}
       onSubmit = {handleSubmit}
       onChange = {handleChange}

@@ -3,10 +3,10 @@ import { useState, useEffect } from 'react'
 import { useAuth } from '@/context/AuthContext';
 import { useRouter } from 'next/navigation';
 import AuthForm from '@/app/components/ui/AuthForm';
-import Link from 'next/link';
 
 type SignUpForm = {
   email: string;
+  userName: string;
   password: string;
   confirmPassword: string
 }
@@ -26,10 +26,12 @@ function Page() {
 
   const [formData, setFormData] = useState({
     email: "",
+    userName: "",
     password: "",
     confirmPassword: "",
   });
-  const { email, password, confirmPassword } = formData
+
+  const { email, password, userName,  confirmPassword } = formData
   const [errors, setErrors] = useState<SignUpErrors>({})
   const [serverError, setServerError] = useState("")
 
@@ -78,6 +80,8 @@ function Page() {
   return (
      <AuthForm 
       email = {email}
+      showUsername = {true}
+      userName = {userName}
       password ={password}
       onSubmit = {handleSubmit}
       onChange = {handleChange}
