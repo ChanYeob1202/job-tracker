@@ -11,6 +11,7 @@ const router = Router();
 //email, password 를 어떠한형식으로 바꾸는것같은데 ?
 const registerSchema = z.object({
   email: z.email(),
+  userName: z.string(), 
   password: z.string().min(8),
 });
 
@@ -54,7 +55,7 @@ router.post("/register", async (req: Request, res: Response) => {
 
   // 검사 통과: parsed.data 에서 email, password 를 꺼냄.
   // 여기 도달했다는 건 이미 "email 은 이메일 형식, password 는 8자 이상" 이 보장된 상태.
-  const { email, password } = parsed.data;
+  const { email, userName, password } = parsed.data;
   const password_hash = await bcrypt.hash(password, 12);
 
   try {

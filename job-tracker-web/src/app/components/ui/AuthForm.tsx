@@ -3,20 +3,21 @@ import Link from "next/link"
 
 type AuthFormProps = {
   email: string;
-  showUsername: boolean; 
+  showUsername: boolean;
   userName?: string;
   password: string;
   onSubmit: (e: React.SubmitEvent<HTMLFormElement>) => Promise<void>
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   emailTitle: string;
   passwordTitle: string;
+  showConfirmPassword?: boolean;
   confirmPassword?: string;
   buttonText: string;
   link: string;
   linkText: string;
 }
 
-function AuthForm({ email,showUsername, userName, password, emailTitle, passwordTitle, confirmPassword, onSubmit, onChange, buttonText, link, linkText }: AuthFormProps) {
+function AuthForm({ email,showUsername, userName, password, emailTitle, passwordTitle, showConfirmPassword, confirmPassword, onSubmit, onChange, buttonText, link, linkText }: AuthFormProps) {
   const labelClass = "mb-1 text-sm font-medium text-gray-700";
   const inputClass =
     "mb-4 rounded-lg border border-gray-300 bg-white px-3 py-2 text-gray-900 " +
@@ -56,18 +57,20 @@ function AuthForm({ email,showUsername, userName, password, emailTitle, password
           type="password"
           name="password"
           value={password}
+          autoComplete="new-password"
           onChange={onChange}
           title={passwordTitle}
           className={inputClass}
         />
 
-        {confirmPassword &&
+        {showConfirmPassword &&
           <>
             <label className={labelClass}>Confirm Password</label>
             <input
               type='password'
               name='confirmPassword'
               value={confirmPassword}
+              autoComplete="new-password"
               onChange={onChange}
               title='Confirm password'
               className={inputClass}

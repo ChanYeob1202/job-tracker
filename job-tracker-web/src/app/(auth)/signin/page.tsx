@@ -21,9 +21,8 @@ function Page() {
   })
 
   const { email,  password } = formData
-  const [ errors, setErrors ] = useState<SignInErrors>({}); //client, pre-field
+  const [errors, setErrors] = useState<SignInErrors>({}); //client, pre-field
   const [serverError, setServerError] = useState("") //server, one string 
-  
 
   useEffect(() => {
     if (!isLoading && user) {
