@@ -15,9 +15,10 @@ type AuthFormProps = {
   buttonText: string;
   link: string;
   linkText: string;
+  serverError?: string;
 }
 
-function AuthForm({ email,showUsername, userName, password, emailTitle, passwordTitle, showConfirmPassword, confirmPassword, onSubmit, onChange, buttonText, link, linkText }: AuthFormProps) {
+function AuthForm({ email,showUsername, userName, password, emailTitle, passwordTitle, showConfirmPassword, confirmPassword, onSubmit, onChange, buttonText, link, linkText, serverError }: AuthFormProps) {
   const labelClass = "mb-1 text-sm font-medium text-gray-700";
   const inputClass =
     "mb-4 rounded-lg border border-gray-300 bg-white px-3 py-2 text-gray-900 " +
@@ -77,6 +78,10 @@ function AuthForm({ email,showUsername, userName, password, emailTitle, password
               required
             />
           </>
+        }
+
+        {serverError &&
+          <p role="alert" className="mb-2 text-sm text-red-600">{serverError}</p>
         }
 
         <button

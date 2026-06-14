@@ -78,6 +78,7 @@ function Page() {
       buttonText = "Sign In"
       link = "/signup"
       linkText = "Don't have an account?"
+      serverError = {serverError}
     />
   );
 }

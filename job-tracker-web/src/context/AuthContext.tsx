@@ -90,7 +90,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             if (!res || !res.ok) {
                 // Surface the server's actual message (e.g. "user doesn't exist")
                 // instead of a generic "Log in failed" so the UI can show it.
-                alert("")
                 throw new Error(toErrorMessage(data?.error, "Log in failed"));
             }
             
