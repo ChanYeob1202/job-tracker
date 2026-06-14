@@ -59,7 +59,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         const path = "/auth/register"
         const options = {
             method: "POST",
-            body: JSON.stringify({ email,userName,  password })
+            body: JSON.stringify({ email,userName, password })
         }
         try {
             const res = await apiFetch(path, options);
@@ -90,6 +90,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             if (!res || !res.ok) {
                 // Surface the server's actual message (e.g. "user doesn't exist")
                 // instead of a generic "Log in failed" so the UI can show it.
+                alert("")
                 throw new Error(toErrorMessage(data?.error, "Log in failed"));
             }
             

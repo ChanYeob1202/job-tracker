@@ -31,7 +31,7 @@ function Page() {
     confirmPassword: "",
   });
 
-  const { email, password, userName,  confirmPassword } = formData
+  const { email, password, userName, confirmPassword } = formData
   const [errors, setErrors] = useState<SignUpErrors>({})
   const [serverError, setServerError] = useState("")
 
@@ -66,7 +66,7 @@ function Page() {
       return; // stop: don't call register while the form is invalid
     }
     try {
-      await register(formData.email,formData.userName,  formData.password)
+      await register(formData.email, formData.userName, formData.password)
       // register only returns { user } (no token), so we can't auto-login.
       // Send them to /signin to enter their credentials once.
       router.push("/signin")
@@ -78,20 +78,20 @@ function Page() {
   const inputClass = "rounded-lg bg-gray-300 hover:cursor-pointer"
 
   return (
-     <AuthForm 
-      email = {email}
-      showUsername = {true}
-      userName = {userName}
-      password ={password}
-      onSubmit = {handleSubmit}
-      onChange = {handleChange}
-      emailTitle = "Type your eamil: "
-      passwordTitle = "Type your password"
-      showConfirmPassword = {true}
-      confirmPassword = {confirmPassword}
-      buttonText = "Sign In"
-      link = "/signin"
-      linkText = "Already signed up?"
+    <AuthForm
+      email={email}
+      showUsername={true}
+      userName={userName}
+      password={password}
+      onSubmit={handleSubmit}
+      onChange={handleChange}
+      emailTitle="Type your eamil: "
+      passwordTitle="Type your password"
+      showConfirmPassword={true}
+      confirmPassword={confirmPassword}
+      buttonText="Sign In"
+      link="/signin"
+      linkText="Already signed up?"
     />
   )
 }
