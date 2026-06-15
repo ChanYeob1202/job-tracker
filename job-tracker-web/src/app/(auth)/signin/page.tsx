@@ -3,10 +3,11 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
 import AuthForm from "@/app/components/ui/AuthForm";
-import Link from "next/link";
+
+// TODO: log in failed dispalyed on browser, do not display server error only FE error (e.g. ❌ no display "Log in failed" ✅ "email and apssword do not match" )
 
 type SignInForm = {
-  email: string;
+  email: string;  
   password:string; 
 }
 
@@ -78,6 +79,7 @@ function Page() {
       buttonText = "Sign In"
       link = "/signup"
       linkText = "Don't have an account?"
+      errors = {errors}
       serverError = {serverError}
     />
   );

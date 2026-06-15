@@ -1,6 +1,13 @@
 "use client"
 import Link from "next/link"
 
+type AuthFormErrors = {
+  email?: string;
+  userName?: string;
+  password?: string;
+  confirmPassword?: string;
+}
+
 type AuthFormProps = {
   email: string;
   showUsername: boolean;
@@ -15,11 +22,14 @@ type AuthFormProps = {
   buttonText: string;
   link: string;
   linkText: string;
+  errors?: AuthFormErrors;
   serverError?: string;
 }
 
-function AuthForm({ email,showUsername, userName, password, emailTitle, passwordTitle, showConfirmPassword, confirmPassword, onSubmit, onChange, buttonText, link, linkText, serverError }: AuthFormProps) {
+function AuthForm({ email,showUsername, userName, password, emailTitle, passwordTitle, showConfirmPassword, confirmPassword, onSubmit, onChange, buttonText, link, linkText, errors, serverError }: AuthFormProps) {
   const labelClass = "mb-1 text-sm font-medium text-gray-700";
+  // Field errors sit just under their input; -mt-4 pulls them up against the input's mb-4 gap.
+  const fieldErrorClass = "-mt-3 mb-3 text-sm text-red-600";
   const inputClass =
     "mb-4 rounded-lg border border-gray-300 bg-white px-3 py-2 text-gray-900 " +
     "placeholder-gray-400 outline-none transition focus:border-blue-500 " +
@@ -38,6 +48,9 @@ function AuthForm({ email,showUsername, userName, password, emailTitle, password
           className={inputClass}
           required
         />
+        {errors?.email &&
+          <p role="alert" className={fieldErrorClass}>{errors.email}</p>
+        }
 
         {showUsername &&
           <>
@@ -50,6 +63,9 @@ function AuthForm({ email,showUsername, userName, password, emailTitle, password
               title="userName"
               className={inputClass}
             />
+            {errors?.userName &&
+              <p role="alert" className={fieldErrorClass}>{errors.userName}</p>
+            }
           </>
         }
 
@@ -63,6 +79,9 @@ function AuthForm({ email,showUsername, userName, password, emailTitle, password
           title={passwordTitle}
           className={inputClass}
         />
+        {errors?.password &&
+          <p role="alert" className={fieldErrorClass}>{errors.password}</p>
+        }
 
         {showConfirmPassword &&
           <>
@@ -77,6 +96,9 @@ function AuthForm({ email,showUsername, userName, password, emailTitle, password
               className={inputClass}
               required
             />
+            {errors?.confirmPassword &&
+              <p role="alert" className={fieldErrorClass}>{errors.confirmPassword}</p>
+            }
           </>
         }
 

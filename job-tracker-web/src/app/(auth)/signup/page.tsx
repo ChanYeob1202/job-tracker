@@ -75,9 +75,7 @@ function Page() {
     }
   }
 
-  const inputClass = "rounded-lg bg-gray-300 hover:cursor-pointer"
-
-  return (
+return (
     <AuthForm
       email={email}
       showUsername={true}
@@ -89,9 +87,11 @@ function Page() {
       passwordTitle="Type your password"
       showConfirmPassword={true}
       confirmPassword={confirmPassword}
-      buttonText="Sign In"
+      buttonText="Sign Up"
       link="/signin"
       linkText="Already signed up?"
+      errors={errors}
+      serverError={serverError}
     />
   )
 }
