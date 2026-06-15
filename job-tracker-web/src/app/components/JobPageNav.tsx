@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { useRouter } from "next/navigation" 
 import { useAuth } from "@/context/AuthContext";
 
@@ -13,13 +13,11 @@ const CHEERS = [
 export default function JobPageNav() {
 
 
-  const [ cheer, setCheer ] = useState(CHEERS[0]);
+  // Pick a random cheer once, on first render. Lazy initializer avoids a
+  // post-mount setState (and the react-hooks/set-state-in-effect error).
+  const [ cheer ] = useState(() => CHEERS[Math.floor(Math.random() * CHEERS.length)]);
 
-  useEffect(() => {
-    setCheer(CHEERS[Math.floor(Math.random() * CHEERS.length)])
-  }, [])
 
-  
   const { user, logOut} = useAuth();
   
   console.log("[nav]: ", user)

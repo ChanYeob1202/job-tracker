@@ -11,14 +11,30 @@ dotenv.config();
 const app = express();
 
 // Only allow our own frontend(s) to call this API.
-// Prod origin can be overridden via FRONTEND_ORIGIN env (no code change needed).
-const allowedOrigins = [
+// - localhost for dev
+// - an explicit prod origin via FRONTEND_ORIGIN (optional)
+// - any Vercel deployment of this project (prod, branch, and preview URLs)
+const staticAllowed = [
   "http://localhost:3000", // local dev
-  process.env.FRONTEND_ORIGIN ?? "https://job-tracker-application23.vercel.app",
-];
+  process.env.FRONTEND_ORIGIN, // optional explicit prod origin
+].filter(Boolean) as string[];
+
+// Matches https://job-tracker-<anything>.vercel.app (preview/branch/prod URLs)
+const vercelOriginPattern = /^https:\/\/job-tracker-[a-z0-9-]+\.vercel\.app$/;
 
 // middleware
-app.use(cors({ origin: allowedOrigins }));
+app.use(
+  cors({
+    origin: (origin, callback) => {
+      // Allow same-origin / non-browser requests (curl, server-to-server) where origin is undefined.
+      if (!origin) return callback(null, true);
+      if (staticAllowed.includes(origin) || vercelOriginPattern.test(origin)) {
+        return callback(null, true);
+      }
+      return callback(new Error(`Origin not allowed by CORS: ${origin}`));
+    },
+  })
+);
 app.use(express.json());
 
 app.get("/", (_req, res)=> {
