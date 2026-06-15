@@ -43,8 +43,10 @@ export default function authMiddleWare(
     if (typeof decoded === "string") {
       return res.status(401).json({ error: "Invalid or expired token" });
     }
+
     // req.user 주입
     req.user = decoded;
+    console.log("[auth] req.user => ", req.user)
     next();
   } catch (error) {
     console.log("[auth] ❌ caught", error)

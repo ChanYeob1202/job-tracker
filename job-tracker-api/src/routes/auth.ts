@@ -43,7 +43,7 @@ router.post("/register", async (req: Request, res: Response) => {
     4. safeParse vs parse 차이:
        - parse()     → 실패하면 throw (try/catch 필요)
        - safeParse() → 실패해도 throw 안 함, 대신 { success: false } 돌려줌
-       여기선 if 문으로 깔끔하게 처리하려고 safeParse 씀.
+       여기선 if 문으로 깔끔하게 처리하려고 safePar\se 씀.
   */
   const parsed = registerSchema.safeParse(req.body);
 
@@ -114,9 +114,11 @@ router.post("/login", async (req: Request, res: Response) => {
 
 router.get("/me", authMiddleWare, async (req: Request, res: Response) => {
   const userID = (req.user as { userID: string }).userID;
-  const result = await pool.query("SELECT id, email FROM users WHERE id = $1", [
-    userID,
-  ]);
+  const result = await pool.query(
+    `SELECT id, email, username AS "userName" FROM users WHERE id = $1`,
+    [userID],
+  );
+
   if (!result.rows[0]) {
     return res.status(404).json({ error: "user not found" });
   }

@@ -6,7 +6,8 @@ import { apiFetch } from "@/lib/api";
 
 type UserType = {
     id: string,
-    email: string
+    email: string,
+    userName: string, 
 }
 
 type AuthContextType = {

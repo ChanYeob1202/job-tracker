@@ -1,9 +1,28 @@
 "use client";
+import { useState, useEffect } from 'react'
 import { useRouter } from "next/navigation" 
 import { useAuth } from "@/context/AuthContext";
 
+const CHEERS = [
+  "You got this!",
+  "Keep going strong",
+  "One step at a time",
+  "You are not alone",
+  "Your dream is close"
+]
 export default function JobPageNav() {
+
+
+  const [ cheer, setCheer ] = useState(CHEERS[0]);
+
+  useEffect(() => {
+    setCheer(CHEERS[Math.floor(Math.random() * CHEERS.length)])
+  }, [])
+
+  
   const { user, logOut} = useAuth();
+  
+  console.log("[nav]: ", user)
   const router = useRouter();
 
   const authButtonClass =
@@ -33,12 +52,16 @@ export default function JobPageNav() {
           </button>
         </div>
         { user ?
-          <button
-            className={authButtonClass}
-            onClick={() => {
-              logOut();
-              router.push("/")
-            }}>Sign out</button>
+          <div>
+            <span className = "mr-4"> {cheer} {user.userName}! Keep applying 💪</span>
+            <button
+              className={authButtonClass}
+              onClick={() => {
+                logOut();
+                router.push("/")
+              }}>Sign out</button>
+
+          </div>
             :
           <button className={authButtonClass} onClick={() => router.push("/signin")}>Sign In</button>}
     </nav>
