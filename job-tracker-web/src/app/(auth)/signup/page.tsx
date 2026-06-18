@@ -93,6 +93,7 @@ return (
       showConfirmPassword={true}
       confirmPassword={confirmPassword}
       buttonText="Sign Up"
+      buttonDisabled={isSubmitting}
       link="/signin"
       linkText="Already signed up?"
       errors={errors}

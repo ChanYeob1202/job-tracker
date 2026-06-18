@@ -20,13 +20,14 @@ type AuthFormProps = {
   showConfirmPassword?: boolean;
   confirmPassword?: string;
   buttonText: string;
+  buttonDisabled:  boolean;
   link: string;
   linkText: string;
   errors?: AuthFormErrors;
   serverError?: string;
 }
 
-function AuthForm({ email,showUsername, userName, password, emailTitle, passwordTitle, showConfirmPassword, confirmPassword, onSubmit, onChange, buttonText, link, linkText, errors, serverError }: AuthFormProps) {
+function AuthForm({ email,showUsername, userName, password, emailTitle, passwordTitle, showConfirmPassword, confirmPassword, onSubmit, onChange, buttonText, buttonDisabled,  link, linkText, errors, serverError }: AuthFormProps) {
   const labelClass = "mb-1 text-sm font-medium text-gray-700";
   // Field errors sit just under their input; -mt-4 pulls them up against the input's mb-4 gap.
   const fieldErrorClass = "-mt-3 mb-3 text-sm text-red-600";
@@ -108,7 +109,8 @@ function AuthForm({ email,showUsername, userName, password, emailTitle, password
 
         <button
           type="submit"
-          className="mt-2 rounded-lg bg-blue-600 px-4 py-2 font-medium text-white transition hover:bg-blue-700 hover:cursor-pointer"
+          disabled = {buttonDisabled}
+          className="mt-2 rounded-lg bg-blue-600 px-4 py-2 font-medium text-white transition hover:bg-blue-700 hover:cursor-pointer disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:bg-blue-600"
         >
           {buttonText}
         </button>

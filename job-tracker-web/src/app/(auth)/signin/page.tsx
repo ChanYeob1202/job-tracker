@@ -82,6 +82,7 @@ function Page() {
       emailTitle="Type your eamil: "
       passwordTitle="Type your Password: "
       buttonText={ isSubmitting ? "loading..." : "Sign in"}
+      buttonDisabled = { isSubmitting }
       link="/signup"
       linkText="Don't have an account?"
       errors={errors}
