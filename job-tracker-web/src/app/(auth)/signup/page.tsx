@@ -32,6 +32,7 @@ function Page() {
   });
 
   const { email, password, userName, confirmPassword } = formData
+  const [ isSubmitting, setIsSubmitting ] = useState(false);
   const [errors, setErrors] = useState<SignUpErrors>({})
   const [serverError, setServerError] = useState("")
 
@@ -65,6 +66,8 @@ function Page() {
     if (Object.keys(nextErrors).length > 0) {
       return; // stop: don't call register while the form is invalid
     }
+
+    setIsSubmitting(true);
     try {
       await register(formData.email, formData.userName, formData.password)
       // register only returns { user } (no token), so we can't auto-login.
@@ -72,6 +75,8 @@ function Page() {
       router.push("/signin")
     } catch (err) {
       if (err instanceof Error) setServerError(err.message); // e.g. "Email already exists"
+    } finally {
+      setIsSubmitting(false);
     }
   }
 
