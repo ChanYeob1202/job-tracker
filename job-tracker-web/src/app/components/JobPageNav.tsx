@@ -12,7 +12,6 @@ const CHEERS = [
 ]
 export default function JobPageNav() {
 
-
   // Pick a random cheer once, on first render. Lazy initializer avoids a
   // post-mount setState (and the react-hooks/set-state-in-effect error).
   const [ cheer ] = useState(() => CHEERS[Math.floor(Math.random() * CHEERS.length)]);
@@ -51,7 +50,7 @@ export default function JobPageNav() {
         </div>
         { user ?
           <div>
-            <span className = "mr-4"> {cheer} {user.userName}! Keep applying 💪</span>
+            <span className = "mr-4"> {cheer} {user.userName}!</span>
             <button
               className={authButtonClass}
               onClick={() => {
