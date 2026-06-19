@@ -1,6 +1,6 @@
 "use client"
 import { use, useState, useEffect } from "react";
-import JobForm from "@/app/components/JobForm";
+import JobForm from "@/app/components/jobs/JobForm";
 import { apiFetch } from "@/lib/api";
 import { JOB_STATUS_OPTIONS, type Job } from "@/types/job";
 

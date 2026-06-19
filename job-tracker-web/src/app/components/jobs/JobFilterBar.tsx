@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import AddJobButton from "./ui/AddJobButton";
+import AddJobButton from "../ui/AddJobButton";
 import type { StatusFilterValue } from "./JobsBoard";
 
 type JobFilterBarProps = {

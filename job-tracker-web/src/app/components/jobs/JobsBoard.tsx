@@ -13,7 +13,7 @@ const STATUS_FILTER_OPTIONS: readonly { value: StatusFilterValue; label: string 
     value,
     label: value.replace(/\b\w/g, (c) => c.toUpperCase()),
   })),
-];  
+];
 
 type JobsBoardProps = {
   initialRows: Job[];
@@ -33,11 +33,11 @@ function JobsBoard({ initialRows, jobLoadingStatus}: JobsBoardProps) {
 
   return (
     <div>
-      <JobFilterBar
+      {/* <JobFilterBar
         statusOptions={STATUS_FILTER_OPTIONS}
         statusFilter={statusFilter}
         onStatusChange={setStatusFilter}
-      />
+      /> */}
       <JobTable 
         rows={filteredRows} 
         jobLoadingStatus = {jobLoadingStatus}

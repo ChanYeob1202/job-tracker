@@ -10,6 +10,7 @@ const CHEERS = [
   "You are not alone",
   "Your dream is close"
 ]
+
 export default function JobPageNav() {
 
   // Pick a random cheer once, on first render. Lazy initializer avoids a
@@ -19,7 +20,7 @@ export default function JobPageNav() {
 
   const { user, logOut} = useAuth();
   
-  console.log("[nav]: ", user)
+  console.log("[nav] user name:  ", user?.userName)
   const router = useRouter();
 
   const authButtonClass =
@@ -50,7 +51,7 @@ export default function JobPageNav() {
         </div>
         { user ?
           <div>
-            <span className = "mr-4"> {cheer} {user.userName}!</span>
+            <span className = "mr-4"> {cheer} {user?.userName}!</span>
             <button
               className={authButtonClass}
               onClick={() => {

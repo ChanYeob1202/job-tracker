@@ -4,9 +4,8 @@ import { useRouter } from "next/navigation";
 import type { Job } from "@/types/job";
 import { apiFetch } from "@/lib/api";
 import { JOB_STATUS_OPTIONS } from "@/types/job";
-import ActionButton from "./ui/ActionButton";
+import ActionButton from "../ui/ActionButton";
 import EditableCell from "./EditableCell";
-;
 
 const TABLE_COLUMNS: readonly { key: string; label: string }[] = [
   { key: "company", label: "Company" },
@@ -23,7 +22,6 @@ const TABLE_COLUMNS: readonly { key: string; label: string }[] = [
 type JobTableProps = {
   rows: Job[];
   jobLoadingStatus: boolean;
-  
 };
 
 const thClass =

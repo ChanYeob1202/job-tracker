@@ -1,11 +1,11 @@
 "use client"
 import { useState, useEffect } from "react";
-import JobsBoard from "./components/JobsBoard";
+import JobsBoard from "./components/jobs/JobsBoard";
 import type { Job } from "@/types/job";
 import { apiFetch } from "@/lib/api";
 import { useAuth } from "@/context/AuthContext";
 import Spinner from "./components/ui/Spinner";
-import LandingPage from "./components/LandingPage";
+import LandingPage from "./components/landing/LandingPage";
 
 export default function Page() {
   const [ rows, setRows ] = useState<Job[] | null>(null)

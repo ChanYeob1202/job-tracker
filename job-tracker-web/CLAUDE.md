@@ -5,23 +5,15 @@ Next.js 16 + React 19. See root `CLAUDE.md` for project-wide rules.
 @AGENTS.md
 
 ---
+## next move
 
-## Critical Rules (Frontend)
+I want to build by myself but I will need you as a guide. 
 
-1. `API_BASE` lives in `src/lib/api.ts` — import it, don't redefine.
-2. Server-side App Router fetches use `cache: "no-store"`.
-3. `JobForm` edit mode: **PATCH** (not POST), seed `useState` from `initialJob`.
-4. Keep `JobStatus` and `JOB_STATUS_OPTIONS` in sync.
-5. Attach `Authorization: Bearer <token>` header to all `/jobs` fetches (JWT from auth flow).
+- make this app a production not just data dumb
+- Stats bar: users will see total jobs number, number of jobs interviewing and waiting, total number of jobs offered, response rate including ( interviews, offers, and rejection ) and (only interview + offers), and total job applied this week.
+- under stat bar: there will be action bar, searching, status filter, and add job button. 
 
----
 
-## Remaining MVP TODOs
-
-- Wire up sign-in / sign-up `handleSubmit` → POST to API
-- Persist JWT + attach `Authorization` header to `/jobs` fetches
-- Route guard: redirect unauthenticated users from dashboard
-- Proactive token expiry handling: decode JWT `exp` in protected layout, redirect to /auth/signin before token expires (currently only detected on submit → form data loss risk in JobForm)
 
 ---
 
