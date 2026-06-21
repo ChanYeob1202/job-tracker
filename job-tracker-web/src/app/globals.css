@@ -1,5 +1,27 @@
 @import "tailwindcss";
 
+/* Brand palette — Facebook-style blue (#1877F2 = brand-500).
+   Defining it in @theme makes `bg-brand-500`, `text-brand-600`, etc.
+   available as real Tailwind utilities. Change these to re-theme the app. */
+@theme {
+  --color-brand-50: #eef5ff;
+  --color-brand-100: #d9e8ff;
+  --color-brand-200: #b3d1ff;
+  --color-brand-300: #80b3fb;
+  --color-brand-400: #4d94f7;
+  --color-brand-500: #1877f2;
+  --color-brand-600: #1466d0;
+  --color-brand-700: #0f4fa3;
+
+  /* Accent — purple/violet, used as the second stop in brand gradients. */
+  --color-accent-200: #ddd6fe;
+  --color-accent-300: #c4b5fd;
+  --color-accent-400: #a78bfa;
+  --color-accent-500: #8b5cf6;
+  --color-accent-600: #7c3aed;
+  --color-accent-700: #6d28d9;
+}
+
 :root {
   --background: #ffffff;
   --foreground: #171717;

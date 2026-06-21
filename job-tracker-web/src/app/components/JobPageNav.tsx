@@ -24,16 +24,19 @@ export default function JobPageNav() {
   const router = useRouter();
 
   const authButtonClass =
-    "text-sm font-bold transition hover:text-blue-600 hover:cursor-pointer"
+    "text-sm font-semibold text-gray-600 transition hover:text-brand-600 hover:cursor-pointer"
+
+  const primaryButtonClass =
+    "rounded-lg bg-linear-to-r from-brand-600 to-accent-600 px-4 py-2 text-sm font-semibold text-white shadow-sm shadow-brand-500/30 transition hover:cursor-pointer hover:brightness-110"
 
   return (
-    <nav className="sticky top-0 z-10 flex flex-wrap items-center justify-between gap-4 bg-white px-6 py-3 shadow-sm">
+    <nav className="sticky top-0 z-10 flex flex-wrap items-center justify-between gap-4 border-b border-gray-100 bg-white/80 px-6 py-3 backdrop-blur-md">
         <div className="flex items-center gap-6">
           <h1
             onClick={() => router.push("/")}
-            className="text-xl font-bold tracking-tight text-gray-900 transition hover:text-blue-600 hover:cursor-pointer"
+            className="bg-linear-to-r from-brand-600 to-accent-600 bg-clip-text text-xl font-bold tracking-tight text-transparent transition hover:cursor-pointer hover:opacity-80"
           >
-            Jobs
+            JobTracker
           </h1>
           <button
             onClick={() => {
@@ -50,8 +53,8 @@ export default function JobPageNav() {
           </button>
         </div>
         { user ?
-          <div>
-            <span className = "mr-4"> {cheer} {user?.userName}!</span>
+          <div className="flex items-center gap-4">
+            <span className="text-sm text-gray-500">{cheer} <span className="font-semibold text-gray-900">{user?.userName}</span>!</span>
             <button
               className={authButtonClass}
               onClick={() => {
@@ -61,7 +64,7 @@ export default function JobPageNav() {
 
           </div>
             :
-          <button className={authButtonClass} onClick={() => router.push("/signin")}>Sign In</button>}
+          <button className={primaryButtonClass} onClick={() => router.push("/signin")}>Sign In</button>}
     </nav>
   );
 }
