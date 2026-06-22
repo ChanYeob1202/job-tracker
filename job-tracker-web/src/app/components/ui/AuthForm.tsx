@@ -33,11 +33,30 @@ function AuthForm({ email,showUsername, userName, password, emailTitle, password
   const fieldErrorClass = "-mt-3 mb-3 text-sm text-red-600";
   const inputClass =
     "mb-4 rounded-lg border border-gray-300 bg-white px-3 py-2 text-gray-900 " +
-    "placeholder-gray-400 outline-none transition focus:border-blue-500 " +
-    "focus:ring-2 focus:ring-blue-200";
+    "placeholder-gray-400 outline-none transition focus:border-brand-500 " +
+    "focus:ring-2 focus:ring-brand-200";
+
+  // showUsername is true only on the sign-up page, so it cleanly distinguishes the two modes.
+  const heading = showUsername ? "Create your account" : "Welcome back";
+  const subheading = showUsername
+    ? "Start tracking your applications in minutes."
+    : "Sign in to pick up where you left off.";
 
   return (
-    <div className="mx-auto mt-10 flex w-full max-w-xs flex-col">
+    <div className="relative isolate mx-auto mt-16 flex w-full max-w-sm flex-col overflow-hidden rounded-2xl border border-gray-100 bg-white p-8 shadow-xl shadow-brand-500/5">
+      {/* Brand gradient strip across the top of the card */}
+      <div
+        aria-hidden
+        className="absolute inset-x-0 top-0 h-1.5 bg-linear-to-r from-brand-600 via-accent-600 to-sky-500"
+      />
+
+      <div className="mb-6 text-center">
+        <h1 className="bg-linear-to-r from-brand-600 to-accent-600 bg-clip-text text-2xl font-bold text-transparent">
+          {heading}
+        </h1>
+        <p className="mt-1 text-sm text-gray-500">{subheading}</p>
+      </div>
+
       <form className="flex flex-col" onSubmit={onSubmit}>
         <label htmlFor="email" className={labelClass}>email</label>
         <input
@@ -110,14 +129,14 @@ function AuthForm({ email,showUsername, userName, password, emailTitle, password
         <button
           type="submit"
           disabled = {buttonDisabled}
-          className="mt-2 rounded-lg bg-blue-600 px-4 py-2 font-medium text-white transition hover:bg-blue-700 hover:cursor-pointer disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:bg-blue-600"
+          className="mt-2 rounded-lg bg-linear-to-r from-brand-600 to-accent-600 px-4 py-2 font-semibold text-white shadow-sm shadow-brand-500/30 transition hover:cursor-pointer hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:brightness-100"
         >
           {buttonText}
         </button>
       </form>
       <Link
         href={link}
-        className="mt-4 text-center underline font-light text-sm text-gray-400 hover:text-blue-500 hover:cursor-pointer"
+        className="mt-6 text-center text-sm font-medium text-gray-500 transition hover:text-brand-600 hover:cursor-pointer"
       >
         {linkText}
       </Link>

@@ -2,7 +2,7 @@
 import { useMemo, useState } from "react";
 import { type JobStatus, JOB_STATUS_OPTIONS } from "@/types/job";
 import type { Job } from "@/types/job";
-import JobFilterBar from "./JobFilterBar";
+import Statsbar from "./Statsbar";
 import JobTable from "./JobTable";
 
 export type StatusFilterValue = "all" | JobStatus;
@@ -33,11 +33,9 @@ function JobsBoard({ initialRows, jobLoadingStatus}: JobsBoardProps) {
 
   return (
     <div>
-      {/* <JobFilterBar
-        statusOptions={STATUS_FILTER_OPTIONS}
-        statusFilter={statusFilter}
-        onStatusChange={setStatusFilter}
-      /> */}
+      <Statsbar 
+        apps = {initialRows}
+          />
       <JobTable 
         rows={filteredRows} 
         jobLoadingStatus = {jobLoadingStatus}
