@@ -1,10 +1,12 @@
 import express from "express";
 import cors from "cors";
+import cookieParser from "cookie-parser"
 import dotenv from "dotenv";
 import { pool } from "./db/pool.js";
 import jobsRouter from "./routes/jobs.js";
 import authRouter from "./routes/auth.js";
 import authMiddleWare from "./middleware/auth.js";
+
 
 dotenv.config();
 
@@ -13,11 +15,13 @@ const app = express();
 // - localhost for dev
 // - an explicit prod origin via FRONTEND_ORIGIN (optional)
 // - any Vercel deployment of this project (prod, branch, and preview URLs)
+app.use(cookieParser());
 const staticAllowed = [
-  "http://localhost:3000", // local dev
-  process.env.FRONTEND_ORIGIN, // optional explicit prod origin
+  "http://localhost:3000",
+  "https://landr.land",
+  "https://www.landr.land",
+  process.env.FRONTEND_ORIGIN,
 ].filter(Boolean) as string[];
-
 // Matches https://job-tracker-<anything>.vercel.app (preview/branch/prod URLs)
 const vercelOriginPattern = /^https:\/\/job-tracker-[a-z0-9-]+\.vercel\.app$/;
 
@@ -37,7 +41,7 @@ app.use(
 app.use(express.json());
 
 app.get("/", (_req, res) => {
-  res.json({ message: "job tracker api" });
+  res.json({ message: "landr api" });
 });
 
 // simple health check
