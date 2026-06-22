@@ -27,11 +27,9 @@ export const apiFetch = async (path: string, options?: RequestInit) => {
       headers,
     });
 
-    // Only treat 401 as "session expired → log out" for authenticated
-    // requests (ones that actually carried a token). A login attempt sends
-    // no token, so its 401 must fall through so the caller can read the
-    // error body (e.g. "email and password don't match").
     if (token && response.status === 401) {
+      // 1. call POST /auth/refresh
+      // const response = await fetch("/auth/refresh", )
       clearToken();
       return undefined;
     }
