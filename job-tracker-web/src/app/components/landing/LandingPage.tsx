@@ -24,7 +24,7 @@ function LandingPage() {
           </span>
         </h1>
         <p className="mt-6 max-w-xl text-lg text-gray-600">
-          Stop juggling spreadsheets and email threads. JobTracker keeps your
+          Stop juggling spreadsheets and email threads. Landr keeps your
           applications, interviews, and offers organized so you can focus on
           landing the role.
         </p>
