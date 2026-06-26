@@ -1,7 +1,7 @@
 "use client"
 import { createContext, useState, useEffect, useContext, ReactNode } from "react";
 import { useRouter } from "next/navigation";
-import { getToken, setToken as persistToken, clearToken, getTokenExp } from "@/lib/auth";
+import { getToken, setToken as persistToken, clearToken } from "@/lib/auth";
 import { apiFetch } from "@/lib/api";
 
 type UserType = {
@@ -95,7 +95,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             }
             
             setUser(data.user);
-            persistToken(data.token);
+            persistToken(data.accessToken);
             router.push("/");
         } catch (error) {
             if (error instanceof Error) {
@@ -108,37 +108,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
 
     const logOut = () => {
+        // Revoke the server-side session by clearing the httpOnly refresh
+        // cookie. Fire-and-forget — local state is cleared regardless of the
+        // network result so the UI logs out immediately.
+        apiFetch("/auth/logout", { method: "POST" });
         setUser(null);
         clearToken();
         router.push("/");
     }
 
-    useEffect(() => {
-        if(!user) return;
-        const token = getToken(); //user 가 바뀔때마다 token의 expiry 를 다시 가져오기위함
-        if(!token) return;
-
-        const expiresAtMs = getTokenExp(token);
-        if (expiresAtMs === null) return;
-        // Compute how long until we should act
-        // Subtract a 30s buffer so we redirect before the server would reject
-        const msUntilExpiry = expiresAtMs - Date.now() - 30_000;
-
-        //if the token is already (almost) expired, log out immediately
-        if(msUntilExpiry <= 0){
-            // eslint-disable-next-line react-hooks/set-state-in-effect
-            logOut();
-            return;
-        }
-
-        //other wise schedule the log out
-        const timerId = setTimeout(() => {
-            alert( "Your session has expired, Please sign in again.");
-            logOut();
-        }, msUntilExpiry)
-
-        return () => clearTimeout(timerId);
-    }, [user]);
+    // NOTE: the old effect here force-logged-out the user the moment the access
+    // token expired. That's incompatible with refresh tokens — now an expired
+    // access token is recovered silently by apiFetch (POST /auth/refresh), so
+    // the session lives as long as the 7-day refresh token. The user is only
+    // logged out when a refresh actually fails (handled in apiFetch).
 
     return (
         <AuthContext.Provider value={{ user, isLoading, login, setUser, logOut, register }}>

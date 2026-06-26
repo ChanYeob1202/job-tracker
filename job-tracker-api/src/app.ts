@@ -36,6 +36,9 @@ app.use(
       }
       return callback(new Error(`Origin not allowed by CORS: ${origin}`));
     },
+    // Required for the httpOnly refresh cookie to be sent/stored cross-site.
+    // Pairs with `credentials: "include"` on the frontend fetch.
+    credentials: true,
   }),
 );
 app.use(express.json());

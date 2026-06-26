@@ -1,3 +1,4 @@
+
 /* 
 Extract JWT from Authorization header, verify it with JWT_SECRET,
 and attach the decoded payload ({ userID, iat, exp }) to req.user.

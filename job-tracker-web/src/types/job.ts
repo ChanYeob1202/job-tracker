@@ -24,6 +24,7 @@ export interface Job {
   status: JobStatus;
   source: string; 
   role: string;
+  salary: string;
   notes: string | null;
   applied_at: string;
   website: string;

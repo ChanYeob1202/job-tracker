@@ -7,6 +7,7 @@ import { JOB_STATUS_OPTIONS } from "@/types/job";
 import ActionButton from "../ui/ActionButton";
 import EditableCell from "./EditableCell";
 
+
 const TABLE_COLUMNS: readonly { key: string; label: string }[] = [
   { key: "company", label: "Company" },
   { key: "role", label: "Role" },
@@ -14,6 +15,7 @@ const TABLE_COLUMNS: readonly { key: string; label: string }[] = [
   { key: "status", label: "Status" },
   { key: "applied_at", label: "Applied Date" },
   { key: "website", label: "Website" },
+  { key: "salary", label: "Salary"},
   { key: "location", label: "Location" },
   { key: "notes", label: "Notes" },
   { key: "actions", label: "" }
@@ -138,6 +140,14 @@ function JobTable({ rows: initialRows, jobLoadingStatus }: JobTableProps) {
                     type="url"
                     display={row.website ?? ""}
                     onSave={(v) => updateField(row.id, "website", v)}
+                  />
+                </td>
+                <td className = {tdClass}>
+                  <EditableCell
+                    value= {row.salary ?? ""}
+                    type="text"
+                    display={row.salary ?? ""}
+                    onSave={(v) => updateField(row.id, "salary", v)}
                   />
                 </td>
                 <td className={tdClass}>

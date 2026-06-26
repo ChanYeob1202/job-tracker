@@ -4,8 +4,6 @@ import { useRouter } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
 import AuthForm from "@/app/components/ui/AuthForm";
 
-// TODO: log in failed dispalyed on browser, do not display server error only FE error (e.g. ❌ no display "Log in failed" ✅ "email and apssword do not match" )
-
 type SignInForm = {
   email: string;
   password: string;

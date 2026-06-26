@@ -8,10 +8,57 @@ import { z } from "zod";
 
 const router = Router();
 
+/*
+  [Refresh-token helpers]
+
+  Two tokens, two jobs:
+  - ACCESS token  → short-lived (15m), sent in the Authorization header on
+    every request. If stolen, it's only useful for 15 minutes.
+  - REFRESH token → long-lived (7d), stored in an httpOnly cookie. JS can't
+    read httpOnly cookies, so an XSS script can't steal it. Its only purpose
+    is to mint fresh access tokens via POST /auth/refresh.
+
+  They are signed with DIFFERENT secrets so a leaked access token can never be
+  replayed as a refresh token (and vice-versa).
+*/
+const ACCESS_TOKEN_TTL = "15m";
+const REFRESH_TOKEN_TTL = "7d";
+const REFRESH_COOKIE = "refreshToken";
+const REFRESH_MAX_AGE_MS = 7 * 24 * 60 * 60 * 1000; // 7 days, in milliseconds
+const isProd = process.env.NODE_ENV === "production";
+
+function signAccessToken(userID: string) {
+  return jwt.sign({ userID }, process.env.JWT_SECRET!, {
+    expiresIn: ACCESS_TOKEN_TTL,
+  });
+}
+
+function signRefreshToken(userID: string) {
+  return jwt.sign({ userID }, process.env.REFRESH_TOKEN_SECRET!, {
+    expiresIn: REFRESH_TOKEN_TTL,
+  });
+}
+
+// Cookie options must be IDENTICAL on set (login) and clear (logout), or the
+// browser treats them as different cookies and clearCookie silently no-ops.
+const refreshCookieOptions = {
+  httpOnly: true, // JS (document.cookie) cannot read it → XSS-resistant
+  secure: isProd, // HTTPS-only in prod; required when sameSite is "none"
+  sameSite: isProd ? ("none" as const) : ("lax" as const), // prod = cross-site (Vercel ↔ Render)
+  path: "/auth", // browser only attaches it to /auth/* routes, not every API call
+};
+
+function setRefreshCookie(res: Response, token: string) {
+  res.cookie(REFRESH_COOKIE, token, {
+    ...refreshCookieOptions,
+    maxAge: REFRESH_MAX_AGE_MS,
+  });
+}
+
 //email, password 를 어떠한형식으로 바꾸는것같은데 ?
 const registerSchema = z.object({
   email: z.email(),
-  userName: z.string(), 
+  userName: z.string(),
   password: z.string().min(8),
 });
 
@@ -23,7 +70,6 @@ const loginSchema = z.object({
 router.post("/register", async (req: Request, res: Response) => {
   /*
     [parsed 가 뭐 하는지]
-
     1. req.body 는 사용자가 frontend 에서 보낸 raw 데이터.
        예: { email: "a@b.com", password: "12345678" }
        하지만 사용자가 뭘 보낼지 알 수 없음 — 빈값, 이상한 타입, 추가 필드 등.
@@ -78,7 +124,7 @@ router.post("/login", async (req: Request, res: Response) => {
   const parsed = loginSchema.safeParse(req.body);
 
   if (!parsed.success) {
-    return res.status(401).json({ error: parsed.error.flatten().fieldErrors });
+    return res.status(400).json({ error: parsed.error.flatten().fieldErrors });
   }
   const { email, password } = parsed.data;
 
@@ -96,12 +142,15 @@ router.post("/login", async (req: Request, res: Response) => {
     if (!ok) {
       return res.status(401).json({ error: "email and password don't match" });
     }
+    // Issue BOTH tokens on a successful login:
+    const accessToken = signAccessToken(user.id); // returned in JSON → header auth
+    const refreshToken = signRefreshToken(user.id); // stored in httpOnly cookie
+    setRefreshCookie(res, refreshToken);
 
-    const token = jwt.sign({ userID: user.id }, process.env.JWT_SECRET!, {
-      expiresIn: "15m",
-    });
+    // Only the access token goes in the body. The refresh token never touches
+    // JS — it rides along automatically as a cookie on future /auth requests.
     return res.status(200).json({
-      token,
+      accessToken,
       user: {
         id: user.id,
         email: user.email,
@@ -110,6 +159,42 @@ router.post("/login", async (req: Request, res: Response) => {
   } catch (error: any) {
     return res.status(401).json({ error: "server error" });
   }
+});
+
+router.post("/refresh", async (req: Request, res: Response) => {
+  // cookie-parser (app.use(cookieParser())) populated req.cookies for us.
+  const token = req.cookies?.[REFRESH_COOKIE];
+  if (!token) {
+    return res.status(401).json({ error: "no refresh token" });
+  }
+
+  try {
+    // verify() both checks the signature/expiry AND returns the payload.
+    const decoded = jwt.verify(
+      token,
+      process.env.REFRESH_TOKEN_SECRET!,
+    ) as { userID: string };
+
+    const accessToken = signAccessToken(decoded.userID);
+    return res.status(200).json({ accessToken });
+  } catch {
+    // Expired or tampered refresh token → force a real re-login.
+    return res.status(401).json({ error: "invalid refresh token" });
+  }
+});
+
+/*
+  POST /auth/logout
+
+  Clearing the cookie is what actually revokes the long-lived session — without
+  it, the refresh token stays valid for 7 days even after "logging out".
+  clearCookie MUST receive the same options (path/sameSite/secure) used to set
+  it, or the browser won't match and delete the cookie.
+*/
+
+router.post("/logout", async (_req: Request, res: Response) => {
+  res.clearCookie(REFRESH_COOKIE, refreshCookieOptions);
+  return res.status(200).json({ message: "logged out" });
 });
 
 router.get("/me", authMiddleWare, async (req: Request, res: Response) => {

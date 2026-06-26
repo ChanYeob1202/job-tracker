@@ -23,6 +23,7 @@ const UPDATABLE_FIELDS = [
   "status",
   "notes",
   "website",
+  "salary",
   "location", 
   "applied_at",
 ] as const;

@@ -1,14 +1,9 @@
 "use client";
 import { useMemo, useState } from "react";
 import { Job } from "@/types/job";
+import Link from 'next/link'
 
-/*
-    📄 applied   🎯 Interviewing   📍 Waiting   ✅ Offers
-    Response Rate (any reply)   Interview Rate (interview+offer)   This week: N new
 
-    All numbers are derived from `apps` in a single pass (useMemo), so they
-    recompute only when the jobs list changes.
-*/
 
 type StatsbarProps = {
     apps: Job[];
@@ -29,7 +24,6 @@ function Statsbar({ apps }: StatsbarProps) {
 
     const stats = useMemo<Stat[]>(() => {
         const total = apps.length;
-
         const interviewing = apps.filter((a) => a.status.includes("interview")).length;
         const waiting = apps.filter((a) => a.status.includes("waiting")).length;
         const offers = apps.filter((a) => a.status === "offer").length;
@@ -72,6 +66,7 @@ function Statsbar({ apps }: StatsbarProps) {
 
     return (
         <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-7">
+            <Link href="/jobs/new">add job</Link>
             {stats.map((stat) => (
                 <div
                     key={stat.label}
