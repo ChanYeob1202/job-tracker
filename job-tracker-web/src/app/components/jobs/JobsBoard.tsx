@@ -5,6 +5,7 @@ import type { Job } from "@/types/job";
 import Statsbar from "./Statsbar";
 import JobTable from "./JobTable";
 
+
 export type StatusFilterValue = "all" | JobStatus;
 
 const STATUS_FILTER_OPTIONS: readonly { value: StatusFilterValue; label: string }[] = [

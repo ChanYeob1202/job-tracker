@@ -61,6 +61,7 @@ function JobForm({ statusOptions, initialJob }: FormType) {
     initialJob?.applied_at?.slice(0, 10) ?? ""
   );
   const [website, setWebsite] = useState(initialJob?.website ?? "");
+  const [salary, setSalary] = useState(initialJob?.salary ?? "");
   const [location, setLocation] = useState(initialJob?.location ?? "");
   const [notes, setNotes] = useState(initialJob?.notes ?? "");
 
@@ -85,6 +86,7 @@ function JobForm({ statusOptions, initialJob }: FormType) {
               source,
               applied_at: appliedAt,
               website,
+              salary,
               location,
               notes,
             }),
@@ -156,6 +158,14 @@ function JobForm({ statusOptions, initialJob }: FormType) {
           onChange={setWebsite}
           placeholder={initialJob?.website ?? "website"}
         />
+        <TextField 
+          id="job-salary"
+          label="salary"
+          type="text"
+          value = {salary}
+          onChange = {setSalary}
+          placeholder = { initialJob?.salary ?? "salary"}
+        />
         <TextField
           id="job-location"
           label="Location"
@@ -173,7 +183,6 @@ function JobForm({ statusOptions, initialJob }: FormType) {
         <textarea
           id="job-notes"
           className={`${fieldClass} min-h-24 resize-y`}
-          maxLength={600}
           value={notes}
           onChange={(e) => setNotes(e.target.value)}
         />
@@ -187,7 +196,7 @@ function JobForm({ statusOptions, initialJob }: FormType) {
             Cancel
           </button>
           <button
-            type="submit"
+            type="submit" 
             className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-blue-700 hover:cursor-pointer"
           >
             {initialJob ? "Save changes" : "Add Job"}
