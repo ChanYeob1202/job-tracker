@@ -21,6 +21,16 @@ const TABLE_COLUMNS: readonly { key: string; label: string }[] = [
   { key: "actions", label: "" }
 ];
 
+const STATUS_STYLE: Record <string, string> = {
+  "applied" : "bg-sky-100",
+  "waiting" : "bg-slate-100",
+  "interview 1" : "bg-amber-100",
+  "interview 2" : "bg-orange-100",
+  "interview 3" : "bg-violet-100",
+  "offer" : "bg-emerald-100",
+  "rejected" : "bg-rose-100"
+}
+
 type JobTableProps = {
   rows: Job[];
   jobLoadingStatus: boolean;
@@ -36,7 +46,6 @@ function JobTable({ rows: initialRows, jobLoadingStatus }: JobTableProps) {
 
   const [rows, setRows] = useState<Job[]>(initialRows);
   const router = useRouter();
-
 
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
@@ -117,8 +126,14 @@ function JobTable({ rows: initialRows, jobLoadingStatus }: JobTableProps) {
                 <td className={tdClass}>
                   <EditableCell
                     value={row.status}
+                    display = {
+                      <span className = {`inline-flex rounded-full px-2 py-0.5 text-xs font-medium ${STATUS_STYLE[row.status]}`}>
+                        {row.status}
+                      </span>
+                    }
                     type="select"
                     options={JOB_STATUS_OPTIONS}
+
                     onSave={(v) => updateField(row.id, "status", v)}
                   />
                 </td>

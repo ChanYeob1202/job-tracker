@@ -9,7 +9,7 @@ Status: `[ ]` todo · `[~]` in progress · `[x]` done
 ## Features
 
 - [x] Add **salary** field to jobs (form → type → API → table)
-- [ ] Add **color** to jobs (per-job or per-status color tagging)
+- [x] Add **color** to jobs (per-job or per-status color tagging)
 - [ ] Add **screening interview** as a status / step
 - [ ] Add **next step** field → then surface a "waiting" action on the stats bar
 
@@ -27,6 +27,5 @@ Status: `[ ]` todo · `[~]` in progress · `[x]` done
 
 - [ ] Job table is hard to read on mobile — find a better format for phone users
       (e.g. card layout below a breakpoint). — _JobsBoard_
-
 ## Backend / Data
 

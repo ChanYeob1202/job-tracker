@@ -5,7 +5,7 @@ type EditableCellProps = {
   value: string;
   type?: "text" | "select" | "date" | "url";
   options?: readonly string[];
-  display?: string;
+  display?: React.ReactNode;
   onSave: (newValue: string) => Promise<void>;
 };
 
@@ -73,6 +73,7 @@ function EditableCell({
         </span>
       );
     }
+
     return (
       <button
         type="button"
@@ -113,7 +114,7 @@ function EditableCell({
     <input
       autoFocus
       disabled={saving}
-      type={type === "date" ? "date" : type === "url" ? "url" : "text"}
+      type={type === "date" ? "date" : type === "url" ? "url" : "text" }
       value={draft}
       onChange={(e) => setDraft(e.target.value)}
       onBlur={() => commit(draft)}
