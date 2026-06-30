@@ -40,7 +40,7 @@ const thClass =
   "border-b border-gray-300 bg-gray-200 px-4 py-3 text-left text-sm font-semibold text-gray-900 whitespace-nowrap";
 
 const tdClass =
-  "border-b border-gray-200 px-4 py-3 text-sm text-gray-800 align-top whitespace-nowrap max-w-[200px] truncate";
+  "border-b border-gray-200 px-4 py-3 text-sm text-gray-800 align-top whitespace-nowrap max-w-[200px] truncate transition-colors duration-150 hover:bg-gray-50";
 
 function JobTable({ rows: initialRows, jobLoadingStatus }: JobTableProps) {
 
