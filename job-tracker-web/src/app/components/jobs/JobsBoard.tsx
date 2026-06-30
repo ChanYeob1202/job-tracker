@@ -14,51 +14,51 @@ type JobsBoardProps = {
   jobLoadingStatus: boolean;
 };
 
-function JobsBoard({ initialRows, jobLoadingStatus}: JobsBoardProps) {
+function JobsBoard({ initialRows, jobLoadingStatus }: JobsBoardProps) {
 
-  const [statusFilter, setStatusFilter] = useState<StatusFilterValue>("all");
-  const [ searchTerm, setSearchTerm ] = useState("")
+  // const [statusFilter, setStatusFilter] = useState<StatusFilterValue>("all");
+  const [searchTerm, setSearchTerm] = useState("")
+  const [selectedStatus, setSelectedStatus] = useState("all")
 
-  const filteredRows = useMemo(
-    () =>
-      statusFilter === "all"
-        ? initialRows
-        : initialRows.filter((job) => job.status === statusFilter),
-    [initialRows, statusFilter]
-  );
 
 
   const searchedRows = useMemo(
     () => {
       const cleanSearch = searchTerm.trim().toLowerCase();
       return initialRows.filter((row) => {
-        // condition A matches title
         const matchesNames = row.company.trim().toLowerCase().includes(cleanSearch);
 
         const matchesRole = row.role.trim().toLowerCase().includes(cleanSearch)
 
-        // condition B matches notes
         const matchesNotes = row.notes?.trim().toLowerCase().includes(cleanSearch);
 
         return matchesNames || matchesRole || matchesNotes
       })
-     }
-  , [initialRows, searchTerm])
+    }
+    , [initialRows, searchTerm])
+
+  const filteredRows = useMemo(
+    () =>
+      selectedStatus === "all"
+        ? initialRows
+        : searchedRows.filter((job) => job.status === selectedStatus),
+    [searchedRows, selectedStatus]
+  );
 
   return (
     <div>
-      <Statsbar 
-        apps = { initialRows }
-          />
-      <ActionBar 
-        setSearchTerm = { setSearchTerm }
-        searchTerm = {searchTerm}
+      <Statsbar
+        apps={initialRows}
       />
-      <JobTable 
-        // rows={filteredRows} 
-        rows = {searchedRows}
-        jobLoadingStatus = { jobLoadingStatus }
-        />
+      <ActionBar
+        setSearchTerm={setSearchTerm}
+        searchTerm={searchTerm}
+        setSelectedStatus={setSelectedStatus}
+      />
+      <JobTable
+        rows={filteredRows}
+        jobLoadingStatus={jobLoadingStatus}
+      />
     </div>
   );
 }

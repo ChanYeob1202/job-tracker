@@ -1,7 +1,6 @@
 "use client";
 import { useMemo, useState } from "react";
 import { Job } from "@/types/job";
-import Link from 'next/link'
 
 
 
@@ -66,7 +65,6 @@ function Statsbar({ apps }: StatsbarProps) {
 
     return (
         <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-7">
-            <Link href="/jobs/new">add job</Link>
             {stats.map((stat) => (
                 <div
                     key={stat.label}

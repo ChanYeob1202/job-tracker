@@ -1,4 +1,5 @@
 export type JobStatus =
+  | "all"
   | "applied"
   | "interview 1"
   | "interview 2"
@@ -9,6 +10,7 @@ export type JobStatus =
 
 /** Status values offered in forms, table editor, and filters (subset of JobStatus). */
 export const JOB_STATUS_OPTIONS: readonly JobStatus[] = [
+  "all",
   "applied",
   "interview 1",
   "interview 2",
