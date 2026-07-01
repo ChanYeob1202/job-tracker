@@ -1,22 +1,21 @@
 "use client";
-import { useMemo, useState } from "react";
-import { type JobStatus, JOB_STATUS_OPTIONS } from "@/types/job";
+import { useMemo, useState, Dispatch, SetStateAction} from "react";
+import { type JobStatus } from "@/types/job";
 import type { Job } from "@/types/job";
 import Statsbar from "./Statsbar";
 import JobTable from "./JobTable";
 import ActionBar from "./ActionBar";
-
 
 export type StatusFilterValue = "all" | JobStatus;
 
 type JobsBoardProps = {
   initialRows: Job[];
   jobLoadingStatus: boolean;
+  setRows: Dispatch<SetStateAction<Job[] | null>>
 };
 
-function JobsBoard({ initialRows, jobLoadingStatus }: JobsBoardProps) {
+function JobsBoard({ initialRows, jobLoadingStatus, setRows }: JobsBoardProps) {
 
-  // const [statusFilter, setStatusFilter] = useState<StatusFilterValue>("all");
   const [searchTerm, setSearchTerm] = useState("")
   const [selectedStatus, setSelectedStatus] = useState("all")
 
@@ -40,7 +39,7 @@ function JobsBoard({ initialRows, jobLoadingStatus }: JobsBoardProps) {
       selectedStatus === "all"
         ? initialRows
         : searchedRows.filter((job) => job.status === selectedStatus),
-    [searchedRows, selectedStatus]
+    [searchedRows, selectedStatus, initialRows]
   );
 
   return (
@@ -55,6 +54,7 @@ function JobsBoard({ initialRows, jobLoadingStatus }: JobsBoardProps) {
       />
       <JobTable
         rows={filteredRows}
+        setRows={setRows}
         jobLoadingStatus={jobLoadingStatus}
       />
     </div>

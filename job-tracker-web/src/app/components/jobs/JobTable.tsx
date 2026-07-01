@@ -1,56 +1,57 @@
 "use client";
-import { useState, useEffect } from "react";
+import { Dispatch, SetStateAction } from "react";
+import type { ReactNode } from "react";
 import { useRouter } from "next/navigation";
 import type { Job } from "@/types/job";
 import { apiFetch } from "@/lib/api";
 import { JOB_STATUS_OPTIONS } from "@/types/job";
 import ActionButton from "../ui/ActionButton";
 import EditableCell from "./EditableCell";
+import { FaBuilding, FaNetworkWired, FaRegCalendar, FaEarthEurope, FaMagnifyingGlassDollar } from "react-icons/fa6";
+import { SiCrowdsource } from "react-icons/si";
+import { IoIosArrowDropdown } from "react-icons/io";
+import { IoLocation } from "react-icons/io5";
+import { CgNotes } from "react-icons/cg";
 
 
-const TABLE_COLUMNS: readonly { key: string; label: string }[] = [
-  { key: "company", label: "Company" },
-  { key: "role", label: "Role" },
-  { key: "source", label: "Source" },
-  { key: "status", label: "Status" },
-  { key: "applied_at", label: "Applied Date" },
-  { key: "website", label: "Website" },
-  { key: "salary", label: "Salary"},
-  { key: "location", label: "Location" },
-  { key: "notes", label: "Notes" },
+const TABLE_COLUMNS: readonly { key: string; label: string; icon?: ReactNode }[] = [
+  { key: "company", label: "Company", icon: <FaBuilding /> },
+  { key: "role", label: "Role", icon: <FaNetworkWired /> },
+  { key: "source", label: "Source", icon: <SiCrowdsource /> },
+  { key: "status", label: "Status", icon: <IoIosArrowDropdown /> },
+  { key: "applied_at", label: "Applied Date", icon: <FaRegCalendar /> },
+  { key: "website", label: "Website", icon: <FaEarthEurope /> },
+  { key: "salary", label: "Salary", icon: <FaMagnifyingGlassDollar /> },
+  { key: "location", label: "Location", icon: <IoLocation /> },
+  { key: "notes", label: "Notes", icon: <CgNotes /> },
   { key: "actions", label: "" }
 ];
 
-const STATUS_STYLE: Record <string, string> = {
-  "applied" : "bg-sky-100",
-  "waiting" : "bg-slate-100",
-  "interview 1" : "bg-amber-100",
-  "interview 2" : "bg-orange-100",
-  "interview 3" : "bg-violet-100",
-  "offer" : "bg-emerald-100",
-  "rejected" : "bg-rose-100"
-}
+const STATUS_STYLE: Record<string, string> = {
+  "applied":     "bg-sky-50 text-sky-700 ring-1 ring-sky-200",
+  "waiting":     "bg-gray-100 text-gray-500 ring-1 ring-gray-200",
+  "interview 1": "bg-amber-50 text-amber-700 ring-1 ring-amber-200",
+  "interview 2": "bg-orange-50 text-orange-700 ring-1 ring-orange-200",
+  "interview 3": "bg-violet-50 text-violet-700 ring-1 ring-violet-200",
+  "offer":       "bg-emerald-50 text-emerald-700 ring-1 ring-emerald-200",
+  "rejected":    "bg-rose-50 text-rose-600 ring-1 ring-rose-200",
+};
 
 type JobTableProps = {
   rows: Job[];
+  setRows: Dispatch<SetStateAction<Job[] | null>>;
   jobLoadingStatus: boolean;
 };
 
 const thClass =
-  "border-b border-gray-300 bg-gray-200 px-4 py-3 text-left text-sm font-semibold text-gray-900 whitespace-nowrap";
+  "border-b border-gray-100 px-4 py-2.5 text-left text-xs font-medium text-gray-400 uppercase tracking-wider whitespace-nowrap";
 
 const tdClass =
-  "border-b border-gray-200 px-4 py-3 text-sm text-gray-800 align-top whitespace-nowrap max-w-[200px] truncate transition-colors duration-150 hover:bg-gray-50";
+  "border-b border-gray-100 px-4 py-2.5 text-sm text-gray-700 align-middle whitespace-nowrap max-w-[200px] truncate";
 
-function JobTable({ rows: initialRows, jobLoadingStatus }: JobTableProps) {
+function JobTable({ rows, jobLoadingStatus, setRows }: JobTableProps) {
 
-  const [rows, setRows] = useState<Job[]>(initialRows);
   const router = useRouter();
-
-  useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    setRows(initialRows);
-  }, [initialRows]);
 
   async function updateField(
     id: number,
@@ -65,7 +66,7 @@ function JobTable({ rows: initialRows, jobLoadingStatus }: JobTableProps) {
     if (res) {
       const data = (await res.json()) as { row: Job };
       setRows((prev) =>
-        prev.map((r) => (r.id === id ? { ...r, ...data.row } : r))
+        (prev ?? []).map((r) => (r.id === id ? { ...r, ...data.row } : r))
       );
     }
     router.refresh();
@@ -77,17 +78,20 @@ function JobTable({ rows: initialRows, jobLoadingStatus }: JobTableProps) {
     });
     if (res)
       console.log(res);
-    setRows((prev) => prev.filter((r) => r.id !== id));
+    setRows((prev) => (prev ?? []).filter((r) => r.id !== id));
   }
 
   return (
-    <div className="mt-4 -mx-4 overflow-x-auto px-4 sm:mx-0 sm:px-0">
+    <div className="mt-2 overflow-x-auto rounded-xl border border-gray-100 bg-white shadow-sm">
       <table className="w-full min-w-max table-auto border-collapse">
         <thead>
-          <tr>
-            {TABLE_COLUMNS.map(({ key, label }) => (
+          <tr className="bg-gray-50/70">
+            {TABLE_COLUMNS.map(({ key, label, icon }) => (
               <th key={key} className={thClass}>
-                {label}
+                <span className="inline-flex items-center gap-1.5 text-gray-400">
+                  {icon}
+                  {label}
+                </span>
               </th>
             ))}
           </tr>
@@ -97,14 +101,14 @@ function JobTable({ rows: initialRows, jobLoadingStatus }: JobTableProps) {
             <tr>
               <td
                 colSpan={TABLE_COLUMNS.length}
-                className="px-4 py-6 text-center text-sm text-gray-500"
+                className="px-4 py-12 text-center text-sm text-gray-400"
               >
-                {jobLoadingStatus ? "getting data..." : "No application yet"}
+                {jobLoadingStatus ? "Loading…" : "No applications yet"}
               </td>
             </tr>
           ) : (
-            rows.map((row) => (
-              <tr key={row.id}>
+            rows.map((row: Job) => (
+              <tr key={row.id} className="group transition-colors duration-100 hover:bg-gray-50/60">
                 <td className={tdClass}>
                   <EditableCell
                     value={row.company}
@@ -126,14 +130,13 @@ function JobTable({ rows: initialRows, jobLoadingStatus }: JobTableProps) {
                 <td className={tdClass}>
                   <EditableCell
                     value={row.status}
-                    display = {
-                      <span className = {`inline-flex rounded-full px-2 py-0.5 text-xs font-medium ${STATUS_STYLE[row.status]}`}>
+                    display={
+                      <span className={`inline-flex items-center rounded-md px-2 py-0.5 text-xs font-medium ${STATUS_STYLE[row.status]}`}>
                         {row.status}
                       </span>
                     }
                     type="select"
                     options={JOB_STATUS_OPTIONS}
-
                     onSave={(v) => updateField(row.id, "status", v)}
                   />
                 </td>
@@ -144,7 +147,7 @@ function JobTable({ rows: initialRows, jobLoadingStatus }: JobTableProps) {
                     display={
                       row.applied_at
                         ? new Date(row.applied_at).toLocaleDateString()
-                        : "-"
+                        : <span className="text-gray-300">—</span>
                     }
                     onSave={(v) => updateField(row.id, "applied_at", v)}
                   />
@@ -153,30 +156,29 @@ function JobTable({ rows: initialRows, jobLoadingStatus }: JobTableProps) {
                   <EditableCell
                     value={row.website ?? ""}
                     type="url"
-                    display={row.website ?? ""}
+                    display={row.website ?? <span className="text-gray-300">—</span>}
                     onSave={(v) => updateField(row.id, "website", v)}
                   />
                 </td>
-                <td className = {tdClass}>
+                <td className={tdClass}>
                   <EditableCell
-                    value= {row.salary ?? ""}
+                    value={row.salary ?? ""}
                     type="text"
-                    display={row.salary ?? ""}
+                    display={row.salary ?? <span className="text-gray-300">—</span>}
                     onSave={(v) => updateField(row.id, "salary", v)}
                   />
                 </td>
                 <td className={tdClass}>
                   <EditableCell
                     value={row.location ?? ""}
-                    display={row.location ?? ""}
+                    display={row.location ?? <span className="text-gray-300">—</span>}
                     onSave={(v) => updateField(row.id, "location", v)}
                   />
                 </td>
-
                 <td className={tdClass}>
                   <EditableCell
                     value={row.notes ?? ""}
-                    display={row.notes ?? "-"}
+                    display={row.notes ?? <span className="text-gray-300">—</span>}
                     onSave={(v) => updateField(row.id, "notes", v)}
                   />
                 </td>

@@ -1,8 +1,8 @@
 "use client";
 import { useMemo, useState } from "react";
+import type { ReactNode } from "react";
 import { Job } from "@/types/job";
-
-
+import { LuFileText, LuMessageSquare, LuClock, LuPartyPopper, LuTrendingUp, LuCalendarDays, LuChartBar } from "react-icons/lu";
 
 type StatsbarProps = {
     apps: Job[];
@@ -11,14 +11,11 @@ type StatsbarProps = {
 type Stat = {
     label: string;
     value: string | number;
-    emoji: string;
+    icon: ReactNode;
     hint?: string;
 };
 
 function Statsbar({ apps }: StatsbarProps) {
-    // Capture "now" once on mount via a lazy initializer. Reading the clock
-    // directly during render (Date.now()) is impure and breaks React's
-    // purity rule; this keeps render deterministic.
     const [now] = useState(() => Date.now());
 
     const stats = useMemo<Stat[]>(() => {
@@ -28,59 +25,73 @@ function Statsbar({ apps }: StatsbarProps) {
         const offers = apps.filter((a) => a.status === "offer").length;
         const rejected = apps.filter((a) => a.status === "rejected").length;
 
-        // "Responded" = anything that isn't still just applied/waiting on a reply.
         const responded = interviewing + offers + rejected;
-        // "Positive" = made it to an interview or got an offer.
         const positive = interviewing + offers;
 
         const pct = (n: number) => (total === 0 ? 0 : Math.round((n / total) * 100));
 
-        // Applied within the last 7 days.
-        // TODO [ ] : check if Neon returns different date format for "this week".
         const weekAgo = now - 7 * 24 * 60 * 60 * 1000;
         const thisWeek = apps.filter(
             (a) => a.applied_at && new Date(a.applied_at).getTime() >= weekAgo
         ).length;
 
         return [
-            { emoji: "📄", label: "Applied", value: total },
-            { emoji: "🎯", label: "Interviewing", value: interviewing },
-            { emoji: "📍", label: "Waiting", value: waiting },
-            { emoji: "✅", label: "Offers", value: offers },
+            { icon: <LuFileText />, label: "Applied", value: total },
+            { icon: <LuMessageSquare />, label: "Interviewing", value: interviewing },
+            { icon: <LuClock />, label: "Waiting", value: waiting },
+            { icon: <LuPartyPopper />, label: "Offers", value: offers },
             {
-                emoji: "📬",
+                icon: <LuChartBar />,
                 label: "Response Rate",
                 value: `${pct(responded)}%`,
                 hint: "interview · offer · rejected",
             },
             {
-                emoji: "⭐",
+                icon: <LuTrendingUp />,
                 label: "Interview Rate",
                 value: `${pct(positive)}%`,
                 hint: "interview · offer",
             },
-            { emoji: "🗓️", label: "This Week", value: `${thisWeek} new` },
+            { icon: <LuCalendarDays />, label: "This Week", value: thisWeek },
         ];
     }, [apps, now]);
 
+    const countStats = stats.slice(0, 4);
+    const rateStats = stats.slice(4);
+
     return (
-        <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-7">
-            {stats.map((stat) => (
-                <div
-                    key={stat.label}
-                    className="flex flex-col gap-1 rounded-xl border border-gray-100 bg-white/80 p-4 shadow-sm backdrop-blur-md transition hover:shadow-md"
-                >
-                    <span className="text-xs font-medium tracking-wide text-gray-500 uppercase">
-                        {stat.emoji} {stat.label}
-                    </span>
-                    <span className="bg-linear-to-r from-brand-600 to-accent-600 bg-clip-text text-2xl font-bold text-transparent">
-                        {stat.value}
-                    </span>
-                    {stat.hint && (
-                        <span className="text-[10px] text-gray-400">{stat.hint}</span>
-                    )}
-                </div>
-            ))}
+        <div className="mt-2 rounded-xl border border-gray-100 bg-white shadow-sm overflow-hidden">
+            {/* Row 1 — counts */}
+            <div className="grid grid-cols-4 divide-x divide-gray-100">
+                {countStats.map((stat) => (
+                    <div key={stat.label} className="flex flex-col gap-1.5 px-6 py-4">
+                        <span className="flex items-center gap-1.5 text-xs text-gray-400">
+                            {stat.icon}
+                            {stat.label}
+                        </span>
+                        <span className="text-2xl font-semibold tracking-tight text-gray-800">
+                            {stat.value}
+                        </span>
+                    </div>
+                ))}
+            </div>
+            {/* Row 2 — rates + this week */}
+            <div className="grid grid-cols-3 divide-x divide-gray-100 border-t border-gray-100 bg-gray-50/50">
+                {rateStats.map((stat) => (
+                    <div key={stat.label} className="flex items-center gap-4 px-6 py-3">
+                        <span className="flex items-center gap-1.5 text-xs text-gray-400 whitespace-nowrap">
+                            {stat.icon}
+                            {stat.label}
+                        </span>
+                        <span className="text-base font-semibold text-gray-700">
+                            {stat.value}
+                        </span>
+                        {stat.hint && (
+                            <span className="text-[10px] text-gray-300 hidden sm:block">{stat.hint}</span>
+                        )}
+                    </div>
+                ))}
+            </div>
         </div>
     );
 }

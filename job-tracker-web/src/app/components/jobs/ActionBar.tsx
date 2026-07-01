@@ -3,6 +3,7 @@
 import { Dispatch, SetStateAction } from "react";
 import Link from "next/link"
 import { JOB_STATUS_OPTIONS } from "@/types/job";
+import { LuSearch, LuPlus } from "react-icons/lu";
 
 type ActionBarProps = {
     searchTerm:string;
@@ -12,37 +13,47 @@ type ActionBarProps = {
 
 function ActionBar({ searchTerm, setSearchTerm, setSelectedStatus  }: ActionBarProps) {
     const handleKeyDown = (evt: React.KeyboardEvent<HTMLInputElement>) => {
-        // key down => filter
         if(evt.key === "Escape"){
             setSearchTerm("");
             evt.preventDefault();
         }
-        if(evt.key === "Enter"){
-            setSearchTerm(searchTerm);
-        }
     }
 
   return (
-        <div className="flex items-center justify-center gap-3 mt-10 mb-10">
-            <input
-                type="text"
-                placeholder="🔍 Search..."
-                value={searchTerm}
-                className="w-42 border border-gray-200 px-3 py-2 rounded-lg bg-white text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-300 transition"
-                onKeyDown={handleKeyDown}
-                onChange={(e) => setSearchTerm(e.target.value)}
-            />
+        <div className="flex items-center gap-2 mt-6 mb-4">
+            {/* Search */}
+            <div className="relative">
+                <LuSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm pointer-events-none" />
+                <input
+                    type="text"
+                    placeholder="Search..."
+                    value={searchTerm}
+                    className="w-52 pl-8 pr-3 py-2 rounded-lg border border-gray-200 bg-white text-sm text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-200 transition"
+                    onKeyDown={handleKeyDown}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                />
+            </div>
+
+            {/* Status filter */}
             <select
-                className="w-24 border border-gray-200 px-3 py-2 rounded-lg bg-white text-sm shadow-sm text-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-300 transition cursor-pointer"
-                onChange={(e) => setSelectedStatus(e.target.value)}>
+                className="px-3 py-2 rounded-lg border border-gray-200 bg-white text-sm text-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-200 transition cursor-pointer"
+                onChange={(e) => setSelectedStatus(e.target.value)}
+            >
                 {JOB_STATUS_OPTIONS.map((job, idx) => (
-                    <option key={idx} value={job}>
-                        {job}
-                    </option>
+                    <option key={idx} value={job}>{job}</option>
                 ))}
             </select>
-            <Link href="/jobs/new" className="whitespace-nowrap px-4 py-2 rounded-lg bg-blue-500 hover:bg-blue-600 active:bg-blue-700 text-white text-sm font-medium shadow-sm transition">
-                + Add Job
+
+            {/* Spacer */}
+            <div className="flex-1" />
+
+            {/* Add Job */}
+            <Link
+                href="/jobs/new"
+                className="inline-flex items-center gap-1.5 whitespace-nowrap px-4 py-2 rounded-lg bg-gray-900 hover:bg-gray-700 text-white text-sm font-medium transition"
+            >
+                <LuPlus className="text-base" />
+                Add Job
             </Link>
         </div>
     )
