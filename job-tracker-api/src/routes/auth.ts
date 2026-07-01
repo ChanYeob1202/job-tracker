@@ -67,6 +67,110 @@ const loginSchema = z.object({
   password: z.string().min(8, "Password must be at least 8 characters"),
 });
 
+/*
+  [Demo account]
+
+  A public "Try the demo" button on the landing page hits POST /auth/demo.
+  There is no password prompt — the endpoint logs the visitor into a shared
+  demo user and returns the same access+refresh tokens a real login would, so
+  every downstream feature (JWT middleware, /jobs scoping, /auth/refresh) works
+  unchanged.
+
+  Because the demo is public, anyone can edit/delete its rows. To keep the demo
+  pristine for the next visitor, each call RESETS the demo user's jobs to a
+  fixed seed set. `daysAgo` is turned into `now() - interval`, so the time-based
+  stats ("This Week", response rate) always look alive instead of frozen.
+*/
+const DEMO_EMAIL = "demo@landr.app";
+const DEMO_USERNAME = "Demo User";
+
+// The demo user needs *a* password hash (users.password_hash is NOT NULL), but
+// nobody ever types it — /auth/demo skips the password check entirely. Hash it
+// once per process and reuse the promise.
+let demoPasswordHashPromise: Promise<string> | null = null;
+function getDemoPasswordHash() {
+  if (!demoPasswordHashPromise) {
+    const secret = process.env.DEMO_PASSWORD ?? "demo-account-not-for-login";
+    demoPasswordHashPromise = bcrypt.hash(secret, 12);
+  }
+  return demoPasswordHashPromise;
+}
+
+type DemoJob = {
+  company: string;
+  role: string;
+  status: string;
+  source: string;
+  location: string;
+  salary: string;
+  website: string;
+  notes: string | null;
+  daysAgo: number; // applied_at = now() - daysAgo
+};
+
+const DEMO_JOBS: DemoJob[] = [
+  { company: "OpenAI", role: "Software Engineer", status: "applied", source: "LinkedIn", location: "San Francisco, CA", salary: "$210k", website: "https://openai.com/careers", notes: "Referred by a friend on the applied team.", daysAgo: 1 },
+  { company: "Supabase", role: "Full Stack Engineer", status: "applied", source: "Company site", location: "Remote", salary: "$170k", website: "https://supabase.com/careers", notes: null, daysAgo: 2 },
+  { company: "Retool", role: "Frontend Engineer", status: "applied", source: "Wellfound", location: "New York, NY", salary: "$185k", website: "https://retool.com/careers", notes: "Take-home due if I hear back.", daysAgo: 4 },
+  { company: "Ramp", role: "Software Engineer", status: "applied", source: "LinkedIn", location: "New York, NY", salary: "$195k", website: "https://ramp.com/careers", notes: null, daysAgo: 6 },
+  { company: "Linear", role: "Product Engineer", status: "waiting", source: "Referral", location: "Remote", salary: "$180k", website: "https://linear.app/careers", notes: "Recruiter said decision by end of week.", daysAgo: 9 },
+  { company: "Vercel", role: "Full Stack Engineer", status: "interview 1", source: "Company site", location: "Remote", salary: "$190k", website: "https://vercel.com/careers", notes: "Phone screen went well — sent thank-you note.", daysAgo: 11 },
+  { company: "Notion", role: "Frontend Engineer", status: "interview 2", source: "LinkedIn", location: "San Francisco, CA", salary: "$200k", website: "https://notion.so/careers", notes: "System design round scheduled for Thursday.", daysAgo: 15 },
+  { company: "Airbnb", role: "Software Engineer", status: "interview 3", source: "Referral", location: "San Francisco, CA", salary: "$220k", website: "https://careers.airbnb.com", notes: "Final onsite — 4 rounds. Prep behavioral stories.", daysAgo: 18 },
+  { company: "Stripe", role: "Backend Engineer", status: "offer", source: "Referral", location: "Seattle, WA", salary: "$235k", website: "https://stripe.com/jobs", notes: "Offer received! Negotiating start date.", daysAgo: 22 },
+  { company: "Figma", role: "Frontend Engineer", status: "rejected", source: "LinkedIn", location: "San Francisco, CA", salary: "$205k", website: "https://figma.com/careers", notes: "Rejected after onsite — close call, keep in touch.", daysAgo: 26 },
+  { company: "Datadog", role: "Software Engineer", status: "rejected", source: "Company site", location: "New York, NY", salary: "$190k", website: "https://careers.datadoghq.com", notes: null, daysAgo: 31 },
+];
+
+router.post("/demo", async (_req: Request, res: Response) => {
+  const client = await pool.connect();
+  try {
+    await client.query("BEGIN");
+
+    // Upsert the shared demo user. ON CONFLICT keeps the same id across visits,
+    // so we don't accumulate orphaned demo users.
+    const passwordHash = await getDemoPasswordHash();
+    const userResult = await client.query(
+      `INSERT INTO users (email, username, password_hash)
+       VALUES ($1, $2, $3)
+       ON CONFLICT (email) DO UPDATE SET username = EXCLUDED.username
+       RETURNING id, email, username`,
+      [DEMO_EMAIL, DEMO_USERNAME, passwordHash],
+    );
+    const user = userResult.rows[0];
+
+    // Reset to a pristine board for the next visitor.
+    await client.query(`DELETE FROM "Jobs" WHERE user_id = $1`, [user.id]);
+
+    for (const j of DEMO_JOBS) {
+      await client.query(
+        `INSERT INTO "Jobs"
+           (user_id, company, role, status, source, location, salary, website, notes, applied_at)
+         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, now() - ($10 || ' days')::interval)`,
+        [user.id, j.company, j.role, j.status, j.source, j.location, j.salary, j.website, j.notes, String(j.daysAgo)],
+      );
+    }
+
+    await client.query("COMMIT");
+
+    // Same token flow as a real login.
+    const accessToken = signAccessToken(user.id);
+    const refreshToken = signRefreshToken(user.id);
+    setRefreshCookie(res, refreshToken);
+
+    return res.status(200).json({
+      accessToken,
+      user: { id: user.id, email: user.email, userName: user.username },
+    });
+  } catch (error) {
+    await client.query("ROLLBACK");
+    console.error("POST /auth/demo failed:", error);
+    return res.status(500).json({ error: "Failed to start demo" });
+  } finally {
+    client.release();
+  }
+});
+
 router.post("/register", async (req: Request, res: Response) => {
   /*
     [parsed 가 뭐 하는지]
@@ -154,6 +258,7 @@ router.post("/login", async (req: Request, res: Response) => {
       user: {
         id: user.id,
         email: user.email,
+        userName: user.username
       },
     });
   } catch (error: any) {

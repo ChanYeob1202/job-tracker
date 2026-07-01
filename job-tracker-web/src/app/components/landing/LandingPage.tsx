@@ -1,110 +1,172 @@
+"use client";
 import Link from "next/link";
+import { useState } from "react";
+import { useAuth } from "@/context/AuthContext";
+import { FaBuilding, FaNetworkWired, FaRegCalendar } from "react-icons/fa6";
+import { SiCrowdsource } from "react-icons/si";
+import { IoIosArrowDropdown } from "react-icons/io";
 
 function LandingPage() {
+  const { loginDemo } = useAuth();
+  const [demoLoading, setDemoLoading] = useState(false);
+  const [demoError, setDemoError] = useState("");
+
+  const handleDemo = async () => {
+    setDemoError("");
+    setDemoLoading(true);
+    try {
+      // loginDemo() redirects to "/" on success; on failure it throws.
+      await loginDemo();
+    } catch (error) {
+      if (error instanceof Error) setDemoError(error.message);
+      setDemoLoading(false); // only reset on failure — success unmounts this page
+    }
+  };
+
   return (
-    <div className="relative isolate flex flex-col overflow-hidden">
-      {/* Soft gradient glow behind the hero — purely decorative */}
-      <div
-        aria-hidden
-        className="pointer-events-none absolute inset-x-0 -top-40 -z-10 flex justify-center blur-3xl"
-      >
-        <div className="h-112 w-xl bg-linear-to-tr from-brand-300 via-accent-300 to-sky-200 opacity-40 [clip-path:polygon(20%_0%,80%_10%,100%_60%,70%_100%,20%_90%,0%_40%)]" />
-      </div>
-
-      <section className="flex flex-col items-center justify-center px-6 py-24 text-center">
-        <span className="mb-6 inline-flex items-center gap-2 rounded-full border border-brand-200 bg-brand-50 px-4 py-1.5 text-sm font-medium text-brand-700">
-          <span className="h-2 w-2 rounded-full bg-brand-500" />
-          Your job search, finally organized
-        </span>
-
-        <h1 className="max-w-3xl text-5xl font-bold tracking-tight text-gray-900 sm:text-6xl">
-          Track every job application in{" "}
-          <span className="bg-linear-to-r from-brand-600 via-accent-600 to-sky-500 bg-clip-text text-transparent">
-            one place.
+    <div className="flex flex-col">
+      {/* Hero — copy on the left, a static preview of the real board on the right. */}
+      <section className="mx-auto grid w-full max-w-6xl grid-cols-1 items-center gap-12 px-6 py-20 lg:grid-cols-2 lg:gap-8 lg:py-28">
+        <div className="text-center lg:text-left">
+          <span className="inline-flex items-center gap-2 rounded-full border border-gray-200 px-3 py-1 text-sm text-gray-500">
+            <FaNetworkWired className="text-gray-400" />
+            Job search tracker
           </span>
-        </h1>
-        <p className="mt-6 max-w-xl text-lg text-gray-600">
-          Stop juggling spreadsheets and email threads. Landr keeps your
-          applications, interviews, and offers organized so you can focus on
-          landing the role.
-        </p>
 
-        <div className="mt-10 flex flex-row gap-4">
-          <Link
-            href="/signup"
-            className="rounded-xl bg-linear-to-r from-brand-600 to-accent-600 px-6 py-3 font-semibold text-white shadow-lg shadow-accent-500/30 transition hover:shadow-xl hover:shadow-accent-500/40 hover:brightness-110"
-          >
-            Get started free
-          </Link>
-          <Link
-            href="/signin"
-            className="rounded-xl border border-gray-300 bg-white/70 px-6 py-3 font-semibold text-gray-900 backdrop-blur transition hover:border-brand-300 hover:bg-white hover:text-brand-700"
-          >
-            Sign in
-          </Link>
+          <h1 className="mt-6 text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl">
+            Every application,{" "}
+            <span className="text-brand-600">in one clear board.</span>
+          </h1>
+          <p className="mt-5 max-w-md text-lg text-gray-600 lg:mx-0 mx-auto">
+            Stop juggling spreadsheets and email threads. Track applications,
+            interviews, and offers in one place.
+          </p>
+
+          <div className="mt-8 flex flex-wrap justify-center gap-3 lg:justify-start">
+            <button
+              type="button"
+              onClick={handleDemo}
+              disabled={demoLoading}
+              className="rounded-lg bg-brand-600 px-5 py-2.5 font-semibold text-white shadow-sm transition hover:cursor-pointer hover:bg-brand-700 disabled:cursor-not-allowed disabled:opacity-60"
+            >
+              {demoLoading ? "Loading demo…" : "Try the live demo"}
+            </button>
+            <Link
+              href="/signup"
+              className="rounded-lg border border-gray-300 px-5 py-2.5 font-semibold text-gray-700 transition hover:border-gray-400 hover:text-gray-900"
+            >
+              Get started
+            </Link>
+          </div>
+          <p className="mt-3 text-sm text-gray-500">
+            No signup required to explore the demo.
+          </p>
+          {demoError && (
+            <p role="alert" className="mt-2 text-sm text-red-600">
+              {demoError}
+            </p>
+          )}
         </div>
+
+        <BoardPreview />
       </section>
 
-      <section className="px-6 py-16">
-        <div className="mx-auto grid max-w-5xl grid-cols-1 gap-8 sm:grid-cols-3">
+      {/* Features — quiet cards, single accent color, no gradients. */}
+      <section className="mx-auto w-full max-w-5xl px-6 pb-24">
+        <div className="grid grid-cols-1 gap-6 sm:grid-cols-3">
           <Feature
-            accent="from-brand-500 to-accent-500"
-            icon="◧"
             title="One board, every status"
             body="Applied, interviewing, offer, rejected — see where each application stands at a glance."
           />
           <Feature
-            accent="from-accent-500 to-accent-600"
-            icon="✎"
             title="Edit inline"
             body="Update company, role, or status directly in the table. No modals, no friction."
           />
           <Feature
-            accent="from-sky-500 to-brand-500"
-            icon="✦"
             title="Notes that stick"
             body="Capture interview prep, recruiter contacts, and follow-ups next to each application."
           />
         </div>
       </section>
-
-      <section className="mx-6 mb-16 flex flex-col items-center rounded-3xl bg-linear-to-r from-brand-600 via-accent-600 to-brand-700 px-6 py-16 text-center shadow-xl shadow-accent-500/20">
-        <h2 className="text-3xl font-semibold text-white">
-          Ready to get organized?
-        </h2>
-        <p className="mt-3 max-w-md text-brand-100">
-          Create an account in seconds — no credit card required.
-        </p>
-        <Link
-          href="/signup"
-          className="mt-8 rounded-xl bg-white px-6 py-3 font-semibold text-brand-700 shadow-lg transition hover:bg-brand-50"
-        >
-          Create your free account
-        </Link>
-      </section>
     </div>
   );
 }
 
-function Feature({
-  title,
-  body,
-  icon,
-  accent,
-}: {
-  title: string;
-  body: string;
-  icon: string;
-  accent: string;
-}) {
+/* Static replica of JobTable — same column headers, pill styles, and row
+   layout, but with hardcoded rows and no editing. Kept intentionally in sync
+   with JobTable's visual language so the landing shows the real product. */
+const STATUS_STYLE: Record<string, string> = {
+  applied: "bg-sky-50 text-sky-700 ring-1 ring-sky-200",
+  waiting: "bg-gray-100 text-gray-500 ring-1 ring-gray-200",
+  "interview 2": "bg-orange-50 text-orange-700 ring-1 ring-orange-200",
+  offer: "bg-emerald-50 text-emerald-700 ring-1 ring-emerald-200",
+};
+
+const PREVIEW_COLUMNS = [
+  { label: "Company", icon: <FaBuilding /> },
+  { label: "Role", icon: <FaNetworkWired /> },
+  { label: "Source", icon: <SiCrowdsource /> },
+  { label: "Status", icon: <IoIosArrowDropdown /> },
+  { label: "Applied Date", icon: <FaRegCalendar /> },
+];
+
+const PREVIEW_ROWS = [
+  { company: "Stripe", role: "Frontend Engineer", source: "Referral", status: "offer", applied: "May 2" },
+  { company: "Notion", role: "Product Engineer", source: "LinkedIn", status: "interview 2", applied: "May 6" },
+  { company: "Linear", role: "Fullstack Engineer", source: "Careers page", status: "applied", applied: "May 9" },
+  { company: "Vercel", role: "DX Engineer", source: "Referral", status: "waiting", applied: "May 12" },
+];
+
+const thClass =
+  "border-b border-gray-100 px-4 py-2.5 text-left text-xs font-medium text-gray-400 uppercase tracking-wider whitespace-nowrap";
+const tdClass =
+  "border-b border-gray-100 px-4 py-2.5 text-sm text-gray-700 align-middle whitespace-nowrap";
+
+function BoardPreview() {
   return (
-    <div className="group rounded-2xl border border-gray-200 bg-white p-6 transition hover:-translate-y-1 hover:border-brand-200 hover:shadow-lg hover:shadow-brand-500/10">
-      <div
-        className={`mb-4 flex h-11 w-11 items-center justify-center rounded-xl bg-linear-to-br ${accent} text-lg text-white shadow-sm`}
-      >
-        {icon}
-      </div>
-      <h3 className="text-lg font-semibold text-gray-900">{title}</h3>
+    <div
+      aria-hidden
+      className="overflow-x-auto rounded-xl border border-gray-100 bg-white shadow-sm"
+    >
+      <table className="w-full min-w-max table-auto border-collapse">
+        <thead>
+          <tr className="bg-gray-50/70">
+            {PREVIEW_COLUMNS.map(({ label, icon }) => (
+              <th key={label} className={thClass}>
+                <span className="inline-flex items-center gap-1.5 text-gray-400">
+                  {icon}
+                  {label}
+                </span>
+              </th>
+            ))}
+          </tr>
+        </thead>
+        <tbody>
+          {PREVIEW_ROWS.map((row) => (
+            <tr key={row.company} className="transition-colors hover:bg-gray-50/60">
+              <td className={`${tdClass} font-medium text-gray-900`}>{row.company}</td>
+              <td className={tdClass}>{row.role}</td>
+              <td className={tdClass}>{row.source}</td>
+              <td className={tdClass}>
+                <span
+                  className={`inline-flex items-center rounded-md px-2 py-0.5 text-xs font-medium ${STATUS_STYLE[row.status]}`}
+                >
+                  {row.status}
+                </span>
+              </td>
+              <td className={tdClass}>{row.applied}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
+}
+
+function Feature({ title, body }: { title: string; body: string }) {
+  return (
+    <div className="rounded-2xl border border-gray-200 bg-white p-6 transition hover:border-gray-300">
+      <h3 className="text-base font-semibold text-gray-900">{title}</h3>
       <p className="mt-2 text-sm text-gray-600">{body}</p>
     </div>
   );

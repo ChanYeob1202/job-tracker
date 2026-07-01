@@ -16,6 +16,7 @@ type AuthContextType = {
     setUser: (u: UserType | null) => void;
     register: (email: string, userName: string, password: string) => Promise<void>
     login: (email: string, password: string) => Promise<void>;
+    loginDemo: () => Promise<void>;
     logOut: () => void;
 }
 
@@ -107,6 +108,29 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         }
     }
 
+    // One-click demo: /auth/demo seeds a fresh demo board and returns the same
+    // token+user shape as /auth/login, so from here on the app behaves exactly
+    // as if a real user signed in.
+    const loginDemo = async () => {
+        try {
+            const res = await apiFetch("/auth/demo", { method: "POST" });
+            const data = await res?.json().catch(() => null);
+            if (!res || !res.ok) {
+                throw new Error(toErrorMessage(data?.error, "Could not start demo"));
+            }
+            setUser(data.user);
+            persistToken(data.accessToken);
+            router.push("/");
+        } catch (error) {
+            if (error instanceof Error) {
+                console.error("Demo login failed: ", error.message);
+            }
+            throw error;
+        } finally {
+            setIsLoading(false);
+        }
+    }
+
     const logOut = () => {
         // Revoke the server-side session by clearing the httpOnly refresh
         // cookie. Fire-and-forget — local state is cleared regardless of the
@@ -124,7 +148,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     // logged out when a refresh actually fails (handled in apiFetch).
 
     return (
-        <AuthContext.Provider value={{ user, isLoading, login, setUser, logOut, register }}>
+        <AuthContext.Provider value={{ user, isLoading, login, loginDemo, setUser, logOut, register }}>
             {children}
         </AuthContext.Provider>
     )
