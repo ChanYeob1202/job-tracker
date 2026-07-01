@@ -36,7 +36,7 @@ router.get("/", async (req: Request, res: Response) => {
 
   try {
     const result = await pool.query(
-      'SELECT * FROM "Jobs" WHERE user_id = $1',
+      'SELECT * FROM "Jobs" WHERE user_id = $1 ORDER BY applied_at DESC',
       [userId]
     );
     const columns = result.fields.slice(1).map((f) => f.name);
