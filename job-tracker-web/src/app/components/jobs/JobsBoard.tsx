@@ -20,8 +20,6 @@ function JobsBoard({ initialRows, jobLoadingStatus }: JobsBoardProps) {
   const [searchTerm, setSearchTerm] = useState("")
   const [selectedStatus, setSelectedStatus] = useState("all")
 
-
-
   const searchedRows = useMemo(
     () => {
       const cleanSearch = searchTerm.trim().toLowerCase();
