@@ -1,5 +1,5 @@
 "use client";
-import { Dispatch, SetStateAction } from "react";
+import { Dispatch, SetStateAction, useState } from "react";
 import type { ReactNode } from "react";
 import { useRouter } from "next/navigation";
 import type { Job } from "@/types/job";
@@ -36,6 +36,55 @@ const STATUS_STYLE: Record<string, string> = {
   "offer":       "bg-emerald-50 text-emerald-700 ring-1 ring-emerald-200",
   "rejected":    "bg-rose-50 text-rose-600 ring-1 ring-rose-200",
 };
+
+// Known job-source brands → a pill hue echoing their brand color, so rows are
+// scannable by where you applied. The raw source is normalized to letters+digits
+// only (lowercase, spaces/punctuation stripped) before matching, so "Linked In",
+// "linkedin", "Applied via LinkedIn" all collapse to the same key. Match tokens
+// are kept short and distinctive so common typos still hit — e.g. "zip" catches
+// both "ZipRecruiter" and "Zip Recourter". Unknown sources fall back to neutral
+// gray, which also means a wrong source is simply gray, never mis-colored.
+// NOTE: class strings must stay full literals so Tailwind's JIT keeps them.
+const SOURCE_BRANDS: readonly { match: string; className: string }[] = [
+  { match: "linkedin",  className: "bg-blue-50 text-blue-700 ring-1 ring-blue-200" },
+  { match: "zip",       className: "bg-green-50 text-green-700 ring-1 ring-green-200" },
+  { match: "indeed",    className: "bg-white text-gray-700 ring-1 ring-gray-300" },
+  { match: "glassdoor", className: "bg-teal-50 text-teal-700 ring-1 ring-teal-200" },
+  { match: "wellfound", className: "bg-slate-100 text-slate-700 ring-1 ring-slate-300" },
+  { match: "angellist", className: "bg-slate-100 text-slate-700 ring-1 ring-slate-300" },
+  { match: "handshake", className: "bg-slate-100 text-slate-700 ring-1 ring-slate-300" },
+  { match: "monster",   className: "bg-purple-50 text-purple-700 ring-1 ring-purple-200" },
+  { match: "dice",      className: "bg-red-50 text-red-700 ring-1 ring-red-200" },
+  { match: "refer",     className: "bg-amber-50 text-amber-700 ring-1 ring-amber-200" },
+];
+
+const SOURCE_NEUTRAL = "bg-gray-100 text-gray-600 ring-1 ring-gray-200";
+
+function sourceStyle(raw: string): string {
+  const s = raw.toLowerCase().replace(/[^a-z0-9]/g, "");
+  if (!s) return SOURCE_NEUTRAL;
+  return SOURCE_BRANDS.find((b) => s.includes(b.match))?.className ?? SOURCE_NEUTRAL;
+}
+
+// Applied date: recent applications (≤7 days) get a brand dot and darker text;
+// older ones dim to gray, so "what did I apply to this week" pops out — the same
+// idea the Statsbar's "This Week" count surfaces numerically.
+function AppliedDate({ iso }: { iso: string }) {
+  // Snapshot "now" once on mount — reading the clock during render is impure
+  // (react-hooks/purity). A lazy useState pins it, same trick as JobPageNav.
+  const [now] = useState(() => Date.now());
+  const d = new Date(iso);
+  const days = (now - d.getTime()) / 86_400_000;
+  const recent = days <= 7;
+  return (
+    <span className={recent ? "text-gray-700" : "text-gray-400"}>
+      {recent && (
+        <span className="mr-1.5 inline-block h-1.5 w-1.5 rounded-full bg-brand-500 align-middle" />
+      )}
+      {d.toLocaleDateString()}
+    </span>
+  );
+}
 
 type JobTableProps = {
   rows: Job[];
@@ -124,6 +173,15 @@ function JobTable({ rows, jobLoadingStatus, setRows }: JobTableProps) {
                 <td className={tdClass}>
                   <EditableCell
                     value={row.source}
+                    display={
+                      row.source ? (
+                        <span className={`inline-flex items-center rounded-md px-2 py-0.5 text-xs font-medium ${sourceStyle(row.source)}`}>
+                          {row.source}
+                        </span>
+                      ) : (
+                        <span className="text-gray-300">—</span>
+                      )
+                    }
                     onSave={(v) => updateField(row.id, "source", v)}
                   />
                 </td>
@@ -146,7 +204,7 @@ function JobTable({ rows, jobLoadingStatus, setRows }: JobTableProps) {
                     type="date"
                     display={
                       row.applied_at
-                        ? new Date(row.applied_at).toLocaleDateString()
+                        ? <AppliedDate iso={row.applied_at} />
                         : <span className="text-gray-300">—</span>
                     }
                     onSave={(v) => updateField(row.id, "applied_at", v)}
@@ -164,7 +222,11 @@ function JobTable({ rows, jobLoadingStatus, setRows }: JobTableProps) {
                   <EditableCell
                     value={row.salary ?? ""}
                     type="text"
-                    display={row.salary ?? <span className="text-gray-300">—</span>}
+                    display={
+                      row.salary
+                        ? <span className="font-medium text-gray-900 tabular-nums">{row.salary}</span>
+                        : <span className="text-gray-300">—</span>
+                    }
                     onSave={(v) => updateField(row.id, "salary", v)}
                   />
                 </td>

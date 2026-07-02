@@ -58,7 +58,7 @@ function EditableCell({
             href={stored}
             target="_blank"
             rel="noopener noreferrer"
-            className="text-blue-600 underline hover:text-blue-800 truncate"
+            className="text-brand-600 underline hover:text-brand-700 truncate"
           >
             {readLabel}
           </a>
