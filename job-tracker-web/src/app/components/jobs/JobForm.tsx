@@ -88,7 +88,7 @@ function JobForm({ statusOptions, initialJob, onCancel, onSuccess }: FormType) {
               notes,
             }),
           });
-          if (res) {
+          if (res?.ok) {
             onSuccess();
           }
         } catch (err) {

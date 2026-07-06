@@ -9,17 +9,27 @@ import { IoIosArrowDropdown } from "react-icons/io";
 function LandingPage() {
   const { loginDemo } = useAuth();
   const [demoLoading, setDemoLoading] = useState(false);
+  const [demoSlow, setDemoSlow] = useState(false);
   const [demoError, setDemoError] = useState("");
 
   const handleDemo = async () => {
     setDemoError("");
     setDemoLoading(true);
+    setDemoSlow(false);
+    // Render's free tier spins the API down after ~15min idle, so the first
+    // request cold-starts (~10s). A warm server answers well under 2.5s and
+    // never trips this timer; only a real cold start swaps in the "waking up"
+    // copy, so the wait reads as expected rather than frozen.
+    const slowTimer = setTimeout(() => setDemoSlow(true), 2500);
     try {
       // loginDemo() redirects to "/" on success; on failure it throws.
       await loginDemo();
     } catch (error) {
       if (error instanceof Error) setDemoError(error.message);
       setDemoLoading(false); // only reset on failure — success unmounts this page
+      setDemoSlow(false);
+    } finally {
+      clearTimeout(slowTimer);
     }
   };
 
@@ -49,7 +59,11 @@ function LandingPage() {
               disabled={demoLoading}
               className="rounded-lg bg-brand-600 px-5 py-2.5 font-semibold text-white shadow-sm transition hover:cursor-pointer hover:bg-brand-700 disabled:cursor-not-allowed disabled:opacity-60"
             >
-              {demoLoading ? "Loading demo…" : "Try the live demo"}
+              {demoLoading
+                ? demoSlow
+                  ? "Waking up the server…"
+                  : "Loading demo…"
+                : "Try the live demo"}
             </button>
             <Link
               href="/signup"
@@ -61,6 +75,11 @@ function LandingPage() {
           <p className="mt-3 text-sm text-gray-500">
             No signup required to explore the demo.
           </p>
+          {demoSlow && !demoError && (
+            <p className="mt-2 text-sm text-gray-500">
+              Waking the free-tier server — the first load takes ~10s. ☕
+            </p>
+          )}
           {demoError && (
             <p role="alert" className="mt-2 text-sm text-red-600">
               {demoError}

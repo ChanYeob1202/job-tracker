@@ -11,10 +11,12 @@ export type StatusFilterValue = "all" | JobStatus;
 type JobsBoardProps = {
   initialRows: Job[];
   jobLoadingStatus: boolean;
-  setRows: Dispatch<SetStateAction<Job[] | null>>
+  setRows: Dispatch<SetStateAction<Job[] | null>>;
+  editorJob: Job | "new" | null;
+  setEditorJob: Dispatch<SetStateAction<Job | "new" | null>>;
 };
 
-function JobsBoard({ initialRows, jobLoadingStatus, setRows }: JobsBoardProps) {
+function JobsBoard({ initialRows, jobLoadingStatus, setRows, editorJob, setEditorJob }: JobsBoardProps) {
 
   const [searchTerm, setSearchTerm] = useState("")
   const [selectedStatus, setSelectedStatus] = useState("all")
@@ -43,7 +45,7 @@ function JobsBoard({ initialRows, jobLoadingStatus, setRows }: JobsBoardProps) {
   );
 
   return (
-    <div>
+    <div className = "z-0">
       <Statsbar
         apps={initialRows}
       />
@@ -51,6 +53,9 @@ function JobsBoard({ initialRows, jobLoadingStatus, setRows }: JobsBoardProps) {
         setSearchTerm={setSearchTerm}
         searchTerm={searchTerm}
         setSelectedStatus={setSelectedStatus}
+        editorJob = {editorJob}
+        setEditorJob = {setEditorJob}
+   
       />
       <JobTable
         rows={filteredRows}
@@ -62,4 +67,3 @@ function JobsBoard({ initialRows, jobLoadingStatus, setRows }: JobsBoardProps) {
 }
 
 export default JobsBoard;
-

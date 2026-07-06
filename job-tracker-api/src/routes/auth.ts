@@ -45,7 +45,7 @@ const refreshCookieOptions = {
   httpOnly: true, // JS (document.cookie) cannot read it → XSS-resistant
   secure: isProd, // HTTPS-only in prod; required when sameSite is "none"
   sameSite: isProd ? ("none" as const) : ("lax" as const), // prod = cross-site (Vercel ↔ Render)
-  path: "/auth", // browser only attaches it to /auth/* routes, not every API call
+  path: "/auth", // browser only attaches it to /auth/* routes, not every API call//
 };
 
 function setRefreshCookie(res: Response, token: string) {
@@ -61,6 +61,7 @@ const registerSchema = z.object({
   userName: z.string(),
   password: z.string().min(8),
 });
+
 
 const loginSchema = z.object({
   email: z.email("Invalid email format"),
