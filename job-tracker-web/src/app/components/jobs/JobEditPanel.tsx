@@ -36,7 +36,6 @@ type JobEditPanelProps = {
   onSuccess: () => void
 }
 
-
 function JobEditPanel({ setEditorJob, onSuccess }: JobEditPanelProps) {
 
   const panelRef = useRef<HTMLDivElement>(null);

@@ -1,17 +1,18 @@
 "use client"
 
 import { Dispatch, SetStateAction } from "react";
-import Link from "next/link"
-import { JOB_STATUS_OPTIONS } from "@/types/job";
+import { JOB_STATUS_OPTIONS, Job } from "@/types/job";
 import { LuSearch, LuPlus } from "react-icons/lu";
 
 type ActionBarProps = {
     searchTerm:string;
     setSearchTerm: Dispatch<SetStateAction<string>>;
     setSelectedStatus: Dispatch<SetStateAction<string>>
+    editorJob : Job | "new" | null
+    setEditorJob: Dispatch<SetStateAction<Job | "new" | null>>
 }
 
-function ActionBar({ searchTerm, setSearchTerm, setSelectedStatus  }: ActionBarProps) {
+function ActionBar({ searchTerm, setSearchTerm, setSelectedStatus, setEditorJob  }: ActionBarProps) {
     const handleKeyDown = (evt: React.KeyboardEvent<HTMLInputElement>) => {
         if(evt.key === "Escape"){
             setSearchTerm("");
@@ -48,13 +49,14 @@ function ActionBar({ searchTerm, setSearchTerm, setSelectedStatus  }: ActionBarP
             <div className="flex-1" />
 
             {/* Add Job */}
-            <Link
-                href="/jobs/new"
+            <div
+                // href="/jobs/new"
+                onClick = {() => setEditorJob("new")}
                 className="inline-flex items-center gap-1.5 whitespace-nowrap px-4 py-2 rounded-lg bg-gray-900 hover:bg-gray-700 text-white text-sm font-medium transition"
             >
                 <LuPlus className="text-base" />
                 Add Job
-            </Link>
+            </div>
         </div>
     )
 }
