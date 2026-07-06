@@ -1,12 +1,13 @@
 "use client";
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import type { Job, JobStatus } from "@/types/job";
 import { apiFetch } from "@/lib/api";
 
 type FormType = {
   statusOptions: readonly JobStatus[];
   initialJob?: Job;
+  onSuccess: () => void;
+  onCancel: () => void; 
 };
 
 const fieldClass =
@@ -49,8 +50,7 @@ function TextField({
   );
 }
 
-function JobForm({ statusOptions, initialJob }: FormType) {
-  const router = useRouter();
+function JobForm({ statusOptions, initialJob, onCancel, onSuccess }: FormType) {
   const [company, setCompany] = useState(initialJob?.company ?? "");
   const [role, setRole] = useState(initialJob?.role ?? "");
   const [source, setSource] = useState(initialJob?.source ?? "");
@@ -65,10 +65,7 @@ function JobForm({ statusOptions, initialJob }: FormType) {
   const [location, setLocation] = useState(initialJob?.location ?? "");
   const [notes, setNotes] = useState(initialJob?.notes ?? "");
 
-  return (
-    <form
-      className="mx-auto mt-10 flex w-full max-w-xl flex-col gap-6 rounded-2xl border border-gray-100 bg-white p-8 shadow-sm"
-      onSubmit={async (e) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         if (company.trim() === "" || role.trim() === "") {
           alert("Please fill in both the company and role fields.");
@@ -92,16 +89,18 @@ function JobForm({ statusOptions, initialJob }: FormType) {
             }),
           });
           if (res) {
-            router.push("/");
+            onSuccess();
           }
         } catch (err) {
           console.error(err);
         }
-      }}
+      }
+
+  return (
+    <form
+      className="mx-auto mt-10 flex w-full max-w-xl flex-col gap-6 rounded-2xl border border-gray-100 bg-white p-8 shadow-sm"
+      onSubmit={handleSubmit}
     >
-      <h2 className="text-xl font-bold tracking-tight text-gray-900">
-        {initialJob ? "Edit Job" : "Add a Job"}
-      </h2>
 
       <div className="grid grid-cols-[9rem_1fr] items-center gap-x-4 gap-y-3">
         <TextField
@@ -190,7 +189,7 @@ function JobForm({ statusOptions, initialJob }: FormType) {
         <div className="col-span-2 flex justify-end gap-2 pt-2">
           <button
             type="button"
-            onClick={() => router.back()}
+            onClick={onCancel}
             className="rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 transition hover:bg-gray-50 hover:cursor-pointer"
           >
             Cancel
