@@ -4,6 +4,7 @@ import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
 import { pool } from "../db/pool.js";
 import authMiddleWare from "../middleware/auth.js";
+import { authLimiter, demoLimiter } from "../middleware/rateLimit.js";
 import { z } from "zod";
 
 const router = Router();
@@ -123,7 +124,7 @@ const DEMO_JOBS: DemoJob[] = [
   { company: "Datadog", role: "Software Engineer", status: "rejected", source: "Company site", location: "New York, NY", salary: "$190k", website: "https://careers.datadoghq.com", notes: null, daysAgo: 31 },
 ];
 
-router.post("/demo", async (_req: Request, res: Response) => {
+router.post("/demo", demoLimiter, async (_req: Request, res: Response) => {
   const client = await pool.connect();
   try {
     await client.query("BEGIN");
@@ -172,7 +173,7 @@ router.post("/demo", async (_req: Request, res: Response) => {
   }
 });
 
-router.post("/register", async (req: Request, res: Response) => {
+router.post("/register", authLimiter, async (req: Request, res: Response) => {
   /*
     [parsed 가 뭐 하는지]
     1. req.body 는 사용자가 frontend 에서 보낸 raw 데이터.
@@ -224,7 +225,7 @@ router.post("/register", async (req: Request, res: Response) => {
   }
 });
 
-router.post("/login", async (req: Request, res: Response) => {
+router.post("/login", authLimiter, async (req: Request, res: Response) => {
   // req takes decoded from middleware => req.user
   const parsed = loginSchema.safeParse(req.body);
 

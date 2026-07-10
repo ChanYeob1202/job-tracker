@@ -11,6 +11,18 @@ import authMiddleWare from "./middleware/auth.js";
 dotenv.config();
 
 const app = express();
+
+// On Render (and most PaaS) requests arrive through a reverse proxy, so the
+// real client IP lives in the `X-Forwarded-For` header — `req.ip` would
+// otherwise be the proxy's IP, and every user would share one rate-limit
+// counter. `trust proxy = 1` tells Express to trust exactly ONE proxy hop and
+// read the client IP from that header. We only enable it in production; setting
+// it to `true` blindly would let a client spoof `X-Forwarded-For` to dodge the
+// limiter.
+if (process.env.NODE_ENV === "production") {
+  app.set("trust proxy", 1);
+}
+
 // Only allow our own frontend(s) to call this API.
 // - localhost for dev
 // - an explicit prod origin via FRONTEND_ORIGIN (optional)
