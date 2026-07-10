@@ -69,7 +69,7 @@ function JobEditPanel({ editorJob, setEditorJob, onSuccess }: JobEditPanelProps)
         animate={{ x: 0 }}
         exit={{ x: "100%" }}
         transition={{ type: "spring", stiffness: 300, damping: 30 }}
-        className="w-full md:w-[70%] fixed right-0 p-4 top-19.25 z-50   h-screen shadow-xl border border-gray-400 bg-white focus:outline-none"
+        className="w-full md:w-[70%] fixed right-0 p-4 top-0 z-50 h-screen shadow-xl border border-gray-400 bg-white focus:outline-none"
         onKeyDown={(event: React.KeyboardEvent<HTMLInputElement>) => {
           if (event.key === "Escape") {
             setEditorJob(null);
