@@ -61,6 +61,7 @@ function JobsBoard({ initialRows, jobLoadingStatus, setRows, editorJob, setEdito
         rows={filteredRows}
         setRows={setRows}
         jobLoadingStatus={jobLoadingStatus}
+        setEditorJob={setEditorJob}
       />
     </div>
   );

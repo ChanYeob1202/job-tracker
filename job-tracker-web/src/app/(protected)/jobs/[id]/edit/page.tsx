@@ -1,6 +1,6 @@
 "use client"
 import { use, useState, useEffect } from "react";
-import { useRouter } from "next/router";
+import { useRouter } from "next/compat/router";
 import JobForm from "@/app/components/jobs/JobForm";
 import { apiFetch } from "@/lib/api";
 import { JOB_STATUS_OPTIONS, type Job } from "@/types/job";
@@ -16,11 +16,11 @@ function Page({ params }: Props) {
   const [job, setJob] = useState<Job | null>(null);
 
   const onSuccess = () => {
-    router.push("/")
+    router?.push("/")
   }
 
   const onCancel = () => {
-    router.back();
+    router?.back();
   }
 
   useEffect(() => {

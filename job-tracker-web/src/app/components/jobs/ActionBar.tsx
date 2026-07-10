@@ -21,7 +21,7 @@ function ActionBar({ searchTerm, setSearchTerm, setSelectedStatus, setEditorJob 
     }
 
   return (
-        <div className="flex items-center gap-2 mt-6 mb-4">
+        <div className="flex   flex-row items-center gap-0.4 sm:gap-0.4  mt-6 mb-4">
             {/* Search */}
             <div className="relative">
                 <LuSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm pointer-events-none" />
@@ -29,7 +29,7 @@ function ActionBar({ searchTerm, setSearchTerm, setSelectedStatus, setEditorJob 
                     type="text"
                     placeholder="Search..."
                     value={searchTerm}
-                    className="w-52 pl-8 pr-3 py-2 rounded-lg border border-gray-200 bg-white text-sm text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-200 transition"
+                    className="w-24 sm:w-52 pl-8 pr-3 py-2 rounded-lg border border-gray-200 bg-white text-sm text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-200 transition"
                     onKeyDown={handleKeyDown}
                     onChange={(e) => setSearchTerm(e.target.value)}
                 />
@@ -37,7 +37,7 @@ function ActionBar({ searchTerm, setSearchTerm, setSelectedStatus, setEditorJob 
 
             {/* Status filter */}
             <select
-                className="px-3 py-2 rounded-lg border border-gray-200 bg-white text-sm text-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-200 transition cursor-pointer"
+                className="sm:px-3 py-2 rounded-lg border border-gray-200 bg-white text-sm text-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-200 transition cursor-pointer"
                 onChange={(e) => setSelectedStatus(e.target.value)}
             >
                 {JOB_STATUS_OPTIONS.map((job, idx) => (

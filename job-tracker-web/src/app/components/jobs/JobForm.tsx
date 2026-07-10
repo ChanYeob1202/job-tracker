@@ -98,11 +98,11 @@ function JobForm({ statusOptions, initialJob, onCancel, onSuccess }: FormType) {
 
   return (
     <form
-      className="mx-auto mt-10 flex w-full max-w-xl flex-col gap-6 rounded-2xl border border-gray-100 bg-white p-8 shadow-sm"
+      className="mx-auto mt-10 flex flex-col w-full max-w-xl  sm:gap-6 rounded-2xl border border-gray-100 bg-white p-8 shadow-sm"
       onSubmit={handleSubmit}
-    >
+    > 
 
-      <div className="grid grid-cols-[9rem_1fr] items-center gap-x-4 gap-y-3">
+      <div className="sm:grid grid-cols-[9rem_1fr] items-center gap-x-4 gap-y-3">
         <TextField
           id="job-company"
           label="Company"
@@ -149,6 +149,7 @@ function JobForm({ statusOptions, initialJob, onCancel, onSuccess }: FormType) {
           onChange={setAppliedAt}
           inputClassName={`${fieldClass} max-w-[12rem]`}
         />
+        
         <TextField
           id="job-website"
           label="Website"
@@ -177,7 +178,7 @@ function JobForm({ statusOptions, initialJob, onCancel, onSuccess }: FormType) {
           htmlFor="job-notes"
           className="self-start pt-2 text-sm font-medium text-gray-700"
         >
-          Notes (optional)
+          Notes
         </label>
         <textarea
           id="job-notes"

@@ -5,13 +5,13 @@ import { useRouter } from "next/navigation";
 import type { Job } from "@/types/job";
 import { apiFetch } from "@/lib/api";
 import { JOB_STATUS_OPTIONS } from "@/types/job";
-import ActionButton from "../ui/ActionButton";
 import EditableCell from "./EditableCell";
 import { FaBuilding, FaNetworkWired, FaRegCalendar, FaEarthEurope, FaMagnifyingGlassDollar } from "react-icons/fa6";
 import { SiCrowdsource } from "react-icons/si";
 import { IoIosArrowDropdown } from "react-icons/io";
 import { IoLocation } from "react-icons/io5";
 import { CgNotes } from "react-icons/cg";
+import { LuPanelRight } from "react-icons/lu";
 
 
 const TABLE_COLUMNS: readonly { key: string; label: string; icon?: ReactNode }[] = [
@@ -24,7 +24,6 @@ const TABLE_COLUMNS: readonly { key: string; label: string; icon?: ReactNode }[]
   { key: "salary", label: "Salary", icon: <FaMagnifyingGlassDollar /> },
   { key: "location", label: "Location", icon: <IoLocation /> },
   { key: "notes", label: "Notes", icon: <CgNotes /> },
-  { key: "actions", label: "" }
 ];
 
 const STATUS_STYLE: Record<string, string> = {
@@ -90,6 +89,7 @@ type JobTableProps = {
   rows: Job[];
   setRows: Dispatch<SetStateAction<Job[] | null>>;
   jobLoadingStatus: boolean;
+  setEditorJob: Dispatch<SetStateAction<Job | "new" | null>>;
 };
 
 const thClass =
@@ -98,7 +98,7 @@ const thClass =
 const tdClass =
   "border-b border-gray-100 px-4 py-2.5 text-sm text-gray-700 align-middle whitespace-nowrap max-w-[200px] truncate";
 
-function JobTable({ rows, jobLoadingStatus, setRows }: JobTableProps) {
+function JobTable({ rows, jobLoadingStatus, setRows, setEditorJob }: JobTableProps) {
 
   const router = useRouter();
 
@@ -119,15 +119,6 @@ function JobTable({ rows, jobLoadingStatus, setRows }: JobTableProps) {
       );
     }
     router.refresh();
-  }
-
-  async function deleteField(id: number): Promise<void> {
-    const res = await apiFetch(`/jobs/${id}`, {
-      method: "DELETE",
-    });
-    if (res)
-      console.log(res);
-    setRows((prev) => (prev ?? []).filter((r) => r.id !== id));
   }
 
   return (
@@ -158,11 +149,19 @@ function JobTable({ rows, jobLoadingStatus, setRows }: JobTableProps) {
           ) : (
             rows.map((row: Job) => (
               <tr key={row.id} className="group transition-colors duration-100 hover:bg-gray-50/60">
-                <td className={tdClass}>
+                <td className={`flex flex-row items-center group/cell ${tdClass}`} >
                   <EditableCell
                     value={row.company}
                     onSave={(v) => updateField(row.id, "company", v)}
                   />
+                  <button
+                    type="button"
+                    onClick={() => setEditorJob(row)}
+                    className="ml-auto inline-flex items-center gap-1 whitespace-nowrap rounded-md bg-gray-800 px-2 py-1 text-xs font-medium text-white opacity-0 transition-opacity group-hover/cell:opacity-100 hover:bg-gray-700 cursor-pointer"
+                  >
+                    <LuPanelRight className="text-sm" />
+                    OPEN
+                  </button>
                 </td>
                 <td className={tdClass}>
                   <EditableCell
@@ -242,12 +241,6 @@ function JobTable({ rows, jobLoadingStatus, setRows }: JobTableProps) {
                     value={row.notes ?? ""}
                     display={row.notes ?? <span className="text-gray-300">—</span>}
                     onSave={(v) => updateField(row.id, "notes", v)}
-                  />
-                </td>
-                <td className={tdClass}>
-                  <ActionButton
-                    onEdit={() => router.push(`/jobs/${row.id}/edit`)}
-                    onDelete={() => deleteField(row.id)}
                   />
                 </td>
               </tr>

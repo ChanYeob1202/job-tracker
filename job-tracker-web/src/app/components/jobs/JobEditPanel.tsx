@@ -36,7 +36,12 @@ type JobEditPanelProps = {
   onSuccess: () => void
 }
 
-function JobEditPanel({ setEditorJob, onSuccess }: JobEditPanelProps) {
+function JobEditPanel({ editorJob, setEditorJob, onSuccess }: JobEditPanelProps) {
+
+  // "new" or null → no initial data (blank form); a real Job → pre-fill with it.
+  // The `&& editorJob !== "new"` narrows the union down to just Job | undefined,
+  // which is exactly what JobForm's initialJob prop expects.
+  const initialJob = editorJob && editorJob !== "new" ? editorJob : undefined;
 
   const panelRef = useRef<HTMLDivElement>(null);
 
@@ -53,8 +58,7 @@ function JobEditPanel({ setEditorJob, onSuccess }: JobEditPanelProps) {
       <div
         onClick={() => {
           setEditorJob(null);
-        }
-        }
+        }}
 
         className="fixed inset-0 z-40 bg-black/20"
 
@@ -65,7 +69,7 @@ function JobEditPanel({ setEditorJob, onSuccess }: JobEditPanelProps) {
         animate={{ x: 0 }}
         exit={{ x: "100%" }}
         transition={{ type: "spring", stiffness: 300, damping: 30 }}
-        className="fixed right-0 p-4 top-19.25 z-50 w-[70%]  h-screen shadow-xl border border-gray-400 bg-white focus:outline-none"
+        className="w-full md:w-[70%] fixed right-0 p-4 top-19.25 z-50   h-screen shadow-xl border border-gray-400 bg-white focus:outline-none"
         onKeyDown={(event: React.KeyboardEvent<HTMLInputElement>) => {
           if (event.key === "Escape") {
             setEditorJob(null);
@@ -87,7 +91,7 @@ function JobEditPanel({ setEditorJob, onSuccess }: JobEditPanelProps) {
             <MdOutlineKeyboardDoubleArrowRight />
           </button>
           <Link
-            href={"/jobs/new"}
+            href={initialJob ? `/jobs/${initialJob.id}/edit` : "/jobs/new" }
             className="hover:cursor-pointer text-xl">
             <AiOutlineArrowsAlt />
           </Link>
@@ -110,8 +114,9 @@ function JobEditPanel({ setEditorJob, onSuccess }: JobEditPanelProps) {
           />
 
         </form> */}
-        <JobForm 
-          statusOptions={JOB_STATUS_OPTIONS} 
+        <JobForm
+          statusOptions={JOB_STATUS_OPTIONS}
+          initialJob={ initialJob }
           onSuccess= { onSuccess }
           onCancel = { onCancel }
           />

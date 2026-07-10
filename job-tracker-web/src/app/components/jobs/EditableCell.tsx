@@ -78,7 +78,7 @@ function EditableCell({
       <button
         type="button"
         onClick={startEdit}
-        className="text-left w-full min-h-5 hover:bg-gray-100 rounded px-1 -mx-1 cursor-pointer"
+        className="text-left w-full min-h-5 rounded px-1 -mx-1 cursor-pointer"
       >
         {readLabel}
       </button>
