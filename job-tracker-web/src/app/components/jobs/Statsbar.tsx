@@ -61,11 +61,12 @@ function Statsbar({ apps }: StatsbarProps) {
 
     return (
         <div className="mt-2 rounded-xl border border-gray-100 bg-white shadow-sm overflow-hidden">
-            {/* Row 1 — counts */}
-            <div className="grid grid-cols-4 divide-x divide-gray-100">
+            {/* Row 1 — counts: 2 cols on mobile (with horizontal dividers),
+                4 cols with vertical dividers from sm up */}
+            <div className="grid grid-cols-2 divide-y divide-gray-100 sm:grid-cols-4 sm:divide-x sm:divide-y-0">
                 {countStats.map((stat) => (
-                    <div key={stat.label} className="flex flex-col sm:flex-row gap-0.5 sm:gap-1.5 px-6 py-4">
-                        <span className="flex items-center gap-0.4 sm:gap-1.5 text-xs text-gray-400">
+                    <div key={stat.label} className="flex flex-col sm:flex-row gap-0.5 sm:gap-1.5 px-4 py-3 sm:px-6 sm:py-4">
+                        <span className="flex items-center gap-1 sm:gap-1.5 text-xs text-gray-400">
                             {stat.icon}
                             {stat.label}
                         </span>
@@ -79,7 +80,7 @@ function Statsbar({ apps }: StatsbarProps) {
             <div className="grid grid-cols-3 divide-x divide-gray-100 border-t border-gray-100 bg-gray-50/50">
                 {rateStats.map((stat) => (
                     <div key={stat.label} className="flex flex-col items-start  gap-0.5 sm:gap-0.5  px-3 sm:px-6 py-3">
-                        <span className="flex items-center gap-1.5 text-xs text-gray-400 whitespace-nowrap">
+                        <span className="flex items-center gap-1.5 text-xs text-gray-400">
                             {stat.icon}
                             {stat.label}
                         </span>

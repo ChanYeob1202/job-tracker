@@ -21,7 +21,7 @@ function ActionBar({ searchTerm, setSearchTerm, setSelectedStatus, setEditorJob 
     }
 
   return (
-        <div className="flex   flex-row items-center gap-0.4 sm:gap-0.4  mt-6 mb-4">
+        <div className="flex flex-row items-center gap-2 sm:gap-3 mt-6 mb-4">
             {/* Search */}
             <div className="relative">
                 <LuSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm pointer-events-none" />
