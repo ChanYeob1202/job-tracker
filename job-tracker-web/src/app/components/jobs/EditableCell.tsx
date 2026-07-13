@@ -74,11 +74,14 @@ function EditableCell({
       );
     }
 
+    // Only plain-text values truncate. Custom `display` nodes (status/source
+    // pills) render a `ring` box-shadow that sits outside the border-box, and
+    // `truncate`'s `overflow: hidden` would clip that ring — so skip it there.
     return (
       <button
         type="button"
         onClick={startEdit}
-        className="text-left w-full min-h-5 rounded px-1 -mx-1 cursor-pointer"
+        className={`block text-left w-full min-h-5 rounded px-1 -mx-1 cursor-pointer ${display ? "" : "truncate"}`}
       >
         {readLabel}
       </button>

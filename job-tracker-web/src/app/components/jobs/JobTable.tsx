@@ -102,6 +102,12 @@ const thClass =
 const tdClass =
   "border-b border-gray-100 px-1 md:px-4 py-2.5 text-sm text-gray-700 align-middle whitespace-nowrap max-w-[200px] truncate";
 
+// First cell can't use `truncate` (overflow:hidden) — it would clip the OPEN
+// button that overlays on hover. So it keeps overflow visible and truncation
+// moves to an inner wrapper around the company name instead.
+const firstTdClass =
+  "relative flex items-center border-b border-gray-100 px-1 md:px-4 py-2.5 text-sm text-gray-700 align-middle whitespace-nowrap max-w-[200px] group/cell";
+
 function JobTable({ rows, jobLoadingStatus, setRows, setEditorJob }: JobTableProps) {
 
   const router = useRouter();
@@ -153,15 +159,17 @@ function JobTable({ rows, jobLoadingStatus, setRows, setEditorJob }: JobTablePro
           ) : (
             rows.map((row: Job) => (
               <tr key={row.id} className="group transition-colors duration-100 hover:bg-gray-50/60">
-                <td className={`flex flex-row items-center group/cell ${tdClass}`} >
-                  <EditableCell
-                    value={row.company}
-                    onSave={(v) => updateField(row.id, "company", v)}
-                  />
+                <td className={firstTdClass} >
+                  <span className="min-w-0 flex-1 truncate">
+                    <EditableCell
+                      value={row.company}
+                      onSave={(v) => updateField(row.id, "company", v)}
+                    />
+                  </span>
                   <button
                     type="button"
                     onClick={() => setEditorJob(row)}
-                    className="ml-auto inline-flex items-center gap-1 whitespace-nowrap rounded-md bg-gray-800 px-2 py-1 text-xs font-medium text-white opacity-0 transition-opacity group-hover/cell:opacity-100 hover:bg-gray-700 cursor-pointer"
+                    className="absolute right-1 md:right-2 top-1/2 -translate-y-1/2 inline-flex items-center gap-1 whitespace-nowrap rounded-md bg-gray-800 px-2 py-1 text-xs font-medium text-white opacity-0 transition-opacity group-hover/cell:opacity-100 hover:bg-gray-700 cursor-pointer"
                   >
                     <LuPanelRight className="text-sm" />
                     OPEN
