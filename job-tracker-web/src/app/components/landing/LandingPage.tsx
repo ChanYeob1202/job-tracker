@@ -113,9 +113,9 @@ function LandingPage() {
    with JobTable's visual language so the landing shows the real product. */
 const STATUS_STYLE: Record<string, string> = {
   applied: "bg-sky-50 text-sky-700 ring-1 ring-sky-200",
-  waiting: "bg-gray-100 text-gray-500 ring-1 ring-gray-200",
   "interview": "bg-orange-50 text-orange-700 ring-1 ring-orange-200",
   offer: "bg-emerald-50 text-emerald-700 ring-1 ring-emerald-200",
+  rejected:  "bg-rose-50 text-rose-600 ring-1 ring-rose-200",
 };
 
 const PREVIEW_COLUMNS = [
@@ -130,7 +130,7 @@ const PREVIEW_ROWS = [
   { company: "Stripe", role: "Frontend Engineer", source: "Referral", status: "offer", applied: "May 2" },
   { company: "Notion", role: "Product Engineer", source: "LinkedIn", status: "interview", applied: "May 6" },
   { company: "Linear", role: "Fullstack Engineer", source: "Careers page", status: "applied", applied: "May 9" },
-  { company: "Vercel", role: "DX Engineer", source: "Referral", status: "waiting", applied: "May 12" },
+  { company: "Vercel", role: "DX Engineer", source: "Referral", status: "rejected", applied: "May 12" },
 ];
 
 const thClass =

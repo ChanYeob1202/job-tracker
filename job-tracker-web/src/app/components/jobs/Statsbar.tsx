@@ -19,19 +19,17 @@ function Statsbar({ apps }: StatsbarProps) {
     const stats = useMemo<Stat[]>(() => {
         const total = apps.length;
         const interviewing = apps.filter((a) => a.status.includes("interview")).length;
-        const waiting = apps.filter((a) => a.status.includes("waiting")).length;
         const offers = apps.filter((a) => a.status === "offer").length;
 
         return [
             { icon: <LuFileText />, label: "Applied", value: total, iconClass: "bg-blue-50 text-blue-500" },
             { icon: <LuMessageSquare />, label: "Interviewing", value: interviewing, iconClass: "bg-violet-50 text-violet-500" },
-            { icon: <LuClock />, label: "Waiting", value: waiting, iconClass: "bg-amber-50 text-amber-500" },
             { icon: <LuPartyPopper />, label: "Offers", value: offers, iconClass: "bg-emerald-50 text-emerald-500" },
         ];
     }, [apps]);
 
     return (
-        <div className="mt-2 grid grid-cols-2 gap-3 sm:grid-cols-4">
+        <div className="mt-2 grid grid-cols-2 gap-3 sm:grid-cols-3">
             {stats.map((stat) => (
                 <div
                     key={stat.label}

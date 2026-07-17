@@ -5,7 +5,6 @@ export type JobStatus =
   // | "interview 1"
   // | "interview 2"
   // | "interview 3"
-  | "waiting"
   | "offer"
   | "rejected";
 
@@ -14,10 +13,6 @@ export const JOB_STATUS_OPTIONS: readonly JobStatus[] = [
   "all",
   "applied",
   "interview",
-  // "interview 1",
-  // "interview 2",
-  // "interview 3",
-  "waiting",
   "offer",
   "rejected",
 ];
@@ -38,3 +33,4 @@ export interface Job {
 
 
 
+  // "rejected":    "bg-rose-50 text-rose-600 ring-1 ring-rose-200",

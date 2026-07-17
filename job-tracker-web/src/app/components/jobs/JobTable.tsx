@@ -33,7 +33,6 @@ const hideOnMobileClass = "hidden md:table-cell";
 
 const STATUS_STYLE: Record<string, string> = {
   "applied":     "bg-sky-50 text-sky-700 ring-1 ring-sky-200",
-  "waiting":     "bg-gray-100 text-gray-500 ring-1 ring-gray-200",
   "interview":   "bg-amber-50 text-amber-700 ring-1 ring-amber-200",
   "offer":       "bg-emerald-50 text-emerald-700 ring-1 ring-emerald-200",
   "rejected":    "bg-rose-50 text-rose-600 ring-1 ring-rose-200",
