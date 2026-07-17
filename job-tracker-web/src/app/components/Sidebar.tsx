@@ -28,7 +28,13 @@ const NAV_ITEMS: NavItem[] = [
   { label: "Settings", href: "/settings", icon: LuSettings },
 ];
 
-export default function Sidebar() {
+type SidebarProps = {
+  /** Mobile drawer open state. On desktop the sidebar is always visible. */
+  isOpen: boolean;
+  onClose: () => void;
+};
+
+export default function Sidebar({ isOpen, onClose }: SidebarProps) {
   const pathname = usePathname();
   const router = useRouter();
   const { user, logOut } = useAuth();
@@ -59,11 +65,18 @@ export default function Sidebar() {
   }, [menuOpen]);
 
   return (
-    <aside className="sticky top-0 flex h-screen w-50 shrink-0 flex-col border-r border-gray-100 bg-white/80 px-4 py-5 backdrop-blur-md">
+    <aside
+      className={`fixed inset-y-0 left-0 z-40 flex h-screen w-64 shrink-0 flex-col border-r border-gray-100 bg-white px-4 py-5 transition-transform duration-200 ease-out md:sticky md:top-0 md:z-auto md:w-50 md:translate-x-0 md:bg-white/80 md:backdrop-blur-md ${
+        isOpen ? "translate-x-0" : "-translate-x-full"
+      }`}
+    >
       {/* Logo */}
       <button
         type="button"
-        onClick={() => router.push("/")}
+        onClick={() => {
+          router.push("/");
+          onClose();
+        }}
         className="flex items-center gap-2.5 px-2 hover:cursor-pointer"
       >
         <span className="grid h-8 w-8 place-items-center rounded-lg bg-linear-to-br from-brand-600 to-accent-600 text-sm font-bold text-white">
@@ -100,6 +113,7 @@ export default function Sidebar() {
             <Link
               key={label}
               href={href}
+              onClick={onClose}
               className={`${base} ${
                 active
                   ? "bg-brand-50 text-brand-700"
