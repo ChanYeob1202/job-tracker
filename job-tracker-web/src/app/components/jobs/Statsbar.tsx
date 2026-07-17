@@ -2,7 +2,7 @@
 import { useMemo } from "react";
 import type { ReactNode } from "react";
 import { Job } from "@/types/job";
-import { LuFileText, LuMessageSquare, LuClock, LuPartyPopper } from "react-icons/lu";
+import { LuFileText, LuMessageSquare, LuCircleX, LuPartyPopper } from "react-icons/lu";
 
 type StatsbarProps = {
     apps: Job[];
@@ -20,16 +20,19 @@ function Statsbar({ apps }: StatsbarProps) {
         const total = apps.length;
         const interviewing = apps.filter((a) => a.status.includes("interview")).length;
         const offers = apps.filter((a) => a.status === "offer").length;
+        const rejected = apps.filter((a) => a.status === "rejected").length
 
         return [
             { icon: <LuFileText />, label: "Applied", value: total, iconClass: "bg-blue-50 text-blue-500" },
             { icon: <LuMessageSquare />, label: "Interviewing", value: interviewing, iconClass: "bg-violet-50 text-violet-500" },
             { icon: <LuPartyPopper />, label: "Offers", value: offers, iconClass: "bg-emerald-50 text-emerald-500" },
+           { icon: <LuCircleX />, label: "Rejected", value: rejected, iconClass: "bg-rose-50 text-rose-500" }
+
         ];
     }, [apps]);
 
     return (
-        <div className="mt-2 grid grid-cols-2 gap-3 sm:grid-cols-3">
+        <div className="mt-2 grid grid-cols-2 gap-4 sm:grid-cols-4">
             {stats.map((stat) => (
                 <div
                     key={stat.label}
