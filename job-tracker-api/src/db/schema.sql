@@ -8,8 +8,7 @@ CREATE TABLE "users" (
 );
 
 
--- TODO: add timestamp for waiting, interviewing and offers.
-                  
+-- TODO: add timestamp for 
 CREATE TABLE "Jobs" (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     company TEXT NOT NULL,
