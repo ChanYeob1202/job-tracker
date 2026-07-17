@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { DM_Sans, DM_Mono } from "next/font/google";
-import JobPageNav from "./components/JobPageNav";
+import AppShell from "./components/AppShell";
 import { AuthProvider } from "@/context/AuthContext";
 import "./globals.css";
 
@@ -30,10 +30,11 @@ export default function RootLayout({
       lang="en"
       className={`${dmSans.variable} ${dmMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col px-4 sm:px-6 lg:px-8 py-6 max-w-10xl mx-auto">
+      <body className="min-h-full">
         <AuthProvider>
-          <JobPageNav />
-          {children}
+          <AppShell>
+            {children}
+          </AppShell>
         </AuthProvider>
       </body>
     </html>
