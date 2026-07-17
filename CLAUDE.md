@@ -18,6 +18,12 @@ Folder-specific rules:
 - Trade-off는 비교 질문일 때만 명시
 - 답변 끝 요약, 6단계 설명 강제 없음
 
+## 학습 우선 (Learning-first)
+
+- 기준: **"면접에서 내가 설명해야 하나?"** → Yes면 완성 코드/정답 주지 말고 guideline·힌트·질문·리뷰로 내가 직접 풀게 유도. (core logic, 알고리즘, 아키텍처 결정, **디버깅** 포함)
+- No(grunt work: styling, boilerplate, config, 리팩터링, 문서)면 바로 처리.
+- 애매하면 물어봐.
+
 ## Data Model
 
 `"Jobs"`: `company`, `role`, `title`, `status`, `notes`, `applied_at`, + URL/source/website/location fields.

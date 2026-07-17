@@ -30,6 +30,7 @@ type TextFieldProps = {
   onChange: (v: string) => void;
   placeholder?: string;
   inputClassName?: string;
+  isSubmitting: boolean;
 };
 
 function TextField({
@@ -41,6 +42,7 @@ function TextField({
   onChange,
   placeholder,
   inputClassName,
+  isSubmitting, 
 }: TextFieldProps) {
   return (
     <>
@@ -55,6 +57,7 @@ function TextField({
         value={value}
         placeholder={placeholder}
         onChange={(e) => onChange(e.target.value)}
+        disabled = {isSubmitting}
       />
     </>
   );
@@ -72,9 +75,16 @@ function JobForm({ statusOptions, initialJob, onCancel, onSuccess }: FormType) {
   );
   const [website, setWebsite] = useState(initialJob?.website ?? "");
   const [salary, setSalary] = useState(initialJob?.salary ?? "");
+  const [ isSubmitting, setIsSubmitting ] = useState(false);
   const [location, setLocation] = useState(initialJob?.location ?? "");
   const [notes, setNotes] = useState(initialJob?.notes ?? "");
 
+/* 
+  TODO: 
+    1. add isSubmitting status => inactive submit button. also can retype input when submitting
+    2. res.ok === false don't do anything, catch only catches console.error (silent failure)
+
+*/
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         if (company.trim() === "" || role.trim() === "") {
@@ -83,6 +93,7 @@ function JobForm({ statusOptions, initialJob, onCancel, onSuccess }: FormType) {
         }
 
         try {
+          setIsSubmitting(true);
           const url = initialJob ? `/jobs/${initialJob.id}` : `/jobs`;
           const res = await apiFetch(url, {
             method: initialJob ? "PATCH" : "POST",
@@ -103,6 +114,8 @@ function JobForm({ statusOptions, initialJob, onCancel, onSuccess }: FormType) {
           }
         } catch (err) {
           console.error(err);
+        } finally{
+          setIsSubmitting(false);
         }
       }
 
@@ -120,6 +133,7 @@ function JobForm({ statusOptions, initialJob, onCancel, onSuccess }: FormType) {
           value={company}
           onChange={setCompany}
           placeholder={initialJob?.company ?? "company name"}
+          isSubmitting = {isSubmitting}
         />
         <TextField
           id="job-role"
@@ -128,6 +142,7 @@ function JobForm({ statusOptions, initialJob, onCancel, onSuccess }: FormType) {
           value={role}
           onChange={setRole}
           placeholder={initialJob?.role ?? "position"}
+          isSubmitting = {isSubmitting}
         />
         <TextField
           id="job-source"
@@ -136,6 +151,7 @@ function JobForm({ statusOptions, initialJob, onCancel, onSuccess }: FormType) {
           value={source}
           onChange={setSource}
           placeholder={initialJob?.source ?? "job source"}
+          isSubmitting = {isSubmitting}
         />
 
         <label htmlFor="job-status" className="inline-flex items-center gap-2 text-sm font-medium text-gray-500">
@@ -163,6 +179,7 @@ function JobForm({ statusOptions, initialJob, onCancel, onSuccess }: FormType) {
           value={appliedAt}
           onChange={setAppliedAt}
           inputClassName={`${fieldClass} max-w-[12rem]`}
+          isSubmitting = {isSubmitting}
         />
 
         <TextField
@@ -173,6 +190,7 @@ function JobForm({ statusOptions, initialJob, onCancel, onSuccess }: FormType) {
           value={website}
           onChange={setWebsite}
           placeholder={initialJob?.website ?? "website"}
+          isSubmitting = {isSubmitting}
         />
         <TextField
           id="job-salary"
@@ -182,6 +200,8 @@ function JobForm({ statusOptions, initialJob, onCancel, onSuccess }: FormType) {
           value = {salary}
           onChange = {setSalary}
           placeholder = { initialJob?.salary ?? "salary"}
+          isSubmitting = {isSubmitting}
+
         />
         <TextField
           id="job-location"
@@ -190,6 +210,7 @@ function JobForm({ statusOptions, initialJob, onCancel, onSuccess }: FormType) {
           value={location}
           onChange={setLocation}
           placeholder={initialJob?.location ?? "location"}
+          isSubmitting = {isSubmitting}
         />
 
         <div className="col-span-2 mt-3 border-t border-gray-100 pt-3">
@@ -200,6 +221,7 @@ function JobForm({ statusOptions, initialJob, onCancel, onSuccess }: FormType) {
             className="w-full min-h-[45vh] resize-y rounded-md bg-transparent px-2 py-1 text-sm leading-relaxed text-gray-900 placeholder:text-gray-400 outline-none transition hover:bg-gray-100/70 focus:bg-gray-100"
             value={notes}
             onChange={(e) => setNotes(e.target.value)}
+            disabled = {isSubmitting}
           />
         </div>
 
@@ -214,8 +236,9 @@ function JobForm({ statusOptions, initialJob, onCancel, onSuccess }: FormType) {
           <button
             type="submit" 
             className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-blue-700 hover:cursor-pointer"
+            disabled = {isSubmitting}
           >
-            {initialJob ? "Save changes" : "Add Job"}
+            { isSubmitting ? `Submnitting...` :  `${initialJob ? "Save changes" : "Add Job"}`}
           </button>
         </div>
       </div>

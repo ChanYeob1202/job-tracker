@@ -1,9 +1,10 @@
 export type JobStatus =
   | "all"
   | "applied"
-  | "interview 1"
-  | "interview 2"
-  | "interview 3"
+  | "interview"
+  // | "interview 1"
+  // | "interview 2"
+  // | "interview 3"
   | "waiting"
   | "offer"
   | "rejected";
@@ -12,9 +13,10 @@ export type JobStatus =
 export const JOB_STATUS_OPTIONS: readonly JobStatus[] = [
   "all",
   "applied",
-  "interview 1",
-  "interview 2",
-  "interview 3",
+  "interview",
+  // "interview 1",
+  // "interview 2",
+  // "interview 3",
   "waiting",
   "offer",
   "rejected",
@@ -31,6 +33,7 @@ export interface Job {
   applied_at: string;
   website: string;
   location: string;
+  is_favorite: boolean;
 }
 
 

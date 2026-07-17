@@ -59,11 +59,7 @@ function LandingPage() {
               disabled={demoLoading}
               className="rounded-lg bg-brand-600 px-5 py-2.5 font-semibold text-white shadow-sm transition hover:cursor-pointer hover:bg-brand-700 disabled:cursor-not-allowed disabled:opacity-60"
             >
-              {demoLoading
-                ? demoSlow
-                  ? "Waking up the server…"
-                  : "Loading demo…"
-                : "Try the live demo"}
+              {demoLoading ? "Loading…" : "Try the live demo"}
             </button>
             <Link
               href="/signup"
@@ -77,7 +73,8 @@ function LandingPage() {
           </p>
           {demoSlow && !demoError && (
             <p className="mt-2 text-sm text-gray-500">
-              Waking the free-tier server — the first load takes ~10s. ☕
+              Hang tight — our server is stretching after a nap. Give it a few
+              seconds. ☕
             </p>
           )}
           {demoError && (
@@ -117,7 +114,7 @@ function LandingPage() {
 const STATUS_STYLE: Record<string, string> = {
   applied: "bg-sky-50 text-sky-700 ring-1 ring-sky-200",
   waiting: "bg-gray-100 text-gray-500 ring-1 ring-gray-200",
-  "interview 2": "bg-orange-50 text-orange-700 ring-1 ring-orange-200",
+  "interview": "bg-orange-50 text-orange-700 ring-1 ring-orange-200",
   offer: "bg-emerald-50 text-emerald-700 ring-1 ring-emerald-200",
 };
 
@@ -131,7 +128,7 @@ const PREVIEW_COLUMNS = [
 
 const PREVIEW_ROWS = [
   { company: "Stripe", role: "Frontend Engineer", source: "Referral", status: "offer", applied: "May 2" },
-  { company: "Notion", role: "Product Engineer", source: "LinkedIn", status: "interview 2", applied: "May 6" },
+  { company: "Notion", role: "Product Engineer", source: "LinkedIn", status: "interview", applied: "May 6" },
   { company: "Linear", role: "Fullstack Engineer", source: "Careers page", status: "applied", applied: "May 9" },
   { company: "Vercel", role: "DX Engineer", source: "Referral", status: "waiting", applied: "May 12" },
 ];

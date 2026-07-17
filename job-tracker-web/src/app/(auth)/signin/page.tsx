@@ -38,8 +38,8 @@ function Page() {
     if (!emailRegex.test(form.email)) {
       nextErrors.email = "Invalid email"
     }
-    if (password.length <= 8) {
-      nextErrors.password = "Password should be longer than 8"
+    if (form.password.length < 8) {
+      nextErrors.password = "Password must be at least 8 characters"
     }
     return nextErrors
   }

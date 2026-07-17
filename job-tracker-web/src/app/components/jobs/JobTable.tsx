@@ -9,6 +9,7 @@ import EditableCell from "./EditableCell";
 import { FaBuilding, FaNetworkWired, FaRegCalendar, FaEarthEurope, FaMagnifyingGlassDollar } from "react-icons/fa6";
 import { SiCrowdsource } from "react-icons/si";
 import { IoIosArrowDropdown } from "react-icons/io";
+import { CiStar } from "react-icons/ci";
 import { IoLocation } from "react-icons/io5";
 import { CgNotes } from "react-icons/cg";
 import { LuPanelRight } from "react-icons/lu";
@@ -33,10 +34,10 @@ const hideOnMobileClass = "hidden md:table-cell";
 const STATUS_STYLE: Record<string, string> = {
   "applied":     "bg-sky-50 text-sky-700 ring-1 ring-sky-200",
   "waiting":     "bg-gray-100 text-gray-500 ring-1 ring-gray-200",
-  "interview 1": "bg-amber-50 text-amber-700 ring-1 ring-amber-200",
-  "interview 2": "bg-orange-50 text-orange-700 ring-1 ring-orange-200",
-  "interview 3": "bg-violet-50 text-violet-700 ring-1 ring-violet-200",
-  "offer":       "bg-emerald-50 text-emerald-700 ring-1 ring-emerald-200",
+  "interview": "bg-amber-50 text-amber-700 ring-1 ring-amber-200",
+  // "interview 2": "bg-orange-50 text-orange-700 ring-1 ring-orange-200",
+  // "interview 3": "bg-violet-50 text-violet-700 ring-1 ring-violet-200",
+  // "offer":       "bg-emerald-50 text-emerald-700 ring-1 ring-emerald-200",
   "rejected":    "bg-rose-50 text-rose-600 ring-1 ring-rose-200",
 };
 
@@ -69,12 +70,8 @@ function sourceStyle(raw: string): string {
   return SOURCE_BRANDS.find((b) => s.includes(b.match))?.className ?? SOURCE_NEUTRAL;
 }
 
-// Applied date: recent applications (≤7 days) get a brand dot and darker text;
-// older ones dim to gray, so "what did I apply to this week" pops out — the same
-// idea the Statsbar's "This Week" count surfaces numerically.
-function AppliedDate({ iso }: { iso: string }) {
-  // Snapshot "now" once on mount — reading the clock during render is impure
-  // (react-hooks/purity). A lazy useState pins it, same trick as JobPageNav.
+
+function AppliedDate({ iso }: { iso: string }) {  
   const [now] = useState(() => Date.now());
   const d = new Date(iso);
   const days = (now - d.getTime()) / 86_400_000;
@@ -105,11 +102,13 @@ const tdClass =
 // First cell can't use `truncate` (overflow:hidden) — it would clip the OPEN
 // button that overlays on hover. So it keeps overflow visible and truncation
 // moves to an inner wrapper around the company name instead.
+
 const firstTdClass =
   "relative flex items-center border-b border-gray-100 px-1 md:px-4 py-2.5 text-sm text-gray-700 align-middle whitespace-nowrap max-w-[200px] group/cell";
 
 function JobTable({ rows, jobLoadingStatus, setRows, setEditorJob }: JobTableProps) {
 
+  const [ isHovered, setIsHovered ] = useState(false);
   const router = useRouter();
 
   async function updateField(
@@ -146,7 +145,7 @@ function JobTable({ rows, jobLoadingStatus, setRows, setEditorJob }: JobTablePro
             ))}
           </tr>
         </thead>
-        <tbody>
+        <tbody >
           {rows.length === 0 ? (
             <tr>
               <td
@@ -158,14 +157,17 @@ function JobTable({ rows, jobLoadingStatus, setRows, setEditorJob }: JobTablePro
             </tr>
           ) : (
             rows.map((row: Job) => (
-              <tr key={row.id} className="group transition-colors duration-100 hover:bg-gray-50/60">
-                <td className={firstTdClass} >
-                  <span className="min-w-0 flex-1 truncate">
-                    <EditableCell
-                      value={row.company}
-                      onSave={(v) => updateField(row.id, "company", v)}
-                    />
-                  </span>
+
+              <tr 
+                onMouseEnter = {() => setIsHovered(true)}
+                key={row.id} 
+                className="group transition-colors duration-100 hover:bg-gray-50/60">
+
+                <td className={`relative flex flex-row items-center overflow-visible group/cell ${firstTdClass}`} >
+                  <EditableCell
+                    value={row.company}
+                    onSave={(v) => updateField(row.id, "company", v)}
+                  />
                   <button
                     type="button"
                     onClick={() => setEditorJob(row)}

@@ -20,7 +20,6 @@ export default function JobPageNav() {
 
   const { user, logOut} = useAuth();
   
-  console.log("[nav] user name:  ", user?.userName)
   const router = useRouter();
 
   const authButtonClass =
