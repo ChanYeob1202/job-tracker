@@ -5,11 +5,11 @@ import dotenv from "dotenv";
 import { pool } from "./db/pool.js";
 import jobsRouter from "./routes/jobs.js";
 import authRouter from "./routes/auth.js";
+import searchRouter from "./routes/search.js"
 import authMiddleWare from "./middleware/auth.js";
 
 
 dotenv.config();
-
 const app = express();
 
 // On Render (and most PaaS) requests arrive through a reverse proxy, so the
@@ -79,6 +79,7 @@ app.get("/db-health", async (_req, res) => {
 
 app.use("/jobs", authMiddleWare, jobsRouter);
 app.use("/auth", authRouter);
+app.use("/search", searchRouter);
 
 // Export the app WITHOUT calling app.listen(), so tests can import it and
 // send requests in-memory. Starting the server lives in index.ts.

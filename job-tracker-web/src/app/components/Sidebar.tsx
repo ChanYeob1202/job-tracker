@@ -23,7 +23,7 @@ type NavItem = {
 
 const NAV_ITEMS: NavItem[] = [
   { label: "Dashboard", href: "/", icon: LuLayoutDashboard, ready: true },
-  { label: "Job Search", href: "/search", icon: LuSearch },
+  { label: "Job Search", href: "/search", icon: LuSearch, ready: true },
   { label: "Saved Jobs", href: "/saved", icon: LuBookmark },
   { label: "Settings", href: "/settings", icon: LuSettings },
 ];
