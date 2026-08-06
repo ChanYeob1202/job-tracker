@@ -59,7 +59,10 @@ function setRefreshCookie(res: Response, token: string) {
 //email, password 를 어떠한형식으로 바꾸는것같은데 ?
 const registerSchema = z.object({
   email: z.email(),
-  userName: z.string(),
+  // .min(1) matters: a bare z.string() accepts "" and would store an empty
+  // username/job title, which the search page can't do anything with.
+  userName: z.string().min(1, "User name is required"),
+  jobTitle: z.string().min(1, "Job title is required"),
   password: z.string().min(8),
 });
 
@@ -85,6 +88,9 @@ const loginSchema = z.object({
 */
 const DEMO_EMAIL = "demo@landr.app";
 const DEMO_USERNAME = "Demo User";
+// Seeded so the demo account behaves like a real one — the search page reads
+// this to decide which listings to show, and would have nothing to query without it.
+const DEMO_JOB_TITLE = "Software Engineer";
 
 // The demo user needs *a* password hash (users.password_hash is NOT NULL), but
 // nobody ever types it — /auth/demo skips the password check entirely. Hash it
@@ -133,11 +139,12 @@ router.post("/demo", demoLimiter, async (_req: Request, res: Response) => {
     // so we don't accumulate orphaned demo users.
     const passwordHash = await getDemoPasswordHash();
     const userResult = await client.query(
-      `INSERT INTO users (email, username, password_hash)
-       VALUES ($1, $2, $3)
-       ON CONFLICT (email) DO UPDATE SET username = EXCLUDED.username
-       RETURNING id, email, username`,
-      [DEMO_EMAIL, DEMO_USERNAME, passwordHash],
+      `INSERT INTO users (email, username, job_title, password_hash)
+       VALUES ($1, $2, $3, $4)
+       ON CONFLICT (email) DO UPDATE
+         SET username = EXCLUDED.username, job_title = EXCLUDED.job_title
+       RETURNING id, email, username AS "userName", job_title AS "jobTitle"`,
+      [DEMO_EMAIL, DEMO_USERNAME, DEMO_JOB_TITLE, passwordHash],
     );
     const user = userResult.rows[0];
 
@@ -162,7 +169,7 @@ router.post("/demo", demoLimiter, async (_req: Request, res: Response) => {
 
     return res.status(200).json({
       accessToken,
-      user: { id: user.id, email: user.email, userName: user.username },
+      user: { id: user.id, email: user.email, userName: user.userName, jobTitle: user.jobTitle },
     });
   } catch (error) {
     await client.query("ROLLBACK");
@@ -207,13 +214,13 @@ router.post("/register", authLimiter, async (req: Request, res: Response) => {
 
   // 검사 통과: parsed.data 에서 email, password 를 꺼냄.
   // 여기 도달했다는 건 이미 "email 은 이메일 형식, password 는 8자 이상" 이 보장된 상태.
-  const { email, userName, password } = parsed.data;
+  const { email, userName, jobTitle, password } = parsed.data;
   const password_hash = await bcrypt.hash(password, 12);
 
   try {
     const result = await pool.query(
-      `INSERT INTO users (email, username, password_hash) VALUES ($1, $2, $3) RETURNING id, email, username, created_at`,
-      [email, userName, password_hash],
+      `INSERT INTO users (email, username, job_title, password_hash) VALUES ($1, $2, $3, $4) RETURNING id, email, username AS "userName", job_title AS "jobTitle", created_at`,
+      [email, userName, jobTitle, password_hash],
     );
     return res.status(201).json({ user: result.rows[0] });
   } catch (err: any) {
@@ -232,6 +239,7 @@ router.post("/login", authLimiter, async (req: Request, res: Response) => {
   if (!parsed.success) {
     return res.status(400).json({ error: parsed.error.flatten().fieldErrors });
   }
+
   const { email, password } = parsed.data;
 
   try {
@@ -260,7 +268,8 @@ router.post("/login", authLimiter, async (req: Request, res: Response) => {
       user: {
         id: user.id,
         email: user.email,
-        userName: user.username
+        userName: user.username,
+        jobTitle: user.job_title,
       },
     });
   } catch (error: any) {
@@ -299,7 +308,6 @@ router.post("/refresh", async (req: Request, res: Response) => {
   clearCookie MUST receive the same options (path/sameSite/secure) used to set
   it, or the browser won't match and delete the cookie.
 */
-
 router.post("/logout", async (_req: Request, res: Response) => {
   res.clearCookie(REFRESH_COOKIE, refreshCookieOptions);
   return res.status(200).json({ message: "logged out" });
@@ -308,7 +316,7 @@ router.post("/logout", async (_req: Request, res: Response) => {
 router.get("/me", authMiddleWare, async (req: Request, res: Response) => {
   const userID = (req.user as { userID: string }).userID;
   const result = await pool.query(
-    `SELECT id, email, username AS "userName" FROM users WHERE id = $1`,
+    `SELECT id, email, username AS "userName", job_title AS "jobTitle" FROM users WHERE id = $1`,
     [userID],
   );
 

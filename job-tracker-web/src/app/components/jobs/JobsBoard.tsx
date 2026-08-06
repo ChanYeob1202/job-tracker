@@ -1,12 +1,11 @@
 "use client";
 import { useMemo, useState, Dispatch, SetStateAction} from "react";
-import { type JobStatus } from "@/types/job";
-import type { Job } from "@/types/job";
+import type { Job, StatusFilterValue } from "@/types/job";
 import Statsbar from "./Statsbar";
 import JobTable from "./JobTable";
 import ActionBar from "./ActionBar";
 
-export type StatusFilterValue = "all" | JobStatus;
+export type { StatusFilterValue };
 
 type JobsBoardProps = {
   initialRows: Job[];
@@ -27,7 +26,7 @@ function JobsBoard({ initialRows, jobLoadingStatus, setRows, editorJob, setEdito
       return initialRows.filter((row) => {
         const matchesNames = row.company.trim().toLowerCase().includes(cleanSearch);
 
-        const matchesRole = row.role.trim().toLowerCase().includes(cleanSearch)
+        const matchesRole = row.role?.trim().toLowerCase().includes(cleanSearch)
 
         const matchesNotes = row.notes?.trim().toLowerCase().includes(cleanSearch);
 

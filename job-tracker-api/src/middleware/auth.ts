@@ -44,7 +44,7 @@ export default function authMiddleWare(
     req.user = decoded;
     next();
   } catch (error) {
-    if( error instanceof jwt.TokenExpiredError ){
+    if( error instanceof jwt.TokenExpiredError ){ 
       return res.status(401).json({ error: "token_expired. Browser will navigate to sign in page."})
     }
     if( error instanceof jwt.JsonWebTokenError){

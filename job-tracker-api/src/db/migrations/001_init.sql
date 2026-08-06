@@ -1,9 +1,10 @@
--- Snapshot of the live Neon schema. Not executable history —
--- see migrations/ for the change log. Update this file after applying a migration.
--- Last verified against Neon: 2026-07-26
+-- 001_init.sql
+-- Baseline: reflects the live Neon schema as of 2026-07-26.
+-- The DB already existed before migrations were introduced, so this file is
+-- written to be a no-op against it (IF NOT EXISTS everywhere). Running it on a
+-- fresh database reproduces the same schema.
 
--- 1. users table (Auth)
-CREATE TABLE "users" (
+CREATE TABLE IF NOT EXISTS "users" (
     id            UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     email         TEXT UNIQUE NOT NULL,
     password_hash TEXT NOT NULL,
@@ -12,7 +13,7 @@ CREATE TABLE "users" (
     job_title     TEXT
 );
 
-CREATE TABLE "Jobs" (
+CREATE TABLE IF NOT EXISTS "Jobs" (
     id          UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     company     TEXT NOT NULL,
     status      TEXT NOT NULL DEFAULT 'applied',

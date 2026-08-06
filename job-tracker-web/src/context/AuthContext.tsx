@@ -7,19 +7,20 @@ import { apiFetch } from "@/lib/api";
 type UserType = {
     id: string,
     email: string,
-    userName: string, 
+    userName: string,
+    jobTitle: string,
 }
 
 type AuthContextType = {
     user: UserType | null;
     isLoading: boolean;
     setUser: (u: UserType | null) => void;
-    register: (email: string, userName: string, password: string) => Promise<void>
+    register: (email: string, userName: string, jobTitle: string, password: string) => Promise<void>
     login: (email: string, password: string) => Promise<void>;
     loginDemo: () => Promise<void>;
     logOut: () => void;
 }
-
+     
 const AuthContext = createContext<AuthContextType | null>(null);
 
 // The API returns `error` as either a string ("email and password don't match")
@@ -57,11 +58,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         })()
     }, [])
 
-    const register = async (email: string, userName: string,  password: string) => {
+    const register = async (email: string, userName: string, jobTitle: string, password: string) => {
         const path = "/auth/register"
         const options = {
             method: "POST",
-            body: JSON.stringify({ email,userName, password })
+            body: JSON.stringify({ email, userName, jobTitle, password })
         }
         try {
             const res = await apiFetch(path, options);

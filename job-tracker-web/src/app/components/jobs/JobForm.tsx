@@ -119,6 +119,7 @@ function JobForm({ statusOptions, initialJob, onCancel, onSuccess }: FormType) {
         }
       }
 
+   
   return (
     <form
       className="mx-auto mt-2 flex flex-col w-full max-w-xl bg-white p-4"
@@ -230,7 +231,7 @@ function JobForm({ statusOptions, initialJob, onCancel, onSuccess }: FormType) {
             type="button"
             onClick={onCancel}
             disabled = {isSubmitting}
-            className="rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 transition hover:bg-gray-50 hover:cursor-pointer"
+            className="rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 transition hover:bg-gray-50 hover:cursor-pointer disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-white"
           >
             Cancel
           </button>

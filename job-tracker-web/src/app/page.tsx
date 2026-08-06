@@ -19,13 +19,13 @@ export default function Page() {
   const loadJobs = async () => {
     const res = await apiFetch(`/jobs`, { cache: "no-store" });
     if (res?.ok) {
-      const data = await res.json();
+      const data = await res.json();  
       setRows(data.rows ?? []);
     } else {
       setRows([]);
     }
-  }
-
+  }       
+      
   // called after a save: close the panel, then re-fetch so the new job appears
   const handleSaved = () => {
     setEditorJob(null);

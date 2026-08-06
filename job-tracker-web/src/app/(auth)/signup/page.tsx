@@ -6,6 +6,7 @@ import AuthForm from '@/app/components/ui/AuthForm';
 
 type SignUpForm = {
   email: string;
+  jobTitle: string;
   userName: string;
   password: string;
   confirmPassword: string
@@ -27,11 +28,12 @@ function Page() {
   const [formData, setFormData] = useState({
     email: "",
     userName: "",
+    jobTitle:"",
     password: "",
     confirmPassword: "",
   });
 
-  const { email, password, userName, confirmPassword } = formData
+  const { email, userName, jobTitle, password,  confirmPassword } = formData
   const [ isSubmitting, setIsSubmitting ] = useState(false);
   const [errors, setErrors] = useState<SignUpErrors>({})
   const [serverError, setServerError] = useState("")
@@ -42,6 +44,14 @@ function Page() {
 
     if (!emailRegex.test(form.email)) {
       nextErrors.email = "invalid email"
+    }
+
+    if (!form.userName.trim()) {
+      nextErrors.userName = "User name is required";
+    }
+
+    if (!form.jobTitle.trim()) {
+      nextErrors.jobTitle = "Job title is required";
     }
 
     if (form.password !== form.confirmPassword) {
@@ -69,7 +79,7 @@ function Page() {
 
     setIsSubmitting(true);
     try {
-      await register(formData.email, formData.userName, formData.password)
+      await register(formData.email, formData.userName,formData.jobTitle,  formData.password)
       // register only returns { user } (no token), so we can't auto-login.
       // Send them to /signin to enter their credentials once.
       router.push("/signin")
@@ -85,6 +95,7 @@ return (
       email={email}
       showUsername={true}
       userName={userName}
+      jobTitle={jobTitle}
       password={password}
       onSubmit={handleSubmit}
       onChange={handleChange}

@@ -36,7 +36,7 @@ function Statsbar({ apps }: StatsbarProps) {
             {stats.map((stat) => (
                 <div
                     key={stat.label}
-                    className="flex items-center gap-3 rounded-xl border border-gray-100 bg-white px-4 py-3 shadow-sm sm:px-6 sm:py-4"
+                    className="flex items-center gap-3 rounded-xl border border-gray-100 bg-white px-4 py-3 shadow-sm sm:px-6 sm:py-4 overflow-hidden"
                 >
                     <span className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl text-lg ${stat.iconClass ?? "bg-gray-50 text-gray-400"}`}>
                         {stat.icon}

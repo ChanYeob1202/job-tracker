@@ -10,8 +10,6 @@ Folder-specific rules:
 ---
 
 ## Communication Style
-
-- 한국어로 질문하면 한국어로답변, 영어로질문하면 영어로답변, 기술 용어는 영어 그대로 (useState, PATCH, JWT 등)
 - 기본은 짧고 실용적으로.
 - "자세히", "왜", "explain deeper" 라고 하면 그때만 깊게 설명
 - 내가 틀린 방향이면 직접 지적, 우회 표현 금지

@@ -1,26 +1,26 @@
 "use client"
 
 import { Dispatch, SetStateAction } from "react";
-import { JOB_STATUS_OPTIONS, Job } from "@/types/job";
+import { JOB_STATUS_FILTERS, Job } from "@/types/job";
 import { LuSearch, LuPlus } from "react-icons/lu";
 
 type ActionBarProps = {
-    searchTerm:string;
+    searchTerm: string;
     setSearchTerm: Dispatch<SetStateAction<string>>;
     setSelectedStatus: Dispatch<SetStateAction<string>>
-    editorJob : Job | "new" | null
+    editorJob: Job | "new" | null
     setEditorJob: Dispatch<SetStateAction<Job | "new" | null>>
 }
 
-function ActionBar({ searchTerm, setSearchTerm, setSelectedStatus, setEditorJob  }: ActionBarProps) {
+function ActionBar({ searchTerm, setSearchTerm, setSelectedStatus, setEditorJob }: ActionBarProps) {
     const handleKeyDown = (evt: React.KeyboardEvent<HTMLInputElement>) => {
-        if(evt.key === "Escape"){
+        if (evt.key === "Escape") {
             setSearchTerm("");
             evt.preventDefault();
         }
     }
 
-  return (
+    return (
         <div className="flex flex-row items-center gap-2 sm:gap-3 mt-6 mb-4">
             {/* Search */}
             <div className="relative">
@@ -40,8 +40,8 @@ function ActionBar({ searchTerm, setSearchTerm, setSelectedStatus, setEditorJob 
                 className="sm:px-3 py-2 rounded-lg border border-gray-200 bg-white text-sm text-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-200 transition cursor-pointer"
                 onChange={(e) => setSelectedStatus(e.target.value)}
             >
-                {JOB_STATUS_OPTIONS.map((job, idx) => (
-                    <option key={idx} value={job}>{job}</option>
+                {JOB_STATUS_FILTERS.map((status, idx) => (
+                    <option key={idx} value={status}>{status}</option>
                 ))}
             </select>
 
@@ -51,7 +51,7 @@ function ActionBar({ searchTerm, setSearchTerm, setSelectedStatus, setEditorJob 
             {/* Add Job */}
             <div
                 // href="/jobs/new"
-                onClick = {() => setEditorJob("new")}
+                onClick={() => setEditorJob("new")}
                 className="inline-flex items-center gap-1.5 whitespace-nowrap px-4 py-2 rounded-lg bg-gray-900 hover:bg-gray-700 text-white text-sm font-medium transition"
             >
                 <LuPlus className="text-base" />

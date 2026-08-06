@@ -6,6 +6,20 @@ type AuthFormErrors = {
   userName?: string;
   password?: string;
   confirmPassword?: string;
+  jobTitle?: string;
+}
+
+// One entry per input. `show` lets sign-in and sign-up share this list —
+// sign-in just filters the sign-up-only fields out.
+type AuthField = {
+  name: keyof AuthFormErrors;
+  label: string;
+  type: string;
+  value?: string;
+  title?: string;
+  autoComplete?: string;
+  required?: boolean;
+  show: boolean;
 }
 
 type AuthFormProps = {
@@ -13,6 +27,7 @@ type AuthFormProps = {
   showUsername: boolean;
   userName?: string;
   password: string;
+  jobTitle?: string;
   onSubmit: (e: React.SubmitEvent<HTMLFormElement>) => Promise<void>
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   emailTitle: string;
@@ -27,7 +42,7 @@ type AuthFormProps = {
   serverError?: string;
 }
 
-function AuthForm({ email,showUsername, userName, password, emailTitle, passwordTitle, showConfirmPassword, confirmPassword, onSubmit, onChange, buttonText, buttonDisabled,  link, linkText, errors, serverError }: AuthFormProps) {
+function AuthForm({ email,showUsername, userName, password, emailTitle, passwordTitle, jobTitle,  showConfirmPassword, confirmPassword, onSubmit, onChange, buttonText, buttonDisabled,  link, linkText, errors, serverError }: AuthFormProps) {
   const labelClass = "mb-1 text-sm font-medium text-gray-700";
   // Field errors sit just under their input; -mt-4 pulls them up against the input's mb-4 gap.
   const fieldErrorClass = "-mt-3 mb-3 text-sm text-red-600";
@@ -40,7 +55,56 @@ function AuthForm({ email,showUsername, userName, password, emailTitle, password
   const heading = showUsername ? "Create your account" : "Welcome back";
   const subheading = showUsername
     ? "Start tracking your applications in minutes."
-    : "Sign in to pick up where you left off.";
+    : "Sign in to pick up where you left off.";  
+
+  const fields: AuthField[] = [
+    {
+      name: "email",
+      label: "Email", 
+      type: "email",
+      value: email,
+      title: emailTitle,
+      required: true,
+      show: true,
+    },
+    {  
+      name: "userName",
+      label: "User Name",
+      type: "text",
+      value: userName,
+      title: "userName",
+      required: true,
+      show: showUsername,
+    },
+    {
+      name: "jobTitle",
+      label: "Job Title",
+      type: "text",
+      value: jobTitle,
+      title: "The kind of role you want to see on your search page",
+      required: true,
+      show: showUsername,
+    },
+    {
+      name: "password",
+      label: "Password",
+      type: "password",
+      value: password,
+      title: passwordTitle,
+      autoComplete: "new-password",
+      show: true,
+    },
+    {
+      name: "confirmPassword",
+      label: "Confirm Password",
+      type: "password",
+      value: confirmPassword,
+      title: "Confirm password",
+      autoComplete: "new-password",
+      required: true,
+      show: Boolean(showConfirmPassword),
+    },
+  ];
 
   return (
     <div className="relative isolate mx-auto mt-16 flex w-full max-w-sm flex-col overflow-hidden rounded-2xl border border-gray-100 bg-white p-8 shadow-xl shadow-brand-500/5">
@@ -58,69 +122,25 @@ function AuthForm({ email,showUsername, userName, password, emailTitle, password
       </div>
 
       <form className="flex flex-col" onSubmit={onSubmit}>
-        <label htmlFor="email" className={labelClass}>email</label>
-        <input
-          type="email"
-          name="email"
-          value={email}
-          onChange={onChange}
-          title={emailTitle}
-          className={inputClass}
-          required
-        />
-        {errors?.email &&
-          <p role="alert" className={fieldErrorClass}>{errors.email}</p>
-        }
-
-        {showUsername &&
-          <>
-            <label htmlFor="userName" className={labelClass}>User Name</label>
+        {fields.filter((field) => field.show).map((field) => (
+          <div key={field.name} className="flex flex-col">
+            <label htmlFor={field.name} className={labelClass}>{field.label}</label>
             <input
-              type="text"
-              name="userName"
-              value={userName}
+              id={field.name}
+              type={field.type}
+              name={field.name}
+              value={field.value ?? ""}
               onChange={onChange}
-              title="userName"
+              title={field.title}
+              autoComplete={field.autoComplete}
+              required={field.required}
               className={inputClass}
             />
-            {errors?.userName &&
-              <p role="alert" className={fieldErrorClass}>{errors.userName}</p>
+            {errors?.[field.name] &&
+              <p role="alert" className={fieldErrorClass}>{errors[field.name]}</p>
             }
-          </>
-        }
-
-        <label htmlFor="password" className={labelClass}>Password</label>
-        <input
-          type="password"
-          name="password"
-          value={password}
-          autoComplete="new-password"
-          onChange={onChange}
-          title={passwordTitle}
-          className={inputClass}
-        />
-        {errors?.password &&
-          <p role="alert" className={fieldErrorClass}>{errors.password}</p>
-        }
-
-        {showConfirmPassword &&
-          <>
-            <label className={labelClass}>Confirm Password</label>
-            <input
-              type='password'
-              name='confirmPassword'
-              value={confirmPassword}
-              autoComplete="new-password"
-              onChange={onChange}
-              title='Confirm password'
-              className={inputClass}
-              required
-            />
-            {errors?.confirmPassword &&
-              <p role="alert" className={fieldErrorClass}>{errors.confirmPassword}</p>
-            }
-          </>
-        }
+          </div>
+        ))}
 
         {serverError &&
           <p role="alert" className="mb-2 text-sm text-red-600">{serverError}</p>

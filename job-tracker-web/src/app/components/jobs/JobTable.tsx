@@ -26,7 +26,7 @@ const TABLE_COLUMNS: readonly { key: string; label: string; icon?: ReactNode; hi
   { key: "website", label: "Website", icon: <FaEarthEurope />, hideOnMobile: true },
   { key: "salary", label: "Salary", icon: <FaMagnifyingGlassDollar />, hideOnMobile: true },
   { key: "location", label: "Location", icon: <IoLocation />, hideOnMobile: true },
-  { key: "notes", label: "Notes", icon: <CgNotes />, hideOnMobile: true },
+  // { key: "notes", label: "Notes", icon: <CgNotes />, hideOnMobile: true },
 ];
 
 const hideOnMobileClass = "hidden md:table-cell";
@@ -176,7 +176,7 @@ function JobTable({ rows, jobLoadingStatus, setRows, setEditorJob }: JobTablePro
                 </td>
                 <td className={tdClass}>
                   <EditableCell
-                    value={row.role}
+                    value={row.role ?? ""}
                     onSave={(v) => updateField(row.id, "role", v)}
                   />
                 </td>
@@ -247,13 +247,13 @@ function JobTable({ rows, jobLoadingStatus, setRows, setEditorJob }: JobTablePro
                     onSave={(v) => updateField(row.id, "location", v)}
                   />
                 </td>
-                <td className={`${tdClass} ${hideOnMobileClass}`}>
+                {/* <td className={`${tdClass} ${hideOnMobileClass}`}>
                   <EditableCell
                     value={row.notes ?? ""}
                     display={row.notes ?? <span className="text-gray-300">—</span>}
                     onSave={(v) => updateField(row.id, "notes", v)}
                   />
-                </td>
+                </td> */}
               </tr>
             ))
           )}

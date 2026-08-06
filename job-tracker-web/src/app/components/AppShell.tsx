@@ -34,7 +34,10 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
 
   return (
     <div className="flex min-h-screen">
-      <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
+      <Sidebar
+        isOpen={sidebarOpen}
+        onClose={() => setSidebarOpen(false)}
+      />
 
       {/* Backdrop — only on mobile, only while the drawer is open. Tap to close. */}
       {sidebarOpen && (
@@ -46,7 +49,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
       )}
 
       <div className="flex min-w-0 flex-1 flex-col">
-        {/* Mobile top bar: hamburger + logo. Hidden once the sidebar is static. */}
+      
         <header className="flex items-center gap-3 border-b border-gray-100 bg-white/80 px-4 py-3 backdrop-blur-md md:hidden">
           <button
             type="button"

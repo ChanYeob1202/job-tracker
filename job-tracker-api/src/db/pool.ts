@@ -9,3 +9,4 @@ if (!url) {
 }
 
 export const pool = new pg.Pool({ connectionString: url });
+
