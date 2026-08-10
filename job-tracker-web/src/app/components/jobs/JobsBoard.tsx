@@ -18,7 +18,7 @@ type JobsBoardProps = {
 function JobsBoard({ initialRows, jobLoadingStatus, setRows, editorJob, setEditorJob }: JobsBoardProps) {
 
   const [searchTerm, setSearchTerm] = useState("")
-  const [selectedStatus, setSelectedStatus] = useState("all")
+  const [selectedStatus, setSelectedStatus] = useState("applied")
 
   const searchedRows = useMemo(
     () => {
@@ -37,10 +37,8 @@ function JobsBoard({ initialRows, jobLoadingStatus, setRows, editorJob, setEdito
 
   const filteredRows = useMemo(
     () =>
-      selectedStatus === "all"
-        ? initialRows
-        : searchedRows.filter((job) => job.status === selectedStatus),
-    [searchedRows, selectedStatus, initialRows]
+       searchedRows.filter((job) => job.status === selectedStatus),
+    [searchedRows, selectedStatus]
   );
 
   return (
@@ -54,8 +52,8 @@ function JobsBoard({ initialRows, jobLoadingStatus, setRows, editorJob, setEdito
         setSelectedStatus={setSelectedStatus}
         editorJob = {editorJob}
         setEditorJob = {setEditorJob}
-   
       />
+
       <JobTable
         rows={filteredRows}
         setRows={setRows}

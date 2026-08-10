@@ -1,9 +1,6 @@
 export type JobStatus =
   | "applied"
   | "interview"
-  // | "interview 1"
-  // | "interview 2"
-  // | "interview 3"
   | "offer"
   | "rejected";
 
@@ -16,10 +13,10 @@ export const JOB_STATUS_OPTIONS: readonly JobStatus[] = [
 ];
 
 /** Filter-only value: "all" is a view option ("show everything"), never a stored status. */
-export type StatusFilterValue = "all" | JobStatus;
+export type StatusFilterValue =  JobStatus;
 
 /** Options for the status filter dropdown — real statuses plus "all". */
-export const JOB_STATUS_FILTERS: readonly StatusFilterValue[] = ["all", ...JOB_STATUS_OPTIONS];
+export const JOB_STATUS_FILTERS: readonly StatusFilterValue[] = JOB_STATUS_OPTIONS
 
 export interface Job {
   id: number;
