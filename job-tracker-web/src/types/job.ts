@@ -12,11 +12,11 @@ export const JOB_STATUS_OPTIONS: readonly JobStatus[] = [
   "rejected",
 ];
 
-/** Filter-only value: "all" is a view option ("show everything"), never a stored status. */
-export type StatusFilterValue =  JobStatus;
+/** The status filter now maps 1:1 to real statuses — there is no "show all" view. */
+export type StatusFilterValue = JobStatus;
 
-/** Options for the status filter dropdown — real statuses plus "all". */
-export const JOB_STATUS_FILTERS: readonly StatusFilterValue[] = JOB_STATUS_OPTIONS
+/** Options for the status filter dropdown — the real statuses, no "all" entry. */
+export const JOB_STATUS_FILTERS: readonly StatusFilterValue[] = JOB_STATUS_OPTIONS;
 
 export interface Job {
   id: number;
