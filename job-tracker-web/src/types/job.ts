@@ -19,7 +19,7 @@ export const JOB_STATUS_OPTIONS: readonly JobStatus[] = [
 export type StatusFilterValue = JobStatus | "all";
 
 /** Options for the status filter dropdown — the real statuses, no "all" entry. */
-export const JOB_STATUS_FILTERS: readonly StatusFilterValue[] = ["all", ...JOB_STATUS_OPTIONS] ;
+export const JOB_STATUS_FILTERS: readonly StatusFilterValue[] = ["all", ...JOB_STATUS_OPTIONS];
 
 export interface Job {
   id: number;

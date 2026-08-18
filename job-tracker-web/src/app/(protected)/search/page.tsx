@@ -37,7 +37,7 @@ function Page() {
     if (user) {
       console.log(user.jobTitle);
       
-
+      
     }
 
   }, [user])
@@ -54,7 +54,7 @@ function Page() {
             <span className="text-xs text-gray-400">
               Last synch 8 min ago
             </span>
-            <button className="ml-4 border px-2 py-1 rounded-xl text-xs">Refresh</button>
+            <button className="ml-4 border px-2 py-1 rounded-xl text-xs hover:cursor-pointer transition-all duration-200 hover:scale-105 ease-out hover:bg-gray-200 ">Refresh</button>
           </div>
         </div>
         <div className="mt-2">
@@ -83,6 +83,7 @@ function Page() {
       {/* body */}
       <div className="mt-10">
         <h1 className="font-bold text-xl">🔥 New Today</h1>
+        {/* job card mapping */}
 
       </div>
     </div>
