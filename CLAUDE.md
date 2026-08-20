@@ -26,7 +26,7 @@ Folder-specific rules:
 
 `"Jobs"`: `company`, `role`, `title`, `status`, `notes`, `applied_at`, + URL/source/website/location fields.
 `users`: `id`, `email`, `password_hash`, `created_at`.
-`JobStatus`: `"applied" | "interview" | "interview 1" | "interview 2" | "interview 3" | "waiting" | "offer" | "rejected"`
+`JobStatus`: `"applied" | "interview" | "offer" | "rejected"` (interview rounds are not tracked separately — all rounds collapse into `"interview"`)
 
 ## Commands
 

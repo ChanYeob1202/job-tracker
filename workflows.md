@@ -223,8 +223,7 @@ JobTable re-renders
 [src/types/job.ts](job-tracker-web/src/types/job.ts)
 ```ts
 type JobStatus =
-  | "applied" | "interview" | "interview 1" | "interview 2" | "interview 3"
-  | "waiting" | "offer" | "rejected";
+  | "applied" | "interview" | "offer" | "rejected";   // all interview rounds collapse into "interview"
 
 interface Job {
   id: number;
