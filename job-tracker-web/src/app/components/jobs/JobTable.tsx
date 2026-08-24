@@ -14,7 +14,6 @@ import { IoLocation } from "react-icons/io5";
 import { CgNotes } from "react-icons/cg";
 import { LuPanelRight } from "react-icons/lu";
 
-
 // `hideOnMobile` columns collapse below md — on phones the table shows only
 // the scan-essentials (Company/Role/Status); the rest live in the OPEN panel.
 const TABLE_COLUMNS: readonly { key: string; label: string; icon?: ReactNode; hideOnMobile?: boolean }[] = [
@@ -32,10 +31,10 @@ const TABLE_COLUMNS: readonly { key: string; label: string; icon?: ReactNode; hi
 const hideOnMobileClass = "hidden md:table-cell";
 
 const STATUS_STYLE: Record<string, string> = {
-  "applied":     "bg-sky-50 text-sky-700 ring-1 ring-sky-200",
-  "interview":   "bg-amber-50 text-amber-700 ring-1 ring-amber-200",
-  "offer":       "bg-emerald-50 text-emerald-700 ring-1 ring-emerald-200",
-  "rejected":    "bg-rose-50 text-rose-600 ring-1 ring-rose-200",
+  "applied": "bg-sky-50 text-sky-700 ring-1 ring-sky-200",
+  "interview": "bg-amber-50 text-amber-700 ring-1 ring-amber-200",
+  "offer": "bg-emerald-50 text-emerald-700 ring-1 ring-emerald-200",
+  "rejected": "bg-rose-50 text-rose-600 ring-1 ring-rose-200",
 };
 
 // Known job-source brands → a pill hue echoing their brand color, so rows are
@@ -47,16 +46,16 @@ const STATUS_STYLE: Record<string, string> = {
 // gray, which also means a wrong source is simply gray, never mis-colored.
 // NOTE: class strings must stay full literals so Tailwind's JIT keeps them.
 const SOURCE_BRANDS: readonly { match: string; className: string }[] = [
-  { match: "linkedin",  className: "bg-blue-50 text-blue-700 ring-1 ring-blue-200" },
-  { match: "zip",       className: "bg-green-50 text-green-700 ring-1 ring-green-200" },
-  { match: "indeed",    className: "bg-white text-gray-700 ring-1 ring-gray-300" },
+  { match: "linkedin", className: "bg-blue-50 text-blue-700 ring-1 ring-blue-200" },
+  { match: "zip", className: "bg-green-50 text-green-700 ring-1 ring-green-200" },
+  { match: "indeed", className: "bg-white text-gray-700 ring-1 ring-gray-300" },
   { match: "glassdoor", className: "bg-teal-50 text-teal-700 ring-1 ring-teal-200" },
   { match: "wellfound", className: "bg-slate-100 text-slate-700 ring-1 ring-slate-300" },
   { match: "angellist", className: "bg-slate-100 text-slate-700 ring-1 ring-slate-300" },
   { match: "handshake", className: "bg-slate-100 text-slate-700 ring-1 ring-slate-300" },
-  { match: "monster",   className: "bg-purple-50 text-purple-700 ring-1 ring-purple-200" },
-  { match: "dice",      className: "bg-red-50 text-red-700 ring-1 ring-red-200" },
-  { match: "refer",     className: "bg-amber-50 text-amber-700 ring-1 ring-amber-200" },
+  { match: "monster", className: "bg-purple-50 text-purple-700 ring-1 ring-purple-200" },
+  { match: "dice", className: "bg-red-50 text-red-700 ring-1 ring-red-200" },
+  { match: "refer", className: "bg-amber-50 text-amber-700 ring-1 ring-amber-200" },
 ];
 
 const SOURCE_NEUTRAL = "bg-gray-100 text-gray-600 ring-1 ring-gray-200";
@@ -68,7 +67,7 @@ function sourceStyle(raw: string): string {
 }
 
 
-function AppliedDate({ iso }: { iso: string }) {  
+function AppliedDate({ iso }: { iso: string }) {
   const [now] = useState(() => Date.now());
   const d = new Date(iso);
   const days = (now - d.getTime()) / 86_400_000;
@@ -105,7 +104,7 @@ const firstTdClass =
 
 function JobTable({ rows, jobLoadingStatus, setRows, setEditorJob }: JobTableProps) {
 
-  const [ isHovered, setIsHovered ] = useState(false);
+  const [isHovered, setIsHovered] = useState(false);
   const router = useRouter();
 
   async function updateField(
@@ -155,9 +154,9 @@ function JobTable({ rows, jobLoadingStatus, setRows, setEditorJob }: JobTablePro
           ) : (
             rows.map((row: Job) => (
 
-              <tr 
-                onMouseEnter = {() => setIsHovered(true)}
-                key={row.id} 
+              <tr
+                onMouseEnter={() => setIsHovered(true)}
+                key={row.id}
                 className="group transition-colors duration-100 hover:bg-gray-50/60">
 
                 <td className={`relative flex flex-row items-center overflow-visible group/cell ${firstTdClass}`} >

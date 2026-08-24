@@ -1,8 +1,9 @@
 "use client"
 
 import { Dispatch, SetStateAction } from "react";
-import { JOB_STATUS_FILTERS, Job } from "@/types/job";
+import { Job } from "@/types/job";
 import { LuSearch, LuPlus } from "react-icons/lu";
+import JobFilterBar from "./JobFilterBar";
 
 type ActionBarProps = {
     searchTerm: string;
@@ -34,16 +35,7 @@ function ActionBar({ searchTerm, setSearchTerm, setSelectedStatus, setEditorJob 
                     onChange={(e) => setSearchTerm(e.target.value)}
                 />
             </div>
-
-            {/* Status filter */}
-            <select
-                className="sm:px-3 py-2 rounded-lg border border-gray-200 bg-white text-sm text-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-200 transition cursor-pointer"
-                onChange={(e) => setSelectedStatus(e.target.value)}
-            >
-                {JOB_STATUS_FILTERS.map((status, idx) => (
-                    <option key={idx} value={status}>{status}</option>
-                ))}
-            </select>
+            <JobFilterBar setSelectedStatus={setSelectedStatus} />
 
             {/* Spacer */}
             <div className="flex-1" />

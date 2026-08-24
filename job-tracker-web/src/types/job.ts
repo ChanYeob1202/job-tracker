@@ -4,6 +4,8 @@ export type JobStatus =
   | "offer"
   | "rejected";
 
+
+
 /** Real job statuses offered in forms and the table editor. First value ("applied") is the create default. */
 export const JOB_STATUS_OPTIONS: readonly JobStatus[] = [
   "applied",
@@ -12,11 +14,10 @@ export const JOB_STATUS_OPTIONS: readonly JobStatus[] = [
   "rejected",
 ];
 
-/** The status filter now maps 1:1 to real statuses — there is no "show all" view. */
-export type StatusFilterValue = JobStatus;
+export type StatusFilterValue = JobStatus | "all";
 
 /** Options for the status filter dropdown — the real statuses, no "all" entry. */
-export const JOB_STATUS_FILTERS: readonly StatusFilterValue[] = JOB_STATUS_OPTIONS;
+export const JOB_STATUS_FILTERS: readonly StatusFilterValue[] = ["all", ...JOB_STATUS_OPTIONS] ;
 
 export interface Job {
   id: number;

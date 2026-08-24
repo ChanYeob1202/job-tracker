@@ -1,11 +1,9 @@
 "use client";
-import { useMemo, useState, Dispatch, SetStateAction} from "react";
-import type { Job, StatusFilterValue } from "@/types/job";
+import { useMemo, useState, Dispatch, SetStateAction } from "react";
+import type { Job } from "@/types/job";
 import Statsbar from "./Statsbar";
 import JobTable from "./JobTable";
 import ActionBar from "./ActionBar";
-
-export type { StatusFilterValue };
 
 type JobsBoardProps = {
   initialRows: Job[];
@@ -18,16 +16,14 @@ type JobsBoardProps = {
 function JobsBoard({ initialRows, jobLoadingStatus, setRows, editorJob, setEditorJob }: JobsBoardProps) {
 
   const [searchTerm, setSearchTerm] = useState("")
-  const [selectedStatus, setSelectedStatus] = useState("applied")
+  const [selectedStatus, setSelectedStatus] = useState("all")
 
   const searchedRows = useMemo(
     () => {
       const cleanSearch = searchTerm.trim().toLowerCase();
       return initialRows.filter((row) => {
         const matchesNames = row.company.trim().toLowerCase().includes(cleanSearch);
-
         const matchesRole = row.role?.trim().toLowerCase().includes(cleanSearch)
-
         const matchesNotes = row.notes?.trim().toLowerCase().includes(cleanSearch);
 
         return matchesNames || matchesRole || matchesNotes
@@ -37,12 +33,12 @@ function JobsBoard({ initialRows, jobLoadingStatus, setRows, editorJob, setEdito
 
   const filteredRows = useMemo(
     () =>
-       searchedRows.filter((job) => job.status === selectedStatus),
+      searchedRows.filter((job) => job.status === selectedStatus),
     [searchedRows, selectedStatus]
   );
 
   return (
-    <div className = "z-0">
+    <div className="z-0">
       <Statsbar
         apps={initialRows}
       />
@@ -50,8 +46,8 @@ function JobsBoard({ initialRows, jobLoadingStatus, setRows, editorJob, setEdito
         setSearchTerm={setSearchTerm}
         searchTerm={searchTerm}
         setSelectedStatus={setSelectedStatus}
-        editorJob = {editorJob}
-        setEditorJob = {setEditorJob}
+        editorJob={editorJob}
+        setEditorJob={setEditorJob}
       />
 
       <JobTable
