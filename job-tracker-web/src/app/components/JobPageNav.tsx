@@ -26,14 +26,14 @@ export default function JobPageNav() {
     "text-sm font-semibold text-gray-600 transition hover:text-brand-600 hover:cursor-pointer"
 
   const primaryButtonClass =
-    "rounded-lg bg-linear-to-r from-brand-600 to-accent-600 px-4 py-2 text-sm font-semibold text-white shadow-sm shadow-brand-500/30 transition hover:cursor-pointer hover:brightness-110"
+    "rounded-lg bg-brand-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:cursor-pointer hover:bg-brand-700"
 
   return (
     <nav className="sticky top-0 z-10 flex flex-wrap items-center justify-between gap-4 border-b border-gray-100 bg-white/80 px-6 py-3 backdrop-blur-md">
         <div className="flex items-center gap-3">
           <h1
             onClick={() => router.push("/")}
-            className="bg-linear-to-r from-brand-600 to-accent-600 bg-clip-text text-xl font-bold tracking-tight text-transparent transition hover:cursor-pointer hover:opacity-80"
+            className="text-xl font-bold tracking-tight text-brand-600 transition hover:cursor-pointer hover:opacity-80"
           >
             Landr
           </h1>

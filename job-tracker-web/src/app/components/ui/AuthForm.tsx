@@ -108,14 +108,14 @@ function AuthForm({ email,showUsername, userName, password, emailTitle, password
 
   return (
     <div className="relative isolate mx-auto mt-16 flex w-full max-w-sm flex-col overflow-hidden rounded-2xl border border-gray-100 bg-white p-8 shadow-xl shadow-brand-500/5">
-      {/* Brand gradient strip across the top of the card */}
+      {/* Solid brand accent line across the top of the card */}
       <div
         aria-hidden
-        className="absolute inset-x-0 top-0 h-1.5 bg-linear-to-r from-brand-600 via-accent-600 to-sky-500"
+        className="absolute inset-x-0 top-0 h-1 bg-brand-600"
       />
 
       <div className="mb-6 text-center">
-        <h1 className="bg-linear-to-r from-brand-600 to-accent-600 bg-clip-text text-2xl font-bold text-transparent">
+        <h1 className="text-2xl font-bold tracking-tight text-gray-900">
           {heading}
         </h1>
         <p className="mt-1 text-sm text-gray-500">{subheading}</p>
@@ -149,7 +149,7 @@ function AuthForm({ email,showUsername, userName, password, emailTitle, password
         <button
           type="submit"
           disabled = {buttonDisabled}
-          className="mt-2 rounded-lg bg-linear-to-r from-brand-600 to-accent-600 px-4 py-2 font-semibold text-white shadow-sm shadow-brand-500/30 transition hover:cursor-pointer hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:brightness-100"
+          className="mt-2 rounded-lg bg-brand-600 px-4 py-2 font-semibold text-white shadow-sm transition hover:cursor-pointer hover:bg-brand-700 disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:bg-brand-600"
         >
           {buttonText}
         </button>

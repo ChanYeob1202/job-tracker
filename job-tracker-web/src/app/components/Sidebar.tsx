@@ -79,7 +79,7 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
         }}
         className="flex items-center gap-2.5 px-2 hover:cursor-pointer"
       >
-        <span className="grid h-8 w-8 place-items-center rounded-lg bg-linear-to-br from-brand-600 to-accent-600 text-sm font-bold text-white">
+        <span className="grid h-8 w-8 place-items-center rounded-lg bg-brand-600 text-sm font-bold text-white">
           L
         </span>
         <span className="text-lg font-bold tracking-tight text-gray-900">
@@ -137,7 +137,7 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
           aria-expanded={menuOpen}
           className="flex w-full items-center gap-3 rounded-lg px-2 py-1.5 text-left transition hover:bg-gray-100 hover:cursor-pointer"
         >
-          <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-linear-to-br from-brand-600 to-accent-600 text-sm font-semibold text-white">
+          <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-brand-600 text-sm font-semibold text-white">
             {user?.userName?.charAt(0).toUpperCase() ?? "?"}
           </span>
           <div className="min-w-0 flex-1">

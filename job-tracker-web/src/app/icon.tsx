@@ -7,8 +7,8 @@ export const size = {
 };
 export const contentType = "image/png";
 
-// Landr "L" monogram — matches the nav wordmark gradient
-// (Tailwind from-brand-600 #1466d0 → to-accent-600 #7c3aed).
+// Landr "L" monogram — solid brand blue, matching the nav wordmark
+// and sidebar logo (Tailwind brand-600 #1466d0).
 export default function Icon() {
   return new ImageResponse(
     (
@@ -23,7 +23,7 @@ export default function Icon() {
           fontWeight: 700,
           color: "white",
           borderRadius: 7,
-          background: "linear-gradient(135deg, #1466d0 0%, #7c3aed 100%)",
+          background: "#1466d0",
         }}
       >
         L

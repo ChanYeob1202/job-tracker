@@ -35,40 +35,36 @@ function LandingPage() {
 
   return (
     <div className="flex flex-col">
-      {/* Hero — copy on the left, a static preview of the real board on the right. */}
-      <section className="mx-auto grid w-full max-w-6xl grid-cols-1 items-center gap-12 px-6 py-20 lg:grid-cols-2 lg:gap-8 lg:py-28">
+      {/* Hero — copy on the left, a static preview of the real board on the right.
+         Intentionally asymmetric (5/6 split) and left-aligned so it doesn't read
+         as a mirror-perfect template. One headline color, one primary action. */}
+      <section className="mx-auto grid w-full max-w-6xl grid-cols-1 items-center gap-12 px-6 py-20 lg:grid-cols-[5fr_6fr] lg:gap-14 lg:py-28">
         <div className="text-center lg:text-left">
-          <span className="inline-flex items-center gap-2 rounded-full border border-gray-200 px-3 py-1 text-sm text-gray-500">
-            <FaNetworkWired className="text-gray-400" />
-            Job search tracker
-          </span>
-
-          <h1 className="mt-6 text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl">
-            Every application,{" "}
-            <span className="text-brand-600">in one clear board.</span>
+          <h1 className="text-4xl font-bold leading-[1.05] tracking-tight text-gray-900 sm:text-5xl lg:text-6xl">
+            Every application, in one board.
           </h1>
-          <p className="mt-5 max-w-md text-lg text-gray-600 lg:mx-0 mx-auto">
+          <p className="mt-6 max-w-md text-lg leading-relaxed text-gray-600 lg:mx-0 mx-auto">
             Stop juggling spreadsheets and email threads. Track applications,
             interviews, and offers in one place.
           </p>
 
-          <div className="mt-8 flex flex-wrap justify-center gap-3 lg:justify-start">
+          <div className="mt-8 flex flex-wrap items-center justify-center gap-x-5 gap-y-3 lg:justify-start">
             <button
               type="button"
               onClick={handleDemo}
               disabled={demoLoading}
               className="rounded-lg bg-brand-600 px-5 py-2.5 font-semibold text-white shadow-sm transition hover:cursor-pointer hover:bg-brand-700 disabled:cursor-not-allowed disabled:opacity-60"
             >
-              {demoLoading ? "Loading…" : "Try the live demo"}
+              {demoLoading ? "Loading…" : "Try the live demo →"}
             </button>
             <Link
               href="/signup"
-              className="rounded-lg border border-gray-300 px-5 py-2.5 font-semibold text-gray-700 transition hover:border-gray-400 hover:text-gray-900"
+              className="text-sm font-medium text-gray-500 underline-offset-4 transition hover:text-gray-900 hover:underline"
             >
-              Get started
+              or sign up
             </Link>
           </div>
-          <p className="mt-3 text-sm text-gray-500">
+          <p className="mt-4 text-sm text-gray-400">
             No signup required to explore the demo.
           </p>
           {demoSlow && !demoError && (
@@ -87,9 +83,11 @@ function LandingPage() {
         <BoardPreview />
       </section>
 
-      {/* Features — quiet cards, single accent color, no gradients. */}
+      {/* Features — a plain divided row, not boxed cards. Removing the borders
+         and shadows drops the "3 equal template cards" tell; a thin divider
+         carries the separation instead. */}
       <section className="mx-auto w-full max-w-5xl px-6 pb-24">
-        <div className="grid grid-cols-1 gap-6 sm:grid-cols-3">
+        <div className="grid grid-cols-1 gap-y-8 border-t border-gray-100 pt-10 sm:grid-cols-3 sm:gap-x-0 sm:divide-x sm:divide-gray-100">
           <Feature
             title="One board, every status"
             body="Applied, interviewing, offer, rejected — see where each application stands at a glance."
@@ -181,9 +179,9 @@ function BoardPreview() {
 
 function Feature({ title, body }: { title: string; body: string }) {
   return (
-    <div className="rounded-2xl border border-gray-200 bg-white p-6 transition hover:border-gray-300">
-      <h3 className="text-base font-semibold text-gray-900">{title}</h3>
-      <p className="mt-2 text-sm text-gray-600">{body}</p>
+    <div className="sm:px-8 sm:first:pl-0 sm:last:pr-0">
+      <h3 className="text-sm font-semibold text-gray-900">{title}</h3>
+      <p className="mt-2 text-sm leading-relaxed text-gray-500">{body}</p>
     </div>
   );
 }
