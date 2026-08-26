@@ -14,21 +14,20 @@ import { IoLocation } from "react-icons/io5";
 import { CgNotes } from "react-icons/cg";
 import { LuPanelRight } from "react-icons/lu";
 
-// `hideOnMobile` columns collapse below md — on phones the table shows only
-// the scan-essentials (Company/Role/Status); the rest live in the OPEN panel.
-const TABLE_COLUMNS: readonly { key: string; label: string; icon?: ReactNode; hideOnMobile?: boolean }[] = [
+// Every column shows at every breakpoint — on phones the table keeps its
+// natural width and the wrapper scrolls horizontally instead of dropping
+// columns, so nothing is reachable only through the OPEN panel.
+const TABLE_COLUMNS: readonly { key: string; label: string; icon?: ReactNode }[] = [
   { key: "company", label: "Company", icon: <FaBuilding /> },
   { key: "role", label: "Role", icon: <FaNetworkWired /> },
-  { key: "source", label: "Source", icon: <SiCrowdsource />, hideOnMobile: true },
-  { key: "status", label: "Status", icon: <IoIosArrowDropdown />, hideOnMobile: true },
-  { key: "applied_at", label: "Applied Date", icon: <FaRegCalendar />, hideOnMobile: true },
-  { key: "website", label: "Website", icon: <FaEarthEurope />, hideOnMobile: true },
-  { key: "salary", label: "Salary", icon: <FaMagnifyingGlassDollar />, hideOnMobile: true },
-  { key: "location", label: "Location", icon: <IoLocation />, hideOnMobile: true },
-  // { key: "notes", label: "Notes", icon: <CgNotes />, hideOnMobile: true },
+  { key: "source", label: "Source", icon: <SiCrowdsource /> },
+  { key: "status", label: "Status", icon: <IoIosArrowDropdown /> },
+  { key: "applied_at", label: "Applied Date", icon: <FaRegCalendar /> },
+  { key: "website", label: "Website", icon: <FaEarthEurope /> },
+  { key: "salary", label: "Salary", icon: <FaMagnifyingGlassDollar /> },
+  { key: "location", label: "Location", icon: <IoLocation /> },
+  // { key: "notes", label: "Notes", icon: <CgNotes /> },
 ];
-
-const hideOnMobileClass = "hidden md:table-cell";
 
 const STATUS_STYLE: Record<string, string> = {
   "applied": "bg-sky-50 text-sky-700 ring-1 ring-sky-200",
@@ -128,11 +127,11 @@ function JobTable({ rows, jobLoadingStatus, setRows, setEditorJob }: JobTablePro
 
   return (
     <div className="mt-2 overflow-x-auto rounded-xl border border-gray-100 bg-white shadow-sm">
-      <table className="w-full min-w-full md:min-w-max table-auto border-collapse">
+      <table className="w-full min-w-max table-auto border-collapse">
         <thead>
           <tr className="bg-gray-50/70">
-            {TABLE_COLUMNS.map(({ key, label, icon, hideOnMobile }) => (
-              <th key={key} className={`${thClass} ${hideOnMobile ? hideOnMobileClass : ""}`}>
+            {TABLE_COLUMNS.map(({ key, label, icon }) => (
+              <th key={key} className={thClass}>
                 <span className="inline-flex items-center gap-1.5 text-gray-400">
                   {icon}
                   {label}
@@ -179,7 +178,7 @@ function JobTable({ rows, jobLoadingStatus, setRows, setEditorJob }: JobTablePro
                     onSave={(v) => updateField(row.id, "role", v)}
                   />
                 </td>
-                <td className={`${tdClass} ${hideOnMobileClass}`}>
+                <td className={tdClass}>
                   <EditableCell
                     value={row.source}
                     display={
@@ -194,7 +193,7 @@ function JobTable({ rows, jobLoadingStatus, setRows, setEditorJob }: JobTablePro
                     onSave={(v) => updateField(row.id, "source", v)}
                   />
                 </td>
-                <td className={`${tdClass} ${hideOnMobileClass}`}>
+                <td className={tdClass}>
                   <EditableCell
                     value={row.status}
                     display={
@@ -207,7 +206,7 @@ function JobTable({ rows, jobLoadingStatus, setRows, setEditorJob }: JobTablePro
                     onSave={(v) => updateField(row.id, "status", v)}
                   />
                 </td>
-                <td className={`${tdClass} ${hideOnMobileClass}`}>
+                <td className={tdClass}>
                   <EditableCell
                     value={row.applied_at ? row.applied_at.slice(0, 10) : ""}
                     type="date"
@@ -219,7 +218,7 @@ function JobTable({ rows, jobLoadingStatus, setRows, setEditorJob }: JobTablePro
                     onSave={(v) => updateField(row.id, "applied_at", v)}
                   />
                 </td>
-                <td className={`${tdClass} ${hideOnMobileClass}`}>
+                <td className={tdClass}>
                   <EditableCell
                     value={row.website ?? ""}
                     type="url"
@@ -227,7 +226,7 @@ function JobTable({ rows, jobLoadingStatus, setRows, setEditorJob }: JobTablePro
                     onSave={(v) => updateField(row.id, "website", v)}
                   />
                 </td>
-                <td className={`${tdClass} ${hideOnMobileClass}`}>
+                <td className={tdClass}>
                   <EditableCell
                     value={row.salary ?? ""}
                     type="text"
@@ -239,7 +238,7 @@ function JobTable({ rows, jobLoadingStatus, setRows, setEditorJob }: JobTablePro
                     onSave={(v) => updateField(row.id, "salary", v)}
                   />
                 </td>
-                <td className={`${tdClass} ${hideOnMobileClass}`}>
+                <td className={tdClass}>
                   <EditableCell
                     value={row.location ?? ""}
                     display={row.location ?? <span className="text-gray-300">—</span>}
