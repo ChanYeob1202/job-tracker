@@ -32,8 +32,11 @@ function JobsBoard({ initialRows, jobLoadingStatus, setRows, editorJob, setEdito
     , [initialRows, searchTerm])
 
   const filteredRows = useMemo(
-    () =>
-      searchedRows.filter((job) => job.status === selectedStatus),
+    () =>{
+      if(selectedStatus === "all") return searchedRows;
+
+      return searchedRows.filter((job) => job.status === selectedStatus)
+    },
     [searchedRows, selectedStatus]
   );
 
