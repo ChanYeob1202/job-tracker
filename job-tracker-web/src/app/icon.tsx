@@ -12,6 +12,8 @@ export const contentType = "image/png";
 export default function Icon() {
   return new ImageResponse(
     (
+      // Transparent 32x32 canvas; the solid square is inset so it reads
+      // smaller in the tab, sharp-cornered, with a big bold "L".
       <div
         style={{
           width: "100%",
@@ -19,14 +21,27 @@ export default function Icon() {
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
-          fontSize: 22,
-          fontWeight: 700,
-          color: "white",
-          borderRadius: 7,
-          background: "#1466d0",
+          background: "transparent",
         }}
       >
-        L
+        <div
+          style={{
+            width: 26,
+            height: 26,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            borderRadius: 0,
+            background: "#1466d0",
+          }}
+        >
+          {/* "L" drawn as a filled shape, not a font glyph — so thickness is
+             ours to control. Stem width = 26px, foot height = 24px in a 100
+             viewBox. Make those numbers bigger to make the L fatter. */}
+          <svg width="18" height="18" viewBox="0 0 100 100">
+            <path d="M28 14 H54 V60 H86 V84 H28 Z" fill="white" />
+          </svg>
+        </div>
       </div>
     ),
     {
