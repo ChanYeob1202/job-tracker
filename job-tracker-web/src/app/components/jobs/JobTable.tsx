@@ -29,12 +29,20 @@ const TABLE_COLUMNS: readonly { key: string; label: string; icon?: ReactNode }[]
   // { key: "notes", label: "Notes", icon: <CgNotes /> },
 ];
 
+// "no respond" is deliberately the quietest pill — a ghosted application is a
+// non-event, so it reads as muted slate instead of competing with the outcomes
+// (offer / rejected) for attention.
 const STATUS_STYLE: Record<string, string> = {
   "applied": "bg-sky-50 text-sky-700 ring-1 ring-sky-200",
   "interview": "bg-amber-50 text-amber-700 ring-1 ring-amber-200",
   "offer": "bg-emerald-50 text-emerald-700 ring-1 ring-emerald-200",
   "rejected": "bg-rose-50 text-rose-600 ring-1 ring-rose-200",
+  "no respond": "bg-slate-50 text-slate-500 ring-1 ring-slate-200",
 };
+
+// Statuses that exist in the DB but not in the map above (e.g. "interview 1")
+// would otherwise render a pill with no classes at all.
+const STATUS_NEUTRAL = "bg-gray-100 text-gray-600 ring-1 ring-gray-200";
 
 // Known job-source brands → a pill hue echoing their brand color, so rows are
 // scannable by where you applied. The raw source is normalized to letters+digits
@@ -197,7 +205,7 @@ function JobTable({ rows, jobLoadingStatus, setRows, setEditorJob }: JobTablePro
                   <EditableCell
                     value={row.status}
                     display={
-                      <span className={`inline-flex items-center rounded-md px-2 py-0.5 text-xs font-medium ${STATUS_STYLE[row.status]}`}>
+                      <span className={`inline-flex items-center rounded-md px-2 py-0.5 text-xs font-medium ${STATUS_STYLE[row.status] ?? STATUS_NEUTRAL}`}>
                         {row.status}
                       </span>
                     }

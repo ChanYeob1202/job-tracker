@@ -2,7 +2,8 @@ export type JobStatus =
   | "applied"
   | "interview"
   | "offer"
-  | "rejected";
+  | "rejected"
+  | "no respond"
 
 
 
@@ -12,6 +13,7 @@ export const JOB_STATUS_OPTIONS: readonly JobStatus[] = [
   "interview",
   "offer",
   "rejected",
+  "no respond"
 ];
 
 export type StatusFilterValue = JobStatus | "all";
