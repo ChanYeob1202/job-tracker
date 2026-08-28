@@ -9,9 +9,7 @@ import EditableCell from "./EditableCell";
 import { FaBuilding, FaNetworkWired, FaRegCalendar, FaEarthEurope, FaMagnifyingGlassDollar } from "react-icons/fa6";
 import { SiCrowdsource } from "react-icons/si";
 import { IoIosArrowDropdown } from "react-icons/io";
-import { CiStar } from "react-icons/ci";
 import { IoLocation } from "react-icons/io5";
-import { CgNotes } from "react-icons/cg";
 import { LuPanelRight } from "react-icons/lu";
 
 // Every column shows at every breakpoint — on phones the table keeps its

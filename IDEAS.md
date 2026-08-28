@@ -8,6 +8,25 @@
 
 ## Features
 
+### ▶ 확정 로드맵 (2026-08-27 결정) — Adzuna 대신 "코어를 깊게"
+Adzuna search는 보류(아래 참고). 대신 트래커 코어 루프를 깊게 만드는 3개를 순서대로 착수.
+
+- `[next]` **① Follow-up / "액션 필요" 큐** ⭐1순위 — 대시보드 상단에 "N일 무응답 → follow up 할 때" 항목을 띄워 수동 기록장을 능동 어시스턴트로.
+  - 재사용: 이미 있는 `applied_at`만으로 파생 상태 계산(API 변경 최소).
+  - 결정 포인트(착수 전 먼저 정할 것): **"follow up 필요"의 정의** — 며칠 무응답부터? 어떤 `status`일 때만(applied/interview만? rejected/offer 제외)?, "이번 주 지원"은 제외할지.
+  - 확장: 이메일 리마인더(스케줄드 잡). 인터뷰 가치 = derived state + 날짜 경계 처리.
+  - 학습 분담: 정의/날짜 로직은 유저 직접, Claude는 접근법 + 리뷰.
+
+- `[next]` **② Kanban 보드 뷰** 2순위 — applied → interview → offer 컬럼 간 드래그로 상태 변경. 비주얼 임팩트(데모/스크린샷)용.
+  - 재사용: 기존 `status` 필드. 드롭 시 PATCH `/jobs/:id`.
+  - 결정 포인트: **optimistic vs pessimistic** — 카드 먼저 옮기고 실패 시 롤백 vs 서버 응답 후 이동. (favorite 건과 동일한 학습 포인트.)
+
+- `[next]` **③ Funnel 분석** 3순위 — 기존 Statsbar 심화의 확장. 단순 카운트 → 전환율(applied→interview→offer %), source별(LinkedIn vs Referral) 응답률 비교.
+  - "data dump 말고 product" 목표에 직결. 결정 포인트: 분모 정의, 0 division 경계, 기간 범위.
+  - web/CLAUDE.md `next move`의 response rate/this week 항목과 합쳐서 진행.
+
+---
+
 - `[raw]` **Badge / ranking으로 지원 독려** — 계속 지원하도록 동기부여하는 게이미피케이션.
   - 방향 후보: streak(연속 지원일), 주간 지원 수 목표, 마일스톤 뱃지(첫 지원/10개/첫 인터뷰/첫 오퍼), response rate 기반 등급.
   - 데이터는 대부분 이미 있음(`applied_at`, `status`). Statsbar와 연결 가능.
@@ -18,7 +37,7 @@
   - 주의: PATCH 핸들러엔 POST와 달리 `fields[k] !== ""` 필터가 없음 → FE에서 문자열 `"true"` 말고 실제 boolean 보낼 것.
   - 결정 포인트: **optimistic vs pessimistic UI** — 별을 먼저 칠하고 실패 시 롤백(즉각적, 롤백 코드 필요) vs 서버 응답 후 칠하기(단순, 느리게 느껴짐). 유저가 직접 구현 예정, Claude는 리뷰.
 
-- `[next]` **Adzuna job search 연동** — 외부 job aggregator API로 여러 사이트 잡을 앱 안에서 검색 → 저장.
+- `[deferred]` **Adzuna job search 연동** — 2026-08-27 보류. 이유: 트래커의 코어(지원 관리)와 논리가 어긋남(검색은 LinkedIn/Indeed 영역), 인터뷰 가치 얕음(외부 REST 호출), 유지보수 부채. "발견" 문제는 리스팅 import가 아니라 원클릭 캡처(북마클릿/확장)가 올바른 해법 → 그것도 백로그. 외부 job aggregator API로 여러 사이트 잡을 앱 안에서 검색 → 저장.
   - 타겟 = **미국/해외(영어권) 잡**. Adzuna는 한국 미지원(국가코드 `kr` 없음)이라 한국 잡용 아님. US/UK/CA 등은 커버리지·품질 충분(71k+ 회사, 월 ~178k 신규).
   - 구조: 프론트 검색창 → `GET /search` (Express 프록시) → `services/adzuna.ts`가 Adzuna 호출 + 응답을 Jobs 스키마로 매핑 → 결과 표시 → "저장" 시 기존 Jobs insert(`source="adzuna"`).
   - 키는 백엔드 전용(`ADZUNA_APP_ID`/`ADZUNA_APP_KEY`, `NEXT_PUBLIC_*` 금지). 매핑: `company.display_name→company`, `title→role`, `redirect_url→website`, `location.display_name→location`, `salary_min→salary`, `created→applied_at`.
