@@ -5,8 +5,6 @@ import { usePathname, useRouter } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
 import {
   LuLayoutDashboard,
-  LuSearch,
-  LuBookmark,
   LuSettings,
   LuLogOut,
   LuChevronsUpDown,
@@ -23,8 +21,6 @@ type NavItem = {
 
 const NAV_ITEMS: NavItem[] = [
   { label: "Dashboard", href: "/", icon: LuLayoutDashboard, ready: true },
-  { label: "Job Search", href: "/search", icon: LuSearch },
-  { label: "Saved Jobs", href: "/saved", icon: LuBookmark },
   { label: "Settings", href: "/settings", icon: LuSettings },
 ];
 

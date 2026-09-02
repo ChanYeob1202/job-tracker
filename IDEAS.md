@@ -18,7 +18,7 @@
   - 주의: PATCH 핸들러엔 POST와 달리 `fields[k] !== ""` 필터가 없음 → FE에서 문자열 `"true"` 말고 실제 boolean 보낼 것.
   - 결정 포인트: **optimistic vs pessimistic UI** — 별을 먼저 칠하고 실패 시 롤백(즉각적, 롤백 코드 필요) vs 서버 응답 후 칠하기(단순, 느리게 느껴짐). 유저가 직접 구현 예정, Claude는 리뷰.
 
-- `[next]` **Adzuna job search 연동** — 외부 job aggregator API로 여러 사이트 잡을 앱 안에서 검색 → 저장.
+- `[deferred]` **Adzuna job search 연동** — 2026-09-02 보류 확정. 트래커 코어(지원 관리)와 논리 어긋남 + 인터뷰 가치 얕음. 사이드바에서 "Job Search"·"Saved Jobs" 메뉴 제거함(Dashboard + Settings만 남김). 발견 문제는 리스팅 import가 아니라 원클릭 캡처가 올바른 해법 → 백로그. 외부 job aggregator API로 여러 사이트 잡을 앱 안에서 검색 → 저장.
   - 타겟 = **미국/해외(영어권) 잡**. Adzuna는 한국 미지원(국가코드 `kr` 없음)이라 한국 잡용 아님. US/UK/CA 등은 커버리지·품질 충분(71k+ 회사, 월 ~178k 신규).
   - 구조: 프론트 검색창 → `GET /search` (Express 프록시) → `services/adzuna.ts`가 Adzuna 호출 + 응답을 Jobs 스키마로 매핑 → 결과 표시 → "저장" 시 기존 Jobs insert(`source="adzuna"`).
   - 키는 백엔드 전용(`ADZUNA_APP_ID`/`ADZUNA_APP_KEY`, `NEXT_PUBLIC_*` 금지). 매핑: `company.display_name→company`, `title→role`, `redirect_url→website`, `location.display_name→location`, `salary_min→salary`, `created→applied_at`.
@@ -38,6 +38,8 @@
   - 고려: 일부 사이트 로그인/JS 렌더링 필요(LinkedIn 등) → fetch 실패 케이스 처리. 추출 스키마는 Jobs 필드에 맞춤.
 
 ## UX
+
+- `[decided]` **단일 Dashboard IA** (2026-09-02) — stats/list를 별도 페이지로 나누지 않음. Dashboard 한 페이지에 위계로: `Statsbar → Follow-up 큐 → ActionBar+JobTable`. 이유: 같은 데이터·맥락, 스탯카드→리스트 필터 인터랙션이 co-location 필요, 얇은 페이지 2개보다 응집된 1개. 두 번째 페이지는 "같은 리스트의 다른 뷰"(Kanban) 생길 때만 정당.
 
 - `[deferred]` **Signup email-blur check** — 회원가입 시 email 입력 blur에서 async "이미 사용 중" 체크. `GET /auth/check-email` 필요. (post-MVP)
 
