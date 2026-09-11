@@ -1,6 +1,6 @@
 -- Snapshot of the live Neon schema. Not executable history —
 -- see migrations/ for the change log. Update this file after applying a migration.
--- Last verified against Neon: 2026-09-11 (through migration 004)
+-- Last verified against Neon: 2026-09-12 (through migration 005)
 
 -- 1. users table (Auth)
 CREATE TABLE "users" (
@@ -13,8 +13,8 @@ CREATE TABLE "users" (
 );
 
 -- applied_at is DATE, not a timestamp: it comes from an <input type="date">,
--- so there is no time-of-day to store. The other three are real instants
--- produced by now(), so they stay TIMESTAMPTZ. See migrations 003 and 004.
+-- so there is no time-of-day to store. The other four are real instants
+-- produced by now(), so they stay TIMESTAMPTZ. See migrations 003, 004 and 005.
 CREATE TABLE "Jobs" (
     id                UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     company           TEXT NOT NULL,
@@ -31,6 +31,8 @@ CREATE TABLE "Jobs" (
     salary            TEXT,
     is_favorite       BOOLEAN NOT NULL DEFAULT false,
     status_changed_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+    last_followed_up_at   TIMESTAMPTZ NULL, 
+
     CONSTRAINT "Jobs_user_id_fkey" FOREIGN KEY (user_id)
         REFERENCES public.users (id) ON DELETE CASCADE
 );

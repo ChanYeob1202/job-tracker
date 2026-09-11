@@ -1,0 +1,1 @@
+ALTER TABLE "Jobs" ADD COLUMN last_followed_up_at TIMESTAMPTZ NULL;
