@@ -9,9 +9,7 @@ import EditableCell from "./EditableCell";
 import { FaBuilding, FaNetworkWired, FaRegCalendar, FaEarthEurope, FaMagnifyingGlassDollar } from "react-icons/fa6";
 import { SiCrowdsource } from "react-icons/si";
 import { IoIosArrowDropdown } from "react-icons/io";
-import { CiStar } from "react-icons/ci";
 import { IoLocation } from "react-icons/io5";
-import { CgNotes } from "react-icons/cg";
 import { LuPanelRight } from "react-icons/lu";
 
 // Every column shows at every breakpoint — on phones the table keeps its
@@ -74,20 +72,40 @@ function sourceStyle(raw: string): string {
 }
 
 
+// iso is a plain "YYYY-MM-DD" (Postgres DATE, no time-of-day, no timezone).
+// Formats it straight from the string — no Date object, so no timezone can
+// shift the day. Never feed a date-only string to `new Date()` for display:
+// JS parses it as UTC midnight, which local-shifts to the previous day west
+// of UTC (this is the exact bug 004_applied_at_to_date.sql was written to fix).
+function formatAppliedDate(iso: string): string {
+  const [year, month, day] = iso.split("-");
+  return `${Number(month)}/${Number(day)}/${year}`;
+}
+
+// How many days ago `iso` ("YYYY-MM-DD") was, counting from right now.
+// `new Date(iso)` always lands on UTC midnight of that date — that's just a
+// millisecond count, same number no matter what machine runs this code — so
+// subtracting Date.now() (also a plain millisecond count) from it is safe.
+// No timezone conversion happens here at all; that only happens if you call
+// something like .toLocaleDateString(), which we deliberately don't.
+function daysSince(iso: string): number {
+  const appliedMs = new Date(iso).getTime();
+  const nowMs = Date.now();
+  return (nowMs - appliedMs) / 86_400_000;
+}
+
 function AppliedDate({ iso }: { iso: string }) {
-  const [now] = useState(() => Date.now());
-  const d = new Date(iso);
-  const days = (now - d.getTime()) / 86_400_000;
-  const recent = days <= 7;
+  const recent = daysSince(iso) <= 7;
   return (
     <span className={recent ? "text-gray-700" : "text-gray-400"}>
       {recent && (
         <span className="mr-1.5 inline-block h-1.5 w-1.5 rounded-full bg-brand-500 align-middle" />
       )}
-      {d.toLocaleDateString()}
+      {formatAppliedDate(iso)}
     </span>
   );
 }
+
 
 type JobTableProps = {
   rows: Job[];
