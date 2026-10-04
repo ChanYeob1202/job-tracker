@@ -2,6 +2,7 @@
 import { useMemo, useState, Dispatch, SetStateAction } from "react";
 import type { Job } from "@/types/job";
 import Statsbar from "./Statsbar";
+import FollowUp from "./FollowUp";
 import JobTable from "./JobTable";
 import ActionBar from "./ActionBar";
 
@@ -25,9 +26,8 @@ function JobsBoard({ initialRows, jobLoadingStatus, setRows, editorJob, setEdito
         const matchesNames = row.company.trim().toLowerCase().includes(cleanSearch);
         const matchesRole = row.role?.trim().toLowerCase().includes(cleanSearch)
         const matchesNotes = row.notes?.trim().toLowerCase().includes(cleanSearch);
-
         return matchesNames || matchesRole || matchesNotes
-      })
+      });
     }
     , [initialRows, searchTerm])
 
@@ -45,6 +45,14 @@ function JobsBoard({ initialRows, jobLoadingStatus, setRows, editorJob, setEdito
       <Statsbar
         apps={initialRows}
       />
+
+      {/* TODO: create & import follow-up component  */}
+      <FollowUp 
+        jobLoadingStatus = {jobLoadingStatus}
+        initialRows = {initialRows}
+        setEditorJob ={setEditorJob} 
+      />
+
       <ActionBar
         setSearchTerm={setSearchTerm}
         searchTerm={searchTerm}
