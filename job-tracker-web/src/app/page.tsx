@@ -10,6 +10,7 @@ import LandingPage from "./components/landing/LandingPage";
 import JobEditPanel from "./components/jobs/JobEditPanel";
 
 export default function Page() {
+
   const [rows, setRows] = useState<Job[] | null>(null)
   const { user, isLoading: authLoading } = useAuth();
   const [editorJob, setEditorJob] = useState<Job | "new" | null>(null);
@@ -19,13 +20,13 @@ export default function Page() {
   const loadJobs = async () => {
     const res = await apiFetch(`/jobs`, { cache: "no-store" });
     if (res?.ok) {
-      const data = await res.json();  
+      const data = await res.json();
       setRows(data.rows ?? []);
     } else {
       setRows([]);
     }
-  }       
-      
+  }
+
   // called after a save: close the panel, then re-fetch so the new job appears
   const handleSaved = () => {
     setEditorJob(null);
@@ -38,12 +39,10 @@ export default function Page() {
     (async () => { await loadJobs(); })();
   }, [user, authLoading]);
 
-
   if (authLoading) return <Spinner size="lg" label="loading" />
   if (!user) return <LandingPage />
 
   const today = new Date().toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" });
-
 
   return (
     <div className="">
@@ -75,7 +74,6 @@ export default function Page() {
             jobLoadingStatus={isLoadingJobs}
             editorJob={editorJob}
             setEditorJob={setEditorJob}
-
           />
         </div>
       </div>

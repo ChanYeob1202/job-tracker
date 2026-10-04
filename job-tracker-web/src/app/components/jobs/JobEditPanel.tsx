@@ -8,27 +8,8 @@ import { AiOutlineArrowsAlt } from "react-icons/ai";
 import JobForm from "./JobForm";
 import { JOB_STATUS_OPTIONS } from "@/types/job";
 
-
-
 import { Job } from "@/types/job";
 
-/* 
-*  WHAT: inline job editor, editing and creating jobs
-
-* What data should have 
-    *  INPUT: data type JOB 
-    * OUTPUT: storing into DB 
-    * onClose() : 
-    *   => 1. esc 2. clicking outside of panel 3. clicking >> button. 
-
-one source of truth : one state will handle
-creating, editing, and closed by "editorJob"
----- rendering depends on state ---
-* how to implement conditional rendering
-*  
-* 
-* 
-*/
 
 type JobEditPanelProps = {
   editorJob: Job | "new" | null
@@ -91,35 +72,18 @@ function JobEditPanel({ editorJob, setEditorJob, onSuccess }: JobEditPanelProps)
             <MdOutlineKeyboardDoubleArrowRight />
           </button>
           <Link
-            href={initialJob ? `/jobs/${initialJob.id}/edit` : "/jobs/new" }
+            href={initialJob ? `/jobs/${initialJob.id}/edit` : "/jobs/new"}
             className="hover:cursor-pointer text-xl">
             <AiOutlineArrowsAlt />
           </Link>
 
         </div>
-
-
-        {/* <form 
-          className = "mt-10 ml-10"
-          onKeyDown = {(event: React.KeyboardEvent<HTMLFormElement>) => {
-            if (event.key === "Escape") {
-              event.stopPropagation();      // don't close the panel on this ESC
-              panelRef.current?.focus();    // move focus to the panel, so the NEXT ESC closes it
-            }
-          }}
-          >
-          <input
-            className = "focus:outline-none"
-            placeholder="New Application"
-          />
-
-        </form> */}
         <JobForm
           statusOptions={JOB_STATUS_OPTIONS}
-          initialJob={ initialJob }
-          onSuccess= { onSuccess }
-          onCancel = { onCancel }
-          />
+          initialJob={initialJob}
+          onSuccess={onSuccess}
+          onCancel={onCancel}
+        />
       </motion.div>
     </>
 

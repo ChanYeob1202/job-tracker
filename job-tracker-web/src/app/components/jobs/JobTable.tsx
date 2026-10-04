@@ -106,7 +106,6 @@ function AppliedDate({ iso }: { iso: string }) {
   );
 }
 
-
 type JobTableProps = {
   rows: Job[];
   setRows: Dispatch<SetStateAction<Job[] | null>>;

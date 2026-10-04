@@ -107,7 +107,7 @@ function JobForm({ statusOptions, initialJob, onCancel, onSuccess }: FormType) {
               salary,
               location,
               notes,
-            }),
+            })
           });
           if (res?.ok) {
             onSuccess();

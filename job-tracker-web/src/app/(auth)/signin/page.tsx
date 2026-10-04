@@ -16,7 +16,7 @@ function Page() {
   const { user, isLoading, login } = useAuth();
   const [formData, setFormData] = useState<SignInForm>({
     email: "",
-    password: ""
+    password: ""  
   })
   const [ isSubmitting, setIsSubmitting ] = useState(false);
 
@@ -67,7 +67,6 @@ function Page() {
     } finally {
       setIsSubmitting(false);
     }
-
   };
 
   return (
