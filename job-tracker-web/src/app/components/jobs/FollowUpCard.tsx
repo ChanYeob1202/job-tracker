@@ -1,10 +1,12 @@
 "use client"
-import { useState, Dispatch, SetStateAction } from "react"
+import { useState,useRef, useEffect,  Dispatch, SetStateAction } from "react"
 import type { Job } from "@/types/job"
 import { FaRegPaperPlane } from "react-icons/fa";
 import { FaRegCalendarAlt } from "react-icons/fa";
 import { HiOutlineDotsHorizontal } from "react-icons/hi";
+import { LuPanelRight, LuTrash2 } from "react-icons/lu";
 import { followUpInfo, formatDueDate } from "@/lib/followUp";
+import { option } from "framer-motion/client";
 
 type FollowUpCardProps = {
   row: Job
@@ -15,20 +17,29 @@ type FollowUpCardProps = {
 
 function FollowUpCard({ row, info, setEditorJob }: FollowUpCardProps) {
   const [settingOpen, setSettingOpen] = useState(false);
+  const optionRef = useRef<HTMLUListElement>(null); 
+
+  useEffect(()=> {
+    optionRef.current?.focus();
+  })
   
   const settingOptions = [
-   { 
-    label: "Mark as followed up",
-    event: () => {console.log("followed up button clicked")}
-   },
+  //  { 
+  //   label: "Mark as followed up",
+  //   event: () => {console.log("followed up button clicked")}
+  //  },
+  {
+    label: "Open job",
+    icon: LuPanelRight,
+    textColor: "hover:text-blue-400",
+    event: () => {setEditorJob(row)},
+  },
    {
-     label: "Update status",
+     label: "Delete",
+     icon: LuTrash2,
+     textColor: "hover:text-red-400",
      event: () => {}
    },
-   {
-     label: "Open job",
-     event: () => {setEditorJob(row)},
-   }
   ]
   return (
     <div className="flex flex-col gap-2 bg-white rounded-xl m-2 p-4">
@@ -36,21 +47,25 @@ function FollowUpCard({ row, info, setEditorJob }: FollowUpCardProps) {
         <p className="text-sm font-semibold">{info.company}</p>
         <div className="relative">
           <HiOutlineDotsHorizontal
-            className="hover:cursor-pointer"
+            className="hover:cursor-pointer z-30"
             onClick={() => { setSettingOpen((prev => !prev)) }}
           />
           {/* options */}
           {settingOpen ?
           // TODO: esc or click outside to setSettingOpen = false;
             (
-              <ul className="absolute right-0 top-full z-10  w-max rounded-lg  bg-white px-2 py-1 border border-gray-200">
+              <ul
+                className="absolute right-0 top-full z-10  w-max rounded-lg  bg-white px-2 py-1 border border-gray-200"
+                ref = {optionRef}
+                >
                 {settingOptions.map((opt, idx) => (
                   <li 
-                    key={idx}
-                    onClick = {opt.event}
-                    className = "m-1 text-xs transition-all duration-200 hover:cursor-pointer hover:font-semibold hover:text-blue-400"
-                    >
-                    {opt.label}
+                  key={idx}
+                  onClick = {opt.event}
+                  className = {`m-1 flex items-center gap-1.5 text-xs transition-all duration-200 hover:cursor-pointer hover:font-semibold ${opt.textColor}`}
+                  >
+                  <opt.icon className="text-sm" />
+                  {opt.label}
                   </li>
                 ))}
               </ul>
