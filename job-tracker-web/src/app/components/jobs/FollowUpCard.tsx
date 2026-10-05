@@ -1,71 +1,102 @@
 "use client"
-import { useState,useRef, useEffect,  Dispatch, SetStateAction } from "react"
+import { useState, useRef, useEffect, Dispatch, SetStateAction } from "react"
 import type { Job } from "@/types/job"
 import { FaRegPaperPlane } from "react-icons/fa";
 import { FaRegCalendarAlt } from "react-icons/fa";
 import { HiOutlineDotsHorizontal } from "react-icons/hi";
 import { LuPanelRight, LuTrash2 } from "react-icons/lu";
 import { followUpInfo, formatDueDate } from "@/lib/followUp";
-import { option } from "framer-motion/client";
+import { apiFetch } from "@/lib/api";
 
 type FollowUpCardProps = {
   row: Job
   info: ReturnType<typeof followUpInfo>
   setEditorJob: Dispatch<SetStateAction<Job | "new" | null>>;
+  setViewOpen: Dispatch<SetStateAction<boolean>>;
+  id: number;
 }
 
-
-function FollowUpCard({ row, info, setEditorJob }: FollowUpCardProps) {
+function FollowUpCard({ row, info, setEditorJob, setViewOpen, id }: FollowUpCardProps) {
   const [settingOpen, setSettingOpen] = useState(false);
-  const optionRef = useRef<HTMLUListElement>(null); 
+  const optionRef = useRef<HTMLDivElement>(null);
 
-  useEffect(()=> {
-    optionRef.current?.focus();
-  })
-  
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (optionRef && !optionRef.current?.contains(event.target as Node)) {
+        setSettingOpen(false);
+      }
+    }
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (optionRef && event.key === "Escape") {
+        setSettingOpen(false);
+      }
+    }
+    //listen for clicks on the entire page
+    document.addEventListener("mousedown", handleClickOutside);
+    document.addEventListener("keydown", handleKeyDown);
+
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside)
+      document.removeEventListener("keydown", handleKeyDown)
+    }
+  }, [])
+
+
+  const handleDelete = (id: string) => {
+    return apiFetch(`/jobs/${id}`, {
+      method: "Delete"
+    });
+  }
+
   const settingOptions = [
-  //  { 
-  //   label: "Mark as followed up",
-  //   event: () => {console.log("followed up button clicked")}
-  //  },
-  {
-    label: "Open job",
-    icon: LuPanelRight,
-    textColor: "hover:text-blue-400",
-    event: () => {setEditorJob(row)},
-  },
-   {
-     label: "Delete",
-     icon: LuTrash2,
-     textColor: "hover:text-red-400",
-     event: () => {}
-   },
+    {
+      label: "Open job",
+      icon: LuPanelRight,
+      textColor: "hover:text-blue-400",
+
+      event: () => {
+        setEditorJob(row)
+        setSettingOpen(false);
+      },
+    },
+    {
+      label: "Delete",
+      icon: LuTrash2,
+      textColor: "hover:text-red-400",
+      event: () => {
+        setSettingOpen(false)
+      }
+    },
   ]
+
   return (
-    <div className="flex flex-col gap-2 bg-white rounded-xl m-2 p-4">
+    <div className="flex flex-col gap-2 bg-white rounded-xl m-2 p-4 z-0">
       <div className="flex items-center justify-between">
         <p className="text-sm font-semibold">{info.company}</p>
-        <div className="relative">
+        <div
+          className="relative"
+          ref={optionRef}
+        >
           <HiOutlineDotsHorizontal
             className="hover:cursor-pointer z-30"
             onClick={() => { setSettingOpen((prev => !prev)) }}
           />
           {/* options */}
           {settingOpen ?
-          // TODO: esc or click outside to setSettingOpen = false;
+            // TODO: esc or click outside to setSettingOpen = false;
             (
               <ul
                 className="absolute right-0 top-full z-10  w-max rounded-lg  bg-white px-2 py-1 border border-gray-200"
-                ref = {optionRef}
-                >
+              >
                 {settingOptions.map((opt, idx) => (
-                  <li 
-                  key={idx}
-                  onClick = {opt.event}
-                  className = {`m-1 flex items-center gap-1.5 text-xs transition-all duration-200 hover:cursor-pointer hover:font-semibold ${opt.textColor}`}
+                  <li
+                    key={idx}
+                    onClick={opt.event}
+                    className={`m-1 flex items-center gap-1.5 text-xs transition-all duration-200 hover:cursor-pointer hover:font-semibold ${opt.textColor}`}
                   >
-                  <opt.icon className="text-sm" />
-                  {opt.label}
+                    <opt.icon className="text-sm" />
+                    {opt.label}
                   </li>
                 ))}
               </ul>

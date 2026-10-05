@@ -58,7 +58,7 @@ function FollowUp({ initialRows, jobLoadingStatus, setEditorJob }: FollowUpProps
       {/* card section: first 4 always visible */}
       <div className="mt-4 grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-4">
         {quickQueue.map((queue) => (
-          <FollowUpCard key={queue.row.id} row={queue.row} info={queue.info}  setEditorJob={setEditorJob}/>
+          <FollowUpCard key={queue.row.id} id = {queue.row.id} row={queue.row} info={queue.info}  setEditorJob={setEditorJob} setViewOpen={setViewOpen}/>
         ))}
       </div>
 
@@ -68,7 +68,7 @@ function FollowUp({ initialRows, jobLoadingStatus, setEditorJob }: FollowUpProps
         <div className="overflow-hidden">
           <div className="grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-4">
             {restQueue.map((queue) => (
-              <FollowUpCard key={queue.row.id} row={queue.row} info={queue.info} setEditorJob = {setEditorJob} />
+              <FollowUpCard key={queue.row.id} id={queue.row.id} row={queue.row} info={queue.info} setEditorJob = {setEditorJob} setViewOpen = {setViewOpen}/>
             ))}
           </div>
         </div>
