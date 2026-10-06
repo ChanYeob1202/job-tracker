@@ -38,6 +38,10 @@
   - ④ `[raw]` **오래된 overdue 정리 프롬프트** (2026-10-06) — overdue가 오래된 카드(예: 30일+)는 빨간 경고를 계속 띄우는 대신 행동 유도: "Mark as followed up / Stop tracking" 버튼. (overdue 문구 자체는 이미 "Still waiting? · N days ago")
     - 이유: 몇 달 지난 overdue가 쌓이면 큐가 경고판이 되고 무시됨(alarm fatigue). 구직자 불안 자극 X.
     - 구현: `followUpInfo`의 overdue 분기에서 임계값 넘으면 별도 상태(`"stale"` 등) 추가. Stop tracking(스키마 필요)과 묶어서 진행.
+  - ⑤ `[raw]` **Follow-up 큐 섹션 숨기기 버튼** (2026-10-06) — 대시보드의 Follow-up 카드 영역 자체를 접기/숨기기. 팔로업 기능을 안 쓰거나 잠깐 치워두고 싶은 유저용.
+    - 개별 job의 Stop tracking(`follow_up_disabled`)과는 별개: 이건 job 데이터는 그대로 두고 **섹션 표시 여부만** 바꾸는 UI 설정.
+    - 저장 위치: MVP는 `localStorage`(기기별) → 계정 단위로 유지하려면 `users`/`user_settings` 컬럼 (아래 "알림 시점 커스터마이즈"와 같은 settings 저장소 공유).
+    - UX: 완전 숨김 vs 접기(헤더+개수 배지만 남김) — 접기가 overdue 존재를 잊지 않게 해줘서 더 안전.
   - 나중(스키마 필요): Snooze(`snoozed_until`; `last_followed_up_at`을 미래로 넣는 꼼수는 필드 의미 오염), Stop tracking(`follow_up_disabled`), 팔로업 히스토리(별도 테이블).
 
 - `[raw]` **Follow-up 알림 시점 커스터마이즈** (2026-10-05) — 마감 며칠 전부터 큐에 띄울지 유저가 직접 설정.
