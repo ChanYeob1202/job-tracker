@@ -114,13 +114,17 @@ function FollowUpCard({ row, info, setEditorJob, setViewOpen, id }: FollowUpCard
         <p>{formatDueDate(info.dueDate)}</p>
       </div>
       <p className={`ml-2 text-xs ${dueStatusColor[info.dueStatus]}`}>{info.dueLabel}</p>
-      <button
-        // TODO: click => sending email 하나의 포맷을정해서 메일을 오픈해서 회사명만 바꾸기??
-        className="mt-auto lg:w-2/3 self-center  py-1 text-xs flex gap-1 items-center justify-center rounded-xl bg-blue-400 font-bold text-white hover:cursor-pointer hover:font-semibold transition-all duration-200"
-      >
-        <span><FaRegPaperPlane /></span>
-        <span>Follow Up</span>
-      </button>
+      {/* wrapper carries the tooltip — disabled buttons don't reliably fire hover events */}
+      <span title="Coming soon" className="mt-auto lg:w-2/3 self-center cursor-not-allowed">
+        <button
+          // TODO: click => sending email 하나의 포맷을정해서 메일을 오픈해서 회사명만 바꾸기??
+          disabled
+          className="w-full py-1 text-xs flex gap-1 items-center justify-center rounded-xl bg-blue-400 font-bold text-white disabled:opacity-50 disabled:pointer-events-none"
+        >
+          <span><FaRegPaperPlane /></span>
+          <span>Follow Up</span>
+        </button>
+      </span>
     </div>
   )
 }
