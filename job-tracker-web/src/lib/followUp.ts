@@ -1,4 +1,6 @@
 import type { Job } from "@/types/job"
+const DAY_MS = 86_400_000;
+
 
 export const followUpInfo = (job: Job, now: number) => {
 
@@ -13,8 +15,12 @@ export const followUpInfo = (job: Job, now: number) => {
   const role = job.role;
 
   const base = Math.max(statusChangedAt, lastFollowedUp);
-  const dueDate = base + 14;
-  const daysUntilDueDate = (dueDate - now);
+  // 86400000 -> 1 day / 14days = 86400000 * 14
+  const dueDate = base + ( DAY_MS * 14);
+  // queue standard =  before 5 days
+  const daysUntilDueDate = Math.floor((dueDate - now)/ DAY_MS);
+
+
 
   return { company, role, dueDate, daysUntilDueDate };
 }

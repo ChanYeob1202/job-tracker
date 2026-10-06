@@ -42,7 +42,6 @@ function FollowUpCard({ row, info, setEditorJob, setViewOpen, id }: FollowUpCard
     }
   }, [])
 
-
   const handleDelete = (id: string) => {
     return apiFetch(`/jobs/${id}`, {
       method: "Delete"
@@ -84,7 +83,6 @@ function FollowUpCard({ row, info, setEditorJob, setViewOpen, id }: FollowUpCard
           />
           {/* options */}
           {settingOpen ?
-            // TODO: esc or click outside to setSettingOpen = false;
             (
               <ul
                 className="absolute right-0 top-full z-10  w-max rounded-lg  bg-white px-2 py-1 border border-gray-200"
@@ -107,11 +105,11 @@ function FollowUpCard({ row, info, setEditorJob, setViewOpen, id }: FollowUpCard
       <p className="text-xs">{row.role}</p>
       <div className="flex ml-2 gap-2 items-center text-xs">
         <p><FaRegCalendarAlt /></p>
-        <p>{formatDueDate(info.daysUntilDueDate)}</p>
+        <p>{formatDueDate(info.dueDate)}</p>
       </div>
       <button
         // TODO: click => sending email 하나의 포맷을정해서 메일을 오픈해서 회사명만 바꾸기??
-        className="mt-auto lg:w-2/3 self-center  py-1 text-xs flex gap-1 items-center justify-center rounded-xl bg-blue-400 font-bold text-white hover:cursor-pointer"
+        className="mt-auto lg:w-2/3 self-center  py-1 text-xs flex gap-1 items-center justify-center rounded-xl bg-blue-400 font-bold text-white hover:cursor-pointer hover:font-semibold transition-all duration-200"
       >
         <span><FaRegPaperPlane /></span>
         <span>Follow Up</span>

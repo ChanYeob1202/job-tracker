@@ -10,8 +10,7 @@ type FollowUpProps = {
   setEditorJob: Dispatch<SetStateAction<Job | "new" | null>>;
 }
 
-const deadLine = 5;
-const deadLineInMili = deadLine * 24 * 60 * 60 * 1000;
+const queueDate = 5 * 86_400_000;
 
 function FollowUp({ initialRows, jobLoadingStatus, setEditorJob }: FollowUpProps) {
   const [jobQueue, setJobQueue] = useState()
@@ -22,7 +21,8 @@ function FollowUp({ initialRows, jobLoadingStatus, setEditorJob }: FollowUpProps
   const followUpQueue = eligibleJobs.map(row => ({ row, info: followUpInfo(row, currentTime) }))
   // this will be queues that has only 14 or less than 14 days to follow up;
 
-  const dueSoonQueue = followUpQueue.filter(row => row.info.daysUntilDueDate <= deadLineInMili);
+  const dueSoonQueue = followUpQueue.filter(row => row.info.dueDate -  currentTime <= queueDate);
+
   // a larger number of milliseconds means a newer (more recent) date
   const sortedQueue = [...dueSoonQueue].sort((a, b) => a.info.daysUntilDueDate - b.info.daysUntilDueDate);
   const sortedQueueLength = sortedQueue.length;
@@ -30,6 +30,7 @@ function FollowUp({ initialRows, jobLoadingStatus, setEditorJob }: FollowUpProps
   const restQueue = sortedQueue.slice(4);
 
   /* 
+    TODO: fix this bug
     ! Bug: 2주일 남은상태도아닌데 follow up queue 에올라감. (dec 까지, 아무래도 계산 문제도 있을수있음)
   */
 
@@ -61,7 +62,6 @@ function FollowUp({ initialRows, jobLoadingStatus, setEditorJob }: FollowUpProps
           <FollowUpCard key={queue.row.id} id = {queue.row.id} row={queue.row} info={queue.info}  setEditorJob={setEditorJob} setViewOpen={setViewOpen}/>
         ))}
       </div>
-
       <div
         className={`grid transition-[grid-template-rows] duration-300 ease-out ${viewOpen ? "grid-rows-[1fr]" : "grid-rows-[0fr]"}`}
       >
