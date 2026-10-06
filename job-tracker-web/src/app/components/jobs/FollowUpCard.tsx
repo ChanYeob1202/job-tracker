@@ -5,7 +5,7 @@ import { FaRegPaperPlane } from "react-icons/fa";
 import { FaRegCalendarAlt } from "react-icons/fa";
 import { HiOutlineDotsHorizontal } from "react-icons/hi";
 import { LuPanelRight, LuTrash2 } from "react-icons/lu";
-import { followUpInfo, formatDueDate } from "@/lib/followUp";
+import { followUpInfo, formatDueDate, type DueStatus } from "@/lib/followUp";
 import { apiFetch } from "@/lib/api";
 
 type FollowUpCardProps = {
@@ -16,15 +16,11 @@ type FollowUpCardProps = {
   id: number;
 }
 
-
-/* 
-  TODO: 
-      1. due date 이 지난지 한참지났으면 text -> red 그다음에 몇일 지났는지 경고하기 ;
-      upcoming oct 12 - in 3 days (회색)
-      due today oct 9 - due today (주황/amber)
-      overdue oct 2 - 4 days overdue
-*/
-
+const dueStatusColor: Record<DueStatus, string> = {
+  upcoming: "text-gray-500",
+  today: "text-amber-500 font-semibold",
+  overdue: "text-red-500 font-semibold",
+};
 
 function FollowUpCard({ row, info, setEditorJob, setViewOpen, id }: FollowUpCardProps) {
   const [settingOpen, setSettingOpen] = useState(false);
@@ -113,10 +109,11 @@ function FollowUpCard({ row, info, setEditorJob, setViewOpen, id }: FollowUpCard
         </div>
       </div>
       <p className="text-xs">{row.role}</p>
-      <div className="flex ml-2 gap-2 items-center text-xs">
+      <div className="flex ml-2 gap-2 items-center text-xs text-gray-500">
         <p><FaRegCalendarAlt /></p>
         <p>{formatDueDate(info.dueDate)}</p>
       </div>
+      <p className={`ml-2 text-xs ${dueStatusColor[info.dueStatus]}`}>{info.dueLabel}</p>
       <button
         // TODO: click => sending email 하나의 포맷을정해서 메일을 오픈해서 회사명만 바꾸기??
         className="mt-auto lg:w-2/3 self-center  py-1 text-xs flex gap-1 items-center justify-center rounded-xl bg-blue-400 font-bold text-white hover:cursor-pointer hover:font-semibold transition-all duration-200"

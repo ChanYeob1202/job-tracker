@@ -29,11 +29,6 @@ function FollowUp({ initialRows, jobLoadingStatus, setEditorJob }: FollowUpProps
   const quickQueue = sortedQueue.slice(0, 4);
   const restQueue = sortedQueue.slice(4);
 
-  /* 
-    TODO: fix this bug
-    ! Bug: 2주일 남은상태도아닌데 follow up queue 에올라감. (dec 까지, 아무래도 계산 문제도 있을수있음)
-  */
-
   return (
     //여기서 return 해야 할 것은, follow up cards containing compnay name, follow up date, and follow up button.
     <section className="w-full mt-2 rounded-2xl border border-blue-100 bg-blue-50/50 p-5">
