@@ -16,6 +16,15 @@ type FollowUpCardProps = {
   id: number;
 }
 
+
+/* 
+  TODO: 
+      1. due date 이 지난지 한참지났으면 text -> red 그다음에 몇일 지났는지 경고하기 ;
+
+
+*/
+
+
 function FollowUpCard({ row, info, setEditorJob, setViewOpen, id }: FollowUpCardProps) {
   const [settingOpen, setSettingOpen] = useState(false);
   const optionRef = useRef<HTMLDivElement>(null);

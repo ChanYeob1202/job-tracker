@@ -1,7 +1,7 @@
 "use client"
 import { useState, Dispatch, SetStateAction } from "react"
 import type { Job } from "@/types/job"
-import { followUpInfo } from "@/lib/followUp";
+import { followUpInfo, DAY_MS, FOLLOW_UP_INTERVAL_DAYS, FOLLOW_UP_NOTICE_DAYS } from "@/lib/followUp";
 import FollowUpCard from "./FollowUpCard";
 
 type FollowUpProps = {
@@ -10,7 +10,7 @@ type FollowUpProps = {
   setEditorJob: Dispatch<SetStateAction<Job | "new" | null>>;
 }
 
-const queueDate = 5 * 86_400_000;
+const queueDate = FOLLOW_UP_NOTICE_DAYS * DAY_MS;
 
 function FollowUp({ initialRows, jobLoadingStatus, setEditorJob }: FollowUpProps) {
   const [jobQueue, setJobQueue] = useState()
@@ -45,7 +45,9 @@ function FollowUp({ initialRows, jobLoadingStatus, setEditorJob }: FollowUpProps
             <div className="font-bold text-sm">Follow Ups</div>
             <div className="text-sm px-2  bg-blue-400 rounded-xl font-semibold text-white">{sortedQueueLength}</div>
           </div>
-          <p className="mt-1 font-extralight text-xs text-gray-600 ">Don’t miss your next opportunity, Here are your upcoming follow ups.</p>
+          <p className="mt-1 font-extralight text-xs text-gray-600 ">
+            Jobs show up here {FOLLOW_UP_NOTICE_DAYS} days before a follow-up is due — {FOLLOW_UP_INTERVAL_DAYS} days after your last update.
+          </p>
         </div>
         <div
           onClick={() => {
@@ -55,6 +57,13 @@ function FollowUp({ initialRows, jobLoadingStatus, setEditorJob }: FollowUpProps
           {viewOpen ? "show less ←" : "view all →"}
         </div>
       </div>
+
+      {/* empty state */}
+      {!jobLoadingStatus && sortedQueueLength === 0 && (
+        <p className="mt-4 rounded-xl bg-white p-4 text-center text-xs text-gray-500">
+          Nothing due yet. We’ll remind you {FOLLOW_UP_NOTICE_DAYS} days before each follow-up.
+        </p>
+      )}
 
       {/* card section: first 4 always visible */}
       <div className="mt-4 grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-4">
