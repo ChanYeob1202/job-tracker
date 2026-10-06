@@ -85,6 +85,12 @@ const loginSchema = z.object({
   pristine for the next visitor, each call RESETS the demo user's jobs to a
   fixed seed set. `daysAgo` is turned into `now() - interval`, so the time-based
   stats ("This Week", response rate) always look alive instead of frozen.
+
+  `statusChangedDaysAgo` does the same for status_changed_at, which drives the
+  follow-up queue (due 14 days after the last status change). Without it the
+  column defaults to now() and the queue is always empty. Current mix: 1 upcoming
+  (Linear), 1 due today (Vercel, 13.5 so it doesn't tip into overdue right after
+  seeding), 4 overdue (Airbnb, Discord, Notion, Plaid).
 */
 const DEMO_EMAIL = "demo@landr.app";
 const DEMO_USERNAME = "Demo User";
@@ -114,6 +120,7 @@ type DemoJob = {
   website: string;
   notes: string | null;
   daysAgo: number; // applied_at = now() - daysAgo
+  statusChangedDaysAgo?: number; // status_changed_at = now() - this (defaults to daysAgo)
 };
 
 const DEMO_JOBS: DemoJob[] = [
@@ -122,12 +129,14 @@ const DEMO_JOBS: DemoJob[] = [
   { company: "Retool", role: "Frontend Engineer", status: "applied", source: "Wellfound", location: "New York, NY", salary: "$185k", website: "https://retool.com/careers", notes: "Take-home due if I hear back.", daysAgo: 4 },
   { company: "Ramp", role: "Software Engineer", status: "applied", source: "LinkedIn", location: "New York, NY", salary: "$195k", website: "https://ramp.com/careers", notes: null, daysAgo: 6 },
   { company: "Linear", role: "Product Engineer", status:"interview", source: "Referral", location: "Remote", salary: "$180k", website: "https://linear.app/careers", notes: "Recruiter said decision by end of week.", daysAgo: 9 },
-  { company: "Vercel", role: "Full Stack Engineer", status: "interview", source: "Company site", location: "Remote", salary: "$190k", website: "https://vercel.com/careers", notes: "Phone screen went well — sent thank-you note.", daysAgo: 11 },
-  { company: "Notion", role: "Frontend Engineer", status: "interview", source: "LinkedIn", location: "San Francisco, CA", salary: "$200k", website: "https://notion.so/careers", notes: "System design round scheduled for Thursday.", daysAgo: 15 },
   { company: "Airbnb", role: "Software Engineer", status: "applied", source: "Referral", location: "San Francisco, CA", salary: "$220k", website: "https://careers.airbnb.com", notes: "Final onsite — 4 rounds. Prep behavioral stories.", daysAgo: 18 },
+  { company: "Vercel", role: "Full Stack Engineer", status: "interview", source: "Company site", location: "Remote", salary: "$190k", website: "https://vercel.com/careers", notes: "Phone screen went well — sent thank-you note.", daysAgo: 20, statusChangedDaysAgo: 13.5 },
   { company: "Stripe", role: "Backend Engineer", status: "offer", source: "Referral", location: "Seattle, WA", salary: "$235k", website: "https://stripe.com/jobs", notes: "Offer received! Negotiating start date.", daysAgo: 22 },
+  { company: "Discord", role: "Frontend Engineer", status: "applied", source: "LinkedIn", location: "Remote", salary: "$185k", website: "https://discord.com/careers", notes: null, daysAgo: 24 },
   { company: "Figma", role: "Frontend Engineer", status: "rejected", source: "LinkedIn", location: "San Francisco, CA", salary: "$205k", website: "https://figma.com/careers", notes: "Rejected after onsite — close call, keep in touch.", daysAgo: 26 },
+  { company: "Notion", role: "Frontend Engineer", status: "interview", source: "LinkedIn", location: "San Francisco, CA", salary: "$200k", website: "https://notion.so/careers", notes: "System design round done — waiting on feedback.", daysAgo: 28, statusChangedDaysAgo: 17 },
   { company: "Datadog", role: "Software Engineer", status: "rejected", source: "Company site", location: "New York, NY", salary: "$190k", website: "https://careers.datadoghq.com", notes: null, daysAgo: 31 },
+  { company: "Plaid", role: "Software Engineer", status: "applied", source: "Company site", location: "San Francisco, CA", salary: "$195k", website: "https://plaid.com/careers", notes: null, daysAgo: 33 },
 ];
 
 router.post("/demo", demoLimiter, async (_req: Request, res: Response) => {
@@ -154,9 +163,9 @@ router.post("/demo", demoLimiter, async (_req: Request, res: Response) => {
     for (const j of DEMO_JOBS) {
       await client.query(
         `INSERT INTO "Jobs"
-           (user_id, company, role, status, source, location, salary, website, notes, applied_at)
-         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, now() - ($10 || ' days')::interval)`,
-        [user.id, j.company, j.role, j.status, j.source, j.location, j.salary, j.website, j.notes, String(j.daysAgo)],
+           (user_id, company, role, status, source, location, salary, website, notes, applied_at, status_changed_at)
+         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, now() - ($10 || ' days')::interval, now() - ($11 || ' days')::interval)`,
+        [user.id, j.company, j.role, j.status, j.source, j.location, j.salary, j.website, j.notes, String(j.daysAgo), String(j.statusChangedDaysAgo ?? j.daysAgo)],
       );
     }
 
