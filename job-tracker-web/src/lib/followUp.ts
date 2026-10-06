@@ -24,11 +24,18 @@ export const followUpInfo = (job: Job, now: number) => {
   const daysUntilDueDate = Math.floor((dueDate - now)/ DAY_MS);
 
 
-
   return { company, role, dueDate, daysUntilDueDate };
 }
 
 export const formatDueDate = (ms: number): string => {
   const date = new Date(ms);
-  return date.toLocaleDateString("en-US", { month: "short", day: "numeric", })
+  // only show the year when it isn't the current one (e.g. due date rolls into next year)
+  const showYear = date.getFullYear() !== new Date().getFullYear();
+  return date.toLocaleDateString("en-US", {
+    month: "short",
+    day: "numeric",
+    ...(showYear && { year: "numeric" }),
+  })
 }
+
+

@@ -20,8 +20,9 @@ type FollowUpCardProps = {
 /* 
   TODO: 
       1. due date 이 지난지 한참지났으면 text -> red 그다음에 몇일 지났는지 경고하기 ;
-
-
+      upcoming oct 12 - in 3 days (회색)
+      due today oct 9 - due today (주황/amber)
+      overdue oct 2 - 4 days overdue
 */
 
 
