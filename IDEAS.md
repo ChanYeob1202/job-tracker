@@ -24,19 +24,24 @@
   - 키는 백엔드 전용(`ADZUNA_APP_ID`/`ADZUNA_APP_KEY`, `NEXT_PUBLIC_*` 금지). 매핑: `company.display_name→company`, `title→role`, `redirect_url→website`, `location.display_name→location`, `salary_min→salary`, `created→applied_at`.
   - 확장: 저장 키워드로 cron 자동 수집 → 새 매칭 잡 이메일 알림. LinkedIn 공식 API는 job search/notification 불가(파트너 전용)라 대안으로 채택.
 
-- `[next]` **Follow-up 카드 액션 메뉴** (2026-10-02) — `FollowUp.tsx` 카드마다 edit 아이콘 → 메뉴. MVP 3개는 기존 컬럼만으로 가능(마이그레이션 X).
+- `[next]` **Follow-up 큐 — 남은 작업** — 큐 UI·Open job 메뉴는 완료. 아래가 남은 것.
   - ① **Mark as followed up** (핵심) — `last_followed_up_at = now` → 14일 타이머 리셋, 큐에서 빠짐. "Follow Up" 버튼(이메일 열기)과 분리: LinkedIn/전화로 팔로업해도 체크 가능해야 함.
-  - ② **Update status** — interview/offer/rejected. `eligibleJobs` 필터 때문에 자동으로 큐 이탈. 보드의 기존 status 업데이트 재사용.
-  - ③ **Edit job → Open job** (2026-10-04) — 메뉴 라벨을 "Open job"으로. 누르면 JobTable에서 job row를 열었을 때와 **똑같이** 동작(같은 열기 흐름/같은 `JobForm` 재사용, 별도 구현 X).
-    - **JobForm에 Delete 버튼 추가** + 누르면 **confirm 단계**(바로 삭제 X). Table에서 연 폼에도 동일하게 적용됨.
-    - 확인할 것: Table이 job을 여는 방식(선택 state가 어디 있는지) → FollowUp 카드에서 같은 state/콜백을 쓸 수 있어야 함. confirm은 `window.confirm` vs 커스텀 모달 중 선택.
-  - 나중(스키마 필요): Snooze(`snoozed_until`; `last_followed_up_at`을 미래로 넣는 꼼수는 필드 의미 오염), Stop tracking(`follow_up_disabled`), 팔로업 히스토리(별도 테이블).
-  - 제외: 메뉴에 Delete 직접 넣기 — destructive. 삭제는 폼 안 Delete 버튼 + confirm으로만.
-  - `[raw]` **연락처(contact) 컬럼 추가** (2026-10-04) — "Follow Up" 버튼 → 이메일 작성(mailto/템플릿) 구현 예정인데, 막상 보낼 때 누구에게 보낼지 정보를 찾기 어려움 → `"Jobs"`에 연락처 저장.
-    - 후보 필드: `contact_name`, `contact_email` (+ 필요시 `contact_linkedin`). 마이그레이션 필요(nullable).
-    - 연결: `UPDATABLE_FIELDS`/POST 허용 필드, `types/job.ts`, `JobForm` 입력 추가. Follow Up 버튼은 `contact_email` 있으면 `mailto:`로 프리필, 없으면 "연락처 추가" 유도.
+    - 결정 포인트: 카드가 사라지려면 부모의 `initialRows`가 갱신돼야 함 → optimistic update vs refetch (Favorite과 같은 질문). 유저가 직접 구현, Claude는 리뷰.
+  - ② **Delete + confirm** — 바로 삭제 X, 반드시 confirm 단계 거침.
+    - `JobForm`에 Delete 버튼 추가 → Table/Follow-up 어디서 연 폼이든 동일하게 적용.
+    - 카드 메뉴의 Delete는 UI만 있고 핸들러 미연결 → 같은 confirm 흐름으로 연결.
+    - 결정 포인트: `window.confirm` vs 커스텀 모달.
+  - ③ `[raw]` **연락처(contact) 컬럼** (2026-10-04) — Follow Up 버튼으로 이메일 쓸 때 받는 사람 정보가 없음 → `"Jobs"`에 연락처 저장.
+    - 후보 필드: `contact_name`, `contact_email` (+ 필요시 `contact_linkedin`). nullable 마이그레이션.
+    - 연결: `UPDATABLE_FIELDS`/POST 허용 필드, `types/job.ts`, `JobForm` 입력. Follow Up 버튼은 `contact_email` 있으면 `mailto:` 프리필, 없으면 "연락처 추가" 유도.
     - 결정 포인트: 컬럼 vs 별도 `contacts` 테이블(job당 여러 명, 리크루터 재사용) — MVP는 컬럼, 다대다 필요해지면 테이블.
-  - 결정 포인트: ① 후 카드가 사라지려면 부모의 `initialRows`가 갱신돼야 함 → optimistic update vs refetch (Favorite과 같은 질문). 유저가 직접 구현, Claude는 리뷰.
+  - 나중(스키마 필요): Snooze(`snoozed_until`; `last_followed_up_at`을 미래로 넣는 꼼수는 필드 의미 오염), Stop tracking(`follow_up_disabled`), 팔로업 히스토리(별도 테이블).
+
+- `[raw]` **Follow-up 알림 시점 커스터마이즈** (2026-10-05) — 마감 며칠 전부터 큐에 띄울지 유저가 직접 설정.
+  - 현재: `followUp.ts`의 `FOLLOW_UP_NOTICE_DAYS = 5` 고정(due 5일 전부터 큐에 노출). 큐 필터와 안내 문구가 이 상수를 같이 씀.
+  - 저장 위치: `users`에 컬럼(`follow_up_notice_days INT DEFAULT 5`) vs 별도 `user_settings` 테이블. UI는 Settings 페이지.
+  - 확장 후보: 팔로업 주기(현재 14일, `followUp.ts`)도 같이 설정 가능하게.
+
 
 ## Account / Settings
 
