@@ -3,9 +3,7 @@ export type JobStatus =
   | "interview"
   | "offer"
   | "rejected"
-  | "no respond"
-
-
+  | "no respond";
 
 /** Real job statuses offered in forms and the table editor. First value ("applied") is the create default. */
 export const JOB_STATUS_OPTIONS: readonly JobStatus[] = [
@@ -13,26 +11,31 @@ export const JOB_STATUS_OPTIONS: readonly JobStatus[] = [
   "interview",
   "offer",
   "rejected",
-  "no respond"
+  "no respond",
 ];
 
 export type StatusFilterValue = JobStatus | "all";
 
 /** Options for the status filter dropdown — the real statuses, no "all" entry. */
-export const JOB_STATUS_FILTERS: readonly StatusFilterValue[] = ["all", ...JOB_STATUS_OPTIONS] ;
+export const JOB_STATUS_FILTERS: readonly StatusFilterValue[] = [
+  "all",
+  ...JOB_STATUS_OPTIONS,
+];
 
 export interface Job {
   id: number;
   company: string;
   status: JobStatus;
-  source: string; 
+  source: string;
   role: string | null;
   salary: string;
   notes: string | null;
   applied_at: string;
+  status_changed_at: string;
+  last_followed_up_at: string | null;
   website: string;
   location: string;
   is_favorite: boolean;
 }
 
-  // "rejected":    "bg-rose-50 text-rose-600 ring-1 ring-rose-200",
+// "rejected":    "bg-rose-50 text-rose-600 ring-1 ring-rose-200",
