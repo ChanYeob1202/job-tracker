@@ -3,6 +3,8 @@ import { useState, useRef, useEffect, Dispatch, SetStateAction } from "react"
 import type { Job } from "@/types/job"
 import { FaRegPaperPlane } from "react-icons/fa";
 import { FaRegCalendarAlt } from "react-icons/fa";
+import { IoIosCheckmark } from "react-icons/io";
+
 import { HiOutlineDotsHorizontal } from "react-icons/hi";
 import { LuPanelRight, LuTrash2 } from "react-icons/lu";
 import { followUpInfo, formatDueDate, type DueStatus } from "@/lib/followUp";
@@ -41,7 +43,6 @@ function FollowUpCard({ row, info, setEditorJob, setViewOpen, id }: FollowUpCard
     document.addEventListener("mousedown", handleClickOutside);
     document.addEventListener("keydown", handleKeyDown);
 
-
     return () => {
       document.removeEventListener("mousedown", handleClickOutside)
       document.removeEventListener("keydown", handleKeyDown)
@@ -55,6 +56,15 @@ function FollowUpCard({ row, info, setEditorJob, setViewOpen, id }: FollowUpCard
   }
 
   const settingOptions = [
+    {
+      label: "Mark as followed up",
+      icon: IoIosCheckmark,
+      textColor: "hover:text-green-500",
+
+      event: () => {
+        setSettingOpen(false);
+      },
+    },
     {
       label: "Open job",
       icon: LuPanelRight,
