@@ -26,7 +26,10 @@
 
 - `[next]` **Follow-up 큐 — 남은 작업** — 큐 UI·Open job 메뉴는 완료. 아래가 남은 것.
   - ① **Mark as followed up** (핵심) — `last_followed_up_at = now` → 14일 타이머 리셋, 큐에서 빠짐. "Follow Up" 버튼(이메일 열기)과 분리: LinkedIn/전화로 팔로업해도 체크 가능해야 함.
-    - 결정 포인트: 카드가 사라지려면 부모의 `initialRows`가 갱신돼야 함 → optimistic update vs refetch (Favorite과 같은 질문). 유저가 직접 구현, Claude는 리뷰.
+    - **결정: optimistic update** (2026-10-06) — `last_followed_up_at`은 high-risk 데이터가 아님(틀려도 다시 누르면 됨, 되돌릴 수 없는 손실 X) → 즉각 반응 우선.
+      - 흐름: `setRows`로 해당 row의 `last_followed_up_at`을 먼저 now로 교체 → 큐가 `rows`에서 파생되므로 카드 자동 이탈 → API 실패 시 이전 값으로 롤백 + 에러 표시.
+      - 대비: Delete는 되돌릴 수 없는 작업이라 같은 기준으로 판단하면 pessimistic(confirm + 서버 응답 후 제거)이 맞음.
+      - 유저가 직접 구현, Claude는 리뷰.
   - ② **Delete + confirm** — 바로 삭제 X, 반드시 confirm 단계 거침.
     - `JobForm`에 Delete 버튼 추가 → Table/Follow-up 어디서 연 폼이든 동일하게 적용.
     - 카드 메뉴의 Delete는 UI만 있고 핸들러 미연결 → 같은 confirm 흐름으로 연결.
