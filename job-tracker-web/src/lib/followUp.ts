@@ -9,16 +9,18 @@ export const FOLLOW_UP_NOTICE_DAYS = 5;
 export type DueStatus = "overdue" | "today" | "upcoming";
 
 export const followUpInfo = (job: Job, now: number) => {
-  if (!job.last_followed_up_at) {
-    job.last_followed_up_at = job.status_changed_at;
-  }
+  
+  // if (!job.last_followed_up_at) {
+  //   job.last_followed_up_at = job.status_changed_at;
+  // }  it writes directly into a react state object. Combined with optimistic updates, that means my "previous state" snapshot isn't truly untouched. Make it to a local variable
+
+  const lastFollowedUpAt = job.last_followed_up_at ?? job.status_changed_at;
 
   const statusChangedAt = new Date(job.status_changed_at).getTime();
-  const lastFollowedUp = new Date(job.last_followed_up_at).getTime();
+  const lastFollowedUp = new Date(lastFollowedUpAt).getTime();
 
   const company = job.company;
   const role = job.role;
-
   const base = Math.max(statusChangedAt, lastFollowedUp);
   const dueDate = base + DAY_MS * FOLLOW_UP_INTERVAL_DAYS;
   const daysUntilDueDate = Math.floor((dueDate - now) / DAY_MS);
