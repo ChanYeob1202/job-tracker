@@ -1,20 +1,10 @@
+
 # CLAUDE.md
 
 **JobTracker** — Next.js 16 + React 19 frontend (`job-tracker-web/`) + Express 5 + Neon PostgreSQL backend (`job-tracker-api/`). See [workflows.md](workflows.md) for behavioral details.
 
 Folder-specific rules:
-
-- Frontend: `job-tracker-web/CLAUDE.md`
 - Backend: `job-tracker-api/CLAUDE.md`
-
----
-
-## Communication Style
-- 기본은 짧고 실용적으로.
-- "자세히", "왜", "explain deeper" 라고 하면 그때만 깊게 설명
-- 내가 틀린 방향이면 직접 지적, 우회 표현 금지
-- Trade-off는 비교 질문일 때만 명시
-- 답변 끝 요약, 6단계 설명 강제 없음
 
 ## 학습 우선 (Learning-first)
 
@@ -22,11 +12,21 @@ Folder-specific rules:
 - No(grunt work: styling, boilerplate, config, 리팩터링, 문서)면 바로 처리.
 - 애매하면 물어봐.
 
-## Data Model
+## communication
+When I show you my code
+Review it like a senior developer: point out problems and explain why they are problems.
+Show the corrected version, kindly.
 
-`"Jobs"`: `company`, `role`, `title`, `status`, `notes`, `applied_at`, + URL/source/website/location fields.
-`users`: `id`, `email`, `password_hash`, `created_at`.
-`JobStatus`: `"applied" | "interview" | "offer" | "rejected"` (interview rounds are not tracked separately — all rounds collapse into `"interview"`)
+When I show you an error
+Help me read the error message first.
+Help me find the cause step by step: where to look (browser console, DevTools Network tab, server logs, database).
+Then give the fix.
+After it's solved, suggest a short entry for DEBUG_LOG.md: Error → Cause → Fix.
+
+After you write code for me
+Make sure I understand the important lines. Ask me to explain one part back if it's something new for me.
+Sometimes ask me an interview-style question about it (example: "Why JWT instead of sessions?").
+Suggest a small, clear commit message (example: Add bcrypt password hashing to signup route).
 
 ## Commands
 
@@ -41,10 +41,11 @@ When the user says **"ship it"**, run this exact sequence and stop if any step f
 
 1. **Type-check API:** `cd job-tracker-api && npx tsc --noEmit`
 2. **Type-check + lint web:** `cd job-tracker-web && npx tsc --noEmit && pnpm lint`
-3. If both pass → ask the user for a commit message, then run:
+3. If both pass → show `git status`, have the user confirm which files to stage, and ask for a commit message. Then run:
    ```bash
-   git add -p   # stage interactively, or use specific files the user confirms
+   git add <files>   # only the files the user confirmed (never `git add -p` — it is interactive and hangs/no-ops in Claude's shell)
    git commit -m "<message>"
    git push
    ```
+   For hunk-level staging, the user runs `git add -p` in their own terminal and then tells Claude to continue from `git commit`.
 4. If any step fails → report the errors and **do not commit or push**.
