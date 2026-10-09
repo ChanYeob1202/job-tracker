@@ -15,6 +15,7 @@ export const API_BASE =
   "include"` tells the browser to attach it automatically. Returns true if a
   new access token was issued and persisted.
 */
+
 async function tryRefresh(): Promise<boolean> {
   try {
     const res = await fetch(API_BASE + "/auth/refresh", {

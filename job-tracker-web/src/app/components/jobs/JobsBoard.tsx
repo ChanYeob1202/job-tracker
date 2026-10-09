@@ -9,15 +9,15 @@ import ActionBar from "./ActionBar";
 type JobsBoardProps = {
   initialRows: Job[];
   jobLoadingStatus: boolean;
-  setRows: Dispatch<SetStateAction<Job[] | null>>;
   editorJob: Job | "new" | null;
   setEditorJob: Dispatch<SetStateAction<Job | "new" | null>>;
+  updateField: (id: string, field: keyof Job, nameValue: string) => Promise <void>
 };
 
-function JobsBoard({ initialRows, jobLoadingStatus, setRows, editorJob, setEditorJob }: JobsBoardProps) {
+function JobsBoard({ initialRows, jobLoadingStatus, editorJob, setEditorJob, updateField }: JobsBoardProps) {
 
   const [searchTerm, setSearchTerm] = useState("")
-  const [selectedStatus, setSelectedStatus] = useState("all")
+  const [selectedStatus, setSelectedStatus] = useState("all");
 
   const searchedRows = useMemo(
     () => {
@@ -63,9 +63,9 @@ function JobsBoard({ initialRows, jobLoadingStatus, setRows, editorJob, setEdito
 
       <JobTable
         rows={filteredRows}
-        setRows={setRows}
         jobLoadingStatus={jobLoadingStatus}
         setEditorJob={setEditorJob}
+        updateField = {updateField}
       />
     </div>
   );

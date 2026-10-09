@@ -11,8 +11,10 @@ import JobEditPanel from "./components/jobs/JobEditPanel";
 
 export default function Page() {
   const { user, isLoading: authLoading } = useAuth();
-  const { rows, setRows, loadJobs, isLoading: isLoadingJobs } = useJobs();
+  const { rows, loadJobs, isLoading: isLoadingJobs, updateField } = useJobs();
   const [editorJob, setEditorJob] = useState<Job | "new" | null>(null);
+
+  // TODO: follow-up update -> follow up mark up as followed up
 
   // called after a save: close the panel, then re-fetch so the new job appears
   const handleSaved = () => {
@@ -22,7 +24,6 @@ export default function Page() {
 
   if (authLoading) return <Spinner size="lg" label="loading" />
   if (!user) return <LandingPage />
-
   const today = new Date().toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" });
 
   return (
@@ -52,7 +53,7 @@ export default function Page() {
           </AnimatePresence>
           <JobsBoard
             initialRows={rows ?? []}
-            setRows={setRows}
+            updateField = { updateField }
             jobLoadingStatus={isLoadingJobs}
             editorJob={editorJob}
             setEditorJob={setEditorJob}

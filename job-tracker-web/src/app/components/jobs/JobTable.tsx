@@ -108,9 +108,9 @@ function AppliedDate({ iso }: { iso: string }) {
 
 type JobTableProps = {
   rows: Job[];
-  setRows: Dispatch<SetStateAction<Job[] | null>>;
   jobLoadingStatus: boolean;
   setEditorJob: Dispatch<SetStateAction<Job | "new" | null>>;
+   updateField: (id: string, field: keyof Job, nameValue: string) => Promise <void>
 };
 
 const thClass =
@@ -126,30 +126,10 @@ const tdClass =
 const firstTdClass =
   "relative flex items-center border-b border-gray-100 px-1 md:px-4 py-2.5 text-sm text-gray-700 align-middle whitespace-nowrap max-w-[200px] group/cell";
 
-function JobTable({ rows, jobLoadingStatus, setRows, setEditorJob }: JobTableProps) {
+function JobTable({ rows, jobLoadingStatus, setEditorJob, updateField }: JobTableProps) {
 
   const [isHovered, setIsHovered] = useState(false);
-  const router = useRouter();
-
-  async function updateField(
-    id: number,
-    field: keyof Job,
-    newValue: string
-  ): Promise<void> {
-    const res = await apiFetch(`/jobs/${id}`, {
-      method: "PATCH",
-      body: JSON.stringify({ [field]: newValue }),
-    });
-
-    if (res) {
-      const data = (await res.json()) as { row: Job };
-      setRows((prev) =>
-        (prev ?? []).map((r) => (r.id === id ? { ...r, ...data.row } : r))
-      );
-    }
-    router.refresh();
-  }
-
+  
   return (
     <div className="mt-2 overflow-x-auto rounded-xl border border-gray-100 bg-white shadow-sm">
       <table className="w-full min-w-max table-auto border-collapse">

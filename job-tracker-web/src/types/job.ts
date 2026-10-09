@@ -23,7 +23,7 @@ export const JOB_STATUS_FILTERS: readonly StatusFilterValue[] = [
 ];
 
 export interface Job {
-  id: number;
+  id: string;
   company: string;
   status: JobStatus;
   source: string;
