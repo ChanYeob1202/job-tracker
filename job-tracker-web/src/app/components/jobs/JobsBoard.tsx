@@ -46,11 +46,11 @@ function JobsBoard({ initialRows, jobLoadingStatus, editorJob, setEditorJob, upd
         apps={initialRows}
       />
 
-      {/* TODO: create & import follow-up component  */}
       <FollowUp 
         jobLoadingStatus = {jobLoadingStatus}
         initialRows = {initialRows}
         setEditorJob ={setEditorJob} 
+        updateField = { updateField }
       />
 
       <ActionBar

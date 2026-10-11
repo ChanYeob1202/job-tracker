@@ -8,12 +8,12 @@ type FollowUpProps = {
   initialRows: Job[]
   jobLoadingStatus: boolean;
   setEditorJob: Dispatch<SetStateAction<Job | "new" | null>>;
+  updateField: (id: string, field: keyof Job, nameValue: string) => Promise<void>
 }
 
 const queueDate = FOLLOW_UP_NOTICE_DAYS * DAY_MS;
 
-function FollowUp({ initialRows, jobLoadingStatus, setEditorJob }: FollowUpProps) {
-  const [jobQueue, setJobQueue] = useState()
+function FollowUp({ initialRows, jobLoadingStatus, setEditorJob, updateField }: FollowUpProps) {
   const [viewOpen, setViewOpen] = useState(false);
   const [currentTime] = useState(() => Date.now());
 
@@ -21,7 +21,7 @@ function FollowUp({ initialRows, jobLoadingStatus, setEditorJob }: FollowUpProps
   const followUpQueue = eligibleJobs.map(row => ({ row, info: followUpInfo(row, currentTime) }))
   // this will be queues that has only 14 or less than 14 days to follow up;
 
-  const dueSoonQueue = followUpQueue.filter(row => row.info.dueDate -  currentTime <= queueDate);
+  const dueSoonQueue = followUpQueue.filter(row => row.info.dueDate - currentTime <= queueDate);
 
   // a larger number of milliseconds means a newer (more recent) date
   const sortedQueue = [...dueSoonQueue].sort((a, b) => a.info.daysUntilDueDate - b.info.daysUntilDueDate);
@@ -63,7 +63,16 @@ function FollowUp({ initialRows, jobLoadingStatus, setEditorJob }: FollowUpProps
       {/* card section: first 4 always visible */}
       <div className="mt-4 grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-4">
         {quickQueue.map((queue) => (
-          <FollowUpCard key={queue.row.id} id = {queue.row.id} row={queue.row} info={queue.info}  setEditorJob={setEditorJob} setViewOpen={setViewOpen}/>
+          <FollowUpCard 
+            key={queue.row.id} 
+            id={queue.row.id} 
+            row={queue.row} 
+            info={queue.info} 
+            setEditorJob={setEditorJob} 
+            setViewOpen={setViewOpen} 
+            updateField = {updateField}
+            />
+
         ))}
       </div>
       <div
@@ -72,7 +81,7 @@ function FollowUp({ initialRows, jobLoadingStatus, setEditorJob }: FollowUpProps
         <div className="overflow-hidden">
           <div className="grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-4">
             {restQueue.map((queue) => (
-              <FollowUpCard key={queue.row.id} id={queue.row.id} row={queue.row} info={queue.info} setEditorJob = {setEditorJob} setViewOpen = {setViewOpen}/>
+              <FollowUpCard key={queue.row.id} id={queue.row.id} row={queue.row} info={queue.info} setEditorJob={setEditorJob} updateField = {updateField} setViewOpen={setViewOpen} />
             ))}
           </div>
         </div>

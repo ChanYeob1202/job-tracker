@@ -34,7 +34,7 @@ export function useJobs() {
 
   const isLoading = rows === null;
 
-  async function updateField(id: string,field: keyof Job,nameValue: string): Promise<void> {
+  async function updateField(id: string, field: keyof Job,nameValue: string): Promise<void> {
 
     const res = await apiFetch(`/jobs/${id}`, {
       method: "PATCH",
@@ -51,3 +51,5 @@ export function useJobs() {
   }
   return { rows, setRows, loadJobs, isLoading, updateField };
 }
+
+  

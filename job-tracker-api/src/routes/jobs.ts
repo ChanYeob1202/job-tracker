@@ -8,6 +8,7 @@ const router = Router();
 const UUID_REGEX =
   /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
+// validate and normalizes a user ID that has already been authenticated.
 function authorizedUserId(req: Request): string | undefined {
   const raw = req.user?.userID;
   if (raw === undefined || raw === null) return undefined;
@@ -24,8 +25,9 @@ const UPDATABLE_FIELDS = [
   "notes",
   "website",
   "salary",
-  "location", 
+  "location",
   "applied_at",
+  "last_followed_up_at"
 ] as const;
 
 router.get("/", async (req: Request, res: Response) => {
@@ -37,7 +39,7 @@ router.get("/", async (req: Request, res: Response) => {
   try {
     const result = await pool.query(
       'SELECT * FROM "Jobs" WHERE user_id = $1 ORDER BY applied_at DESC',
-      [userId]
+      [userId],
     );
     const columns = result.fields.slice(1).map((f) => f.name);
     res.json({ columns, rows: result.rows });
@@ -58,7 +60,7 @@ router.get("/:id", async (req: Request, res: Response) => {
   try {
     const result = await pool.query(
       `SELECT * FROM "Jobs" WHERE id = $1 AND user_id = $2`,
-      [id, userId]
+      [id, userId],
     );
     if (result.rowCount === 0) {
       return res.status(404).json({ error: "Job not found" });
@@ -84,7 +86,8 @@ router.post("/", async (req: Request, res: Response) => {
   }
 
   const keys = Object.keys(fields).filter(
-    (k) => (UPDATABLE_FIELDS as readonly string[]).includes(k) && fields[k] !== ""
+    (k) =>
+      (UPDATABLE_FIELDS as readonly string[]).includes(k) && fields[k] !== "",
   );
 
   if (keys.length === 0) {
@@ -99,7 +102,7 @@ router.post("/", async (req: Request, res: Response) => {
   try {
     const result = await pool.query(
       `INSERT INTO "Jobs" (${columns}) VALUES ($1, ${placeholders}) RETURNING *`,
-      values
+      values,
     );
     res.status(201).json({ row: result.rows[0] });
   } catch (e) {
@@ -108,27 +111,38 @@ router.post("/", async (req: Request, res: Response) => {
   }
 });
 
-
 // update datas
 router.patch("/:id", async (req: Request, res: Response) => {
   const { id } = req.params;
   const userId = authorizedUserId(req);
+
   if (userId === undefined) {
     return res.status(403).json({ error: "Invalid token payload" });
   }
 
   const fields = req.body;
 
+  console.log(`API: recievs: ID: ${id}, Field:`, fields);
+
   if (!fields || Object.keys(fields).length === 0) {
     return res.status(400).json({ error: "No fields provided to update" });
   }
 
   const keys = Object.keys(fields).filter((k) =>
-    (UPDATABLE_FIELDS as readonly string[]).includes(k)
+    (UPDATABLE_FIELDS as readonly string[]).includes(k),
   );
 
+  if (!keys.includes(fields)) {
+    return res
+      .status(400)
+      .json({ error: `${keys} is/are not included in UPDATABLE_FIELDS` });
+  }
+
   if (keys.length === 0) {
-    return res.status(400).json({ error: "No valid fields to update" });
+    return res
+      .status(400)
+      .json({ error: `No valid fields to update, ${keys}: rejected` });
+    // TODO: tell the client which keys it rejected ( and may be which are allowed);
   }
 
   const setClauses = keys.map((k, i) => `"${k}" = $${i + 1}`).join(", ");
@@ -138,7 +152,7 @@ router.patch("/:id", async (req: Request, res: Response) => {
   try {
     const result = await pool.query(
       `UPDATE "Jobs" SET ${setClauses} WHERE id = $${keys.length + 1} AND user_id = $${keys.length + 2} RETURNING *`,
-      values
+      values,
     );
 
     if (result.rowCount === 0) {
@@ -162,7 +176,7 @@ router.delete("/:id", async (req: Request, res: Response) => {
   try {
     const result = await pool.query(
       `DELETE FROM "Jobs" WHERE id = $1 AND user_id = $2 RETURNING *`,
-      [id, userId]
+      [id, userId],
     );
 
     if (result.rowCount === 0) {
@@ -174,9 +188,6 @@ router.delete("/:id", async (req: Request, res: Response) => {
     console.error(err);
     res.status(500).json({ error: "Failed to delete job" });
   }
-})
-
-
-
+});
 
 export default router;

@@ -37,5 +37,3 @@ export interface Job {
   location: string;
   is_favorite: boolean;
 }
-
-// "rejected":    "bg-rose-50 text-rose-600 ring-1 ring-rose-200",
