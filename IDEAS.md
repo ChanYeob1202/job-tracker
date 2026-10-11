@@ -70,6 +70,10 @@
 
 - `[decided]` **단일 Dashboard IA** (2026-09-02) — stats/list를 별도 페이지로 나누지 않음. Dashboard 한 페이지에 위계로: `Statsbar → Follow-up 큐 → ActionBar+JobTable`. 이유: 같은 데이터·맥락, 스탯카드→리스트 필터 인터랙션이 co-location 필요, 얇은 페이지 2개보다 응집된 1개. 두 번째 페이지는 "같은 리스트의 다른 뷰"(Kanban) 생길 때만 정당.
 
+- `[raw]` **rejected job은 recent 파란 점 숨기기** (2026-10-09) — Applied 날짜 옆 파란 점(7일 이내 = recent)이 `status === "rejected"`인 row에도 뜸 → 끝난 지원인데 "새로운/진행 중" 신호를 줘서 헷갈림.
+  - 위치: `JobTable.tsx`의 `AppliedDate` — 현재 `recent = daysSince(iso) <= 7`만 봄. status를 같이 받아서 rejected면 점(+진한 텍스트색) 끄기.
+  - 결정 포인트: rejected만 끌지 vs "종료 상태"(rejected/withdrawn 등) 전체를 끌지 → 종료 상태 목록을 상수로 두면 Follow-up 큐 필터와 재사용 가능.
+
 - `[deferred]` **Signup email-blur check** — 회원가입 시 email 입력 blur에서 async "이미 사용 중" 체크. `GET /auth/check-email` 필요. (post-MVP)
 
 ## Landing / Marketing
