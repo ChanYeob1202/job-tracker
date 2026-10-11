@@ -132,12 +132,6 @@ router.patch("/:id", async (req: Request, res: Response) => {
     (UPDATABLE_FIELDS as readonly string[]).includes(k),
   );
 
-  if (!keys.includes(fields)) {
-    return res
-      .status(400)
-      .json({ error: `${keys} is/are not included in UPDATABLE_FIELDS` });
-  }
-
   if (keys.length === 0) {
     return res
       .status(400)
