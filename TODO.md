@@ -27,5 +27,11 @@ Status: `[ ]` todo · `[~]` in progress · `[x]` done
 
 - [ ] Job table is hard to read on mobile — find a better format for phone users
       (e.g. card layout below a breakpoint). — _JobsBoard_
+- [ ] Review JobTable redesign (Claude-built, interview prep): `avatarColor` hash in
+      CompanyAvatar, why it's shared, `border-separate` card rows, why `STATUS_THEME`
+      uses full literal class strings. — _JobTable / CompanyAvatar_
+- [ ] Clean up `ui/jobtable-redesign` worktree + branch, `:3002`/`:3003` servers, and
+      the `api-redesign`/`web-redesign` entries in `.claude/launch.json`.
+
 ## Backend / Data
 

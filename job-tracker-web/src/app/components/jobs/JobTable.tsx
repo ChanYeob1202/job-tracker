@@ -1,76 +1,62 @@
 "use client";
-import { Dispatch, SetStateAction, useState } from "react";
-import type { ReactNode } from "react";
-import { useRouter } from "next/navigation";
-import type { Job } from "@/types/job";
-import { apiFetch } from "@/lib/api";
+import { Dispatch, SetStateAction } from "react";
+import type { Job, JobStatus } from "@/types/job";
 import { JOB_STATUS_OPTIONS } from "@/types/job";
 import EditableCell from "./EditableCell";
-import { FaBuilding, FaNetworkWired, FaRegCalendar, FaEarthEurope, FaMagnifyingGlassDollar } from "react-icons/fa6";
-import { SiCrowdsource } from "react-icons/si";
-import { IoIosArrowDropdown } from "react-icons/io";
-import { IoLocation } from "react-icons/io5";
+import CompanyAvatar from "./CompanyAvatar";
+import { FaEarthEurope } from "react-icons/fa6";
+import { IoLocationOutline } from "react-icons/io5";
 import { LuPanelRight } from "react-icons/lu";
 
-// Every column shows at every breakpoint — on phones the table keeps its
-// natural width and the wrapper scrolls horizontally instead of dropping
-// columns, so nothing is reachable only through the OPEN panel.
-const TABLE_COLUMNS: readonly { key: string; label: string; icon?: ReactNode }[] = [
-  { key: "company", label: "Company", icon: <FaBuilding /> },
-  { key: "role", label: "Role", icon: <FaNetworkWired /> },
-  { key: "source", label: "Source", icon: <SiCrowdsource /> },
-  { key: "status", label: "Status", icon: <IoIosArrowDropdown /> },
-  { key: "applied_at", label: "Applied Date", icon: <FaRegCalendar /> },
-  { key: "website", label: "Website", icon: <FaEarthEurope /> },
-  { key: "salary", label: "Salary", icon: <FaMagnifyingGlassDollar /> },
-  { key: "location", label: "Location", icon: <IoLocation /> },
-  // { key: "notes", label: "Notes", icon: <CgNotes /> },
+// Card-row layout: each application is its own floating card (border-separate
+// + vertical spacing) instead of a gridline spreadsheet. Company and role are
+// stacked into one "identity" column, so the eye scans one column to know
+// *who* and the status rail on the left to know *where it stands*.
+const TABLE_COLUMNS: readonly { key: string; label: string; align?: "right" }[] = [
+  { key: "company", label: "Application" },
+  { key: "status", label: "Stage" },
+  { key: "applied_at", label: "Applied" },
+  { key: "source", label: "Source" },
+  { key: "salary", label: "Salary", align: "right" },
+  { key: "location", label: "Location" },
+  { key: "website", label: "Website" },
 ];
 
-// "no respond" is deliberately the quietest pill — a ghosted application is a
-// non-event, so it reads as muted slate instead of competing with the outcomes
-// (offer / rejected) for attention.
-const STATUS_STYLE: Record<string, string> = {
-  "applied": "bg-sky-50 text-sky-700 ring-1 ring-sky-200",
-  "interview": "bg-amber-50 text-amber-700 ring-1 ring-amber-200",
-  "offer": "bg-emerald-50 text-emerald-700 ring-1 ring-emerald-200",
-  "rejected": "bg-rose-50 text-rose-600 ring-1 ring-rose-200",
-  "no respond": "bg-slate-50 text-slate-500 ring-1 ring-slate-200",
+// One entry per status: the left rail colour, the pill, and the dot inside it.
+// Kept as full literal class strings so Tailwind's scanner can see them.
+// "no respond" stays the quietest — a ghosted application is a non-event.
+const STATUS_THEME: Record<JobStatus, { rail: string; pill: string; dot: string; step: number }> = {
+  "applied": { rail: "bg-sky-400", pill: "bg-sky-50 text-sky-700", dot: "bg-sky-500", step: 1 },
+  "interview": { rail: "bg-amber-400", pill: "bg-amber-50 text-amber-700", dot: "bg-amber-500", step: 2 },
+  "offer": { rail: "bg-emerald-500", pill: "bg-emerald-50 text-emerald-700", dot: "bg-emerald-500", step: 3 },
+  "rejected": { rail: "bg-rose-300", pill: "bg-rose-50 text-rose-600", dot: "bg-rose-400", step: 0 },
+  "no respond": { rail: "bg-slate-200", pill: "bg-slate-100 text-slate-500", dot: "bg-slate-400", step: 0 },
 };
 
-// Statuses that exist in the DB but not in the map above (e.g. "interview 1")
-// would otherwise render a pill with no classes at all.
-const STATUS_NEUTRAL = "bg-gray-100 text-gray-600 ring-1 ring-gray-200";
+// Statuses in the DB but not in the map (e.g. legacy "interview 1").
+const STATUS_FALLBACK = { rail: "bg-gray-200", pill: "bg-gray-100 text-gray-600", dot: "bg-gray-400", step: 0 };
 
-// Known job-source brands → a pill hue echoing their brand color, so rows are
-// scannable by where you applied. The raw source is normalized to letters+digits
-// only (lowercase, spaces/punctuation stripped) before matching, so "Linked In",
-// "linkedin", "Applied via LinkedIn" all collapse to the same key. Match tokens
-// are kept short and distinctive so common typos still hit — e.g. "zip" catches
-// both "ZipRecruiter" and "Zip Recourter". Unknown sources fall back to neutral
-// gray, which also means a wrong source is simply gray, never mis-colored.
-// NOTE: class strings must stay full literals so Tailwind's JIT keeps them.
+function statusTheme(status: string) {
+  return STATUS_THEME[status as JobStatus] ?? STATUS_FALLBACK;
+}
+
 const SOURCE_BRANDS: readonly { match: string; className: string }[] = [
-  { match: "linkedin", className: "bg-blue-50 text-blue-700 ring-1 ring-blue-200" },
-  { match: "zip", className: "bg-green-50 text-green-700 ring-1 ring-green-200" },
-  { match: "indeed", className: "bg-white text-gray-700 ring-1 ring-gray-300" },
-  { match: "glassdoor", className: "bg-teal-50 text-teal-700 ring-1 ring-teal-200" },
-  { match: "wellfound", className: "bg-slate-100 text-slate-700 ring-1 ring-slate-300" },
-  { match: "angellist", className: "bg-slate-100 text-slate-700 ring-1 ring-slate-300" },
-  { match: "handshake", className: "bg-slate-100 text-slate-700 ring-1 ring-slate-300" },
-  { match: "monster", className: "bg-purple-50 text-purple-700 ring-1 ring-purple-200" },
-  { match: "dice", className: "bg-red-50 text-red-700 ring-1 ring-red-200" },
-  { match: "refer", className: "bg-amber-50 text-amber-700 ring-1 ring-amber-200" },
+  { match: "linkedin", className: "text-blue-700" },
+  { match: "zip", className: "text-green-700" },
+  { match: "indeed", className: "text-indigo-700" },
+  { match: "glassdoor", className: "text-teal-700" },
+  { match: "wellfound", className: "text-slate-700" },
+  { match: "angellist", className: "text-slate-700" },
+  { match: "handshake", className: "text-slate-700" },
+  { match: "monster", className: "text-purple-700" },
+  { match: "dice", className: "text-red-700" },
+  { match: "refer", className: "text-amber-700" },
 ];
-
-const SOURCE_NEUTRAL = "bg-gray-100 text-gray-600 ring-1 ring-gray-200";
 
 function sourceStyle(raw: string): string {
   const s = raw.toLowerCase().replace(/[^a-z0-9]/g, "");
-  if (!s) return SOURCE_NEUTRAL;
-  return SOURCE_BRANDS.find((b) => s.includes(b.match))?.className ?? SOURCE_NEUTRAL;
+  return SOURCE_BRANDS.find((b) => s && s.includes(b.match))?.className ?? "text-gray-600";
 }
-
 
 // iso is a plain "YYYY-MM-DD" (Postgres DATE, no time-of-day, no timezone).
 // Formats it straight from the string — no Date object, so no timezone can
@@ -83,11 +69,7 @@ function formatAppliedDate(iso: string): string {
 }
 
 // How many days ago `iso` ("YYYY-MM-DD") was, counting from right now.
-// `new Date(iso)` always lands on UTC midnight of that date — that's just a
-// millisecond count, same number no matter what machine runs this code — so
-// subtracting Date.now() (also a plain millisecond count) from it is safe.
-// No timezone conversion happens here at all; that only happens if you call
-// something like .toLocaleDateString(), which we deliberately don't.
+// Both sides are plain millisecond counts, so no timezone conversion happens.
 function daysSince(iso: string): number {
   const appliedMs = new Date(iso).getTime();
   const nowMs = Date.now();
@@ -106,159 +88,205 @@ function AppliedDate({ iso }: { iso: string }) {
   );
 }
 
+// Three-segment pipeline (applied → interview → offer). Terminal statuses
+// (rejected / no respond) have step 0 and render an empty, muted track.
+function StageTrack({ status }: { status: string }) {
+  const { step, dot } = statusTheme(status);
+  return (
+    <span className="mt-1.5 flex gap-0.5" aria-hidden>
+      {[1, 2, 3].map((n) => (
+        <span
+          key={n}
+          className={`h-1 w-5 rounded-full ${n <= step ? dot : "bg-gray-200"}`}
+        />
+      ))}
+    </span>
+  );
+}
+
+function hostname(url: string): string {
+  try {
+    return new URL(url).hostname.replace(/^www\./, "");
+  } catch {
+    return url;
+  }
+}
+
+const Dash = () => <span className="text-gray-300">—</span>;
+
 type JobTableProps = {
   rows: Job[];
   jobLoadingStatus: boolean;
   setEditorJob: Dispatch<SetStateAction<Job | "new" | null>>;
-   updateField: (id: string, field: keyof Job, nameValue: string) => Promise <void>
+  updateField: (id: string, field: keyof Job, nameValue: string) => Promise<void>;
 };
 
 const thClass =
-  "border-b border-gray-100 px-1 md:px-4 py-2.5 text-left text-xs font-medium text-gray-400 uppercase tracking-wider whitespace-nowrap";
+  "px-3 md:px-4 pb-1 pt-2 text-left text-[11px] font-semibold uppercase tracking-wider text-gray-400 whitespace-nowrap";
 
+// With border-separate, the card is drawn by the cells: every cell gets the
+// top/bottom border, the first/last cell close the left/right side + radius.
 const tdClass =
-  "border-b border-gray-100 px-1 md:px-4 py-2.5 text-sm text-gray-700 align-middle whitespace-nowrap max-w-[200px] truncate";
-
-// First cell can't use `truncate` (overflow:hidden) — it would clip the OPEN
-// button that overlays on hover. So it keeps overflow visible and truncation
-// moves to an inner wrapper around the company name instead.
-
-const firstTdClass =
-  "relative flex items-center border-b border-gray-100 px-1 md:px-4 py-2.5 text-sm text-gray-700 align-middle whitespace-nowrap max-w-[200px] group/cell";
+  "border-y border-gray-100 bg-white px-3 md:px-4 py-3 text-sm text-gray-700 align-middle whitespace-nowrap max-w-[200px] truncate transition-colors group-hover:bg-brand-50/40 group-hover:border-brand-100";
 
 function JobTable({ rows, jobLoadingStatus, setEditorJob, updateField }: JobTableProps) {
-
-  const [isHovered, setIsHovered] = useState(false);
-  
   return (
-    <div className="mt-2 overflow-x-auto rounded-xl border border-gray-100 bg-white shadow-sm">
-      <table className="w-full min-w-max table-auto border-collapse">
+    <div className="mt-2 overflow-x-auto rounded-2xl bg-gray-50 p-2 md:p-3">
+      <table className="w-full min-w-max table-auto border-separate border-spacing-y-1.5">
         <thead>
-          <tr className="bg-gray-50/70">
-            {TABLE_COLUMNS.map(({ key, label, icon }) => (
-              <th key={key} className={thClass}>
-                <span className="inline-flex items-center gap-1.5 text-gray-400">
-                  {icon}
-                  {label}
-                </span>
+          <tr>
+            {TABLE_COLUMNS.map(({ key, label, align }) => (
+              <th key={key} className={`${thClass} ${align === "right" ? "text-right" : ""}`}>
+                {label}
               </th>
             ))}
           </tr>
         </thead>
-        <tbody >
+        <tbody>
           {rows.length === 0 ? (
             <tr>
               <td
                 colSpan={TABLE_COLUMNS.length}
-                className="px-4 py-12 text-center text-sm text-gray-400"
+                className="rounded-xl bg-white px-4 py-12 text-center text-sm text-gray-400"
               >
                 {jobLoadingStatus ? "Loading…" : "No applications yet"}
               </td>
             </tr>
           ) : (
-            rows.map((row: Job) => (
+            rows.map((row: Job) => {
+              const theme = statusTheme(row.status);
+              const muted = row.status === "rejected" || row.status === "no respond";
+              return (
+                <tr key={row.id} className="group">
+                  {/* Identity: status rail + monogram + company / role stacked */}
+                  <td className={`${tdClass} relative overflow-hidden rounded-l-xl border-l pl-5 md:pl-5 max-w-[260px]`}>
+                    <span className={`absolute inset-y-0 left-0 w-1 ${theme.rail}`} />
+                    <div className={`flex items-center gap-3 ${muted ? "opacity-60" : ""}`}>
+                      <CompanyAvatar company={row.company} />
+                      <div className="min-w-0 flex-1">
+                        <div className="truncate font-semibold text-gray-900">
+                          <EditableCell
+                            value={row.company}
+                            onSave={(v) => updateField(row.id, "company", v)}
+                          />
+                        </div>
+                        <div className="truncate text-xs text-gray-500">
+                          <EditableCell
+                            value={row.role ?? ""}
+                            display={row.role || <span className="text-gray-300">Add role</span>}
+                            onSave={(v) => updateField(row.id, "role", v)}
+                          />
+                        </div>
+                      </div>
+                    </div>
+                    {/* Overlays the end of the company cell on row hover, so it's
+                        reachable without scrolling the table to the right. */}
+                    <button
+                      type="button"
+                      onClick={() => setEditorJob(row)}
+                      aria-label={`Open ${row.company}`}
+                      className="absolute right-2 top-1/2 -translate-y-1/2 inline-flex items-center gap-1 rounded-md bg-gray-800 px-2 py-1 text-xs font-medium text-white opacity-0 transition-opacity group-hover:opacity-100 focus-visible:opacity-100 hover:bg-gray-700 cursor-pointer"
+                    >
+                      <LuPanelRight className="text-sm" />
+                      OPEN
+                    </button>
+                  </td>
 
-              <tr
-                onMouseEnter={() => setIsHovered(true)}
-                key={row.id}
-                className="group transition-colors duration-100 hover:bg-gray-50/60">
-
-                <td className={`relative flex flex-row items-center overflow-visible group/cell ${firstTdClass}`} >
-                  <EditableCell
-                    value={row.company}
-                    onSave={(v) => updateField(row.id, "company", v)}
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setEditorJob(row)}
-                    className="absolute right-1 md:right-2 top-1/2 -translate-y-1/2 inline-flex items-center gap-1 whitespace-nowrap rounded-md bg-gray-800 px-2 py-1 text-xs font-medium text-white opacity-0 transition-opacity group-hover/cell:opacity-100 hover:bg-gray-700 cursor-pointer"
-                  >
-                    <LuPanelRight className="text-sm" />
-                    OPEN
-                  </button>
-                </td>
-                <td className={tdClass}>
-                  <EditableCell
-                    value={row.role ?? ""}
-                    onSave={(v) => updateField(row.id, "role", v)}
-                  />
-                </td>
-                <td className={tdClass}>
-                  <EditableCell
-                    value={row.source}
-                    display={
-                      row.source ? (
-                        <span className={`inline-flex items-center rounded-md px-2 py-0.5 text-xs font-medium ${sourceStyle(row.source)}`}>
-                          {row.source}
+                  <td className={`${tdClass} overflow-visible`}>
+                    <EditableCell
+                      value={row.status}
+                      display={
+                        <span className="inline-flex flex-col">
+                          <span className={`inline-flex w-fit items-center gap-1.5 rounded-full px-2.5 py-0.5 text-xs font-medium capitalize ${theme.pill}`}>
+                            <span className={`h-1.5 w-1.5 rounded-full ${theme.dot}`} />
+                            {row.status}
+                          </span>
+                          <StageTrack status={row.status} />
                         </span>
-                      ) : (
-                        <span className="text-gray-300">—</span>
-                      )
-                    }
-                    onSave={(v) => updateField(row.id, "source", v)}
-                  />
-                </td>
-                <td className={tdClass}>
-                  <EditableCell
-                    value={row.status}
-                    display={
-                      <span className={`inline-flex items-center rounded-md px-2 py-0.5 text-xs font-medium ${STATUS_STYLE[row.status] ?? STATUS_NEUTRAL}`}>
-                        {row.status}
-                      </span>
-                    }
-                    type="select"
-                    options={JOB_STATUS_OPTIONS}
-                    onSave={(v) => updateField(row.id, "status", v)}
-                  />
-                </td>
-                <td className={tdClass}>
-                  <EditableCell
-                    value={row.applied_at ? row.applied_at.slice(0, 10) : ""}
-                    type="date"
-                    display={
-                      row.applied_at
-                        ? <AppliedDate iso={row.applied_at} />
-                        : <span className="text-gray-300">—</span>
-                    }
-                    onSave={(v) => updateField(row.id, "applied_at", v)}
-                  />
-                </td>
-                <td className={tdClass}>
-                  <EditableCell
-                    value={row.website ?? ""}
-                    type="url"
-                    display={row.website ?? <span className="text-gray-300">—</span>}
-                    onSave={(v) => updateField(row.id, "website", v)}
-                  />
-                </td>
-                <td className={tdClass}>
-                  <EditableCell
-                    value={row.salary ?? ""}
-                    type="text"
-                    display={
-                      row.salary
-                        ? <span className="font-medium text-gray-900 tabular-nums">{row.salary}</span>
-                        : <span className="text-gray-300">—</span>
-                    }
-                    onSave={(v) => updateField(row.id, "salary", v)}
-                  />
-                </td>
-                <td className={tdClass}>
-                  <EditableCell
-                    value={row.location ?? ""}
-                    display={row.location ?? <span className="text-gray-300">—</span>}
-                    onSave={(v) => updateField(row.id, "location", v)}
-                  />
-                </td>
-                {/* <td className={`${tdClass} ${hideOnMobileClass}`}>
-                  <EditableCell
-                    value={row.notes ?? ""}
-                    display={row.notes ?? <span className="text-gray-300">—</span>}
-                    onSave={(v) => updateField(row.id, "notes", v)}
-                  />
-                </td> */}
-              </tr>
-            ))
+                      }
+                      type="select"
+                      options={JOB_STATUS_OPTIONS}
+                      onSave={(v) => updateField(row.id, "status", v)}
+                    />
+                  </td>
+
+                  <td className={tdClass}>
+                    <EditableCell
+                      value={row.applied_at ? row.applied_at.slice(0, 10) : ""}
+                      type="date"
+                      display={row.applied_at ? <AppliedDate iso={row.applied_at.slice(0, 10)} /> : <Dash />}
+                      onSave={(v) => updateField(row.id, "applied_at", v)}
+                    />
+                  </td>
+
+                  <td className={tdClass}>
+                    <EditableCell
+                      value={row.source}
+                      display={
+                        row.source ? (
+                          <span className={`text-xs font-semibold ${sourceStyle(row.source)}`}>
+                            {row.source}
+                          </span>
+                        ) : (
+                          <Dash />
+                        )
+                      }
+                      onSave={(v) => updateField(row.id, "source", v)}
+                    />
+                  </td>
+
+                  <td className={`${tdClass} text-right`}>
+                    <EditableCell
+                      value={row.salary ?? ""}
+                      display={
+                        row.salary ? (
+                          <span className="block text-right font-semibold tabular-nums text-gray-900">{row.salary}</span>
+                        ) : (
+                          <span className="block text-right"><Dash /></span>
+                        )
+                      }
+                      onSave={(v) => updateField(row.id, "salary", v)}
+                    />
+                  </td>
+
+                  <td className={tdClass}>
+                    <EditableCell
+                      value={row.location ?? ""}
+                      display={
+                        row.location ? (
+                          <span className="inline-flex items-center gap-1 text-gray-600">
+                            <IoLocationOutline className="shrink-0 text-gray-400" />
+                            {row.location}
+                          </span>
+                        ) : (
+                          <Dash />
+                        )
+                      }
+                      onSave={(v) => updateField(row.id, "location", v)}
+                    />
+                  </td>
+
+                  <td className={`${tdClass} rounded-r-xl border-r`}>
+                    <EditableCell
+                      value={row.website ?? ""}
+                      type="url"
+                      display={
+                        row.website ? (
+                          <span className="inline-flex items-center gap-1">
+                            <FaEarthEurope className="shrink-0 text-xs" />
+                            {hostname(row.website)}
+                          </span>
+                        ) : (
+                          <Dash />
+                        )
+                      }
+                      onSave={(v) => updateField(row.id, "website", v)}
+                    />
+                  </td>
+
+                </tr>
+              );
+            })
           )}
         </tbody>
       </table>

@@ -9,13 +9,15 @@ import { HiOutlineDotsHorizontal } from "react-icons/hi";
 import { LuPanelRight, LuTrash2 } from "react-icons/lu";
 import { followUpInfo, formatDueDate, type DueStatus } from "@/lib/followUp";
 import { apiFetch } from "@/lib/api";
+import CompanyAvatar from "./CompanyAvatar";
 
 type FollowUpCardProps = {
   row: Job
   info: ReturnType<typeof followUpInfo>
   setEditorJob: Dispatch<SetStateAction<Job | "new" | null>>;
   setViewOpen: Dispatch<SetStateAction<boolean>>;
-  id: number;
+  id: string;
+  updateField: (id: string, field: keyof Job, nameValue: string) => Promise<void>
 }
 
 const dueStatusColor: Record<DueStatus, string> = {
@@ -24,10 +26,11 @@ const dueStatusColor: Record<DueStatus, string> = {
   overdue: "text-red-500 font-semibold",
 };
 
-function FollowUpCard({ row, info, setEditorJob, setViewOpen, id }: FollowUpCardProps) {
+
+function FollowUpCard({ row, info, setEditorJob, setViewOpen, updateField, id }: FollowUpCardProps) {
   const [settingOpen, setSettingOpen] = useState(false);
   const optionRef = useRef<HTMLDivElement>(null);
-
+  const currentDate = new Date();
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (optionRef && !optionRef.current?.contains(event.target as Node)) {
@@ -49,20 +52,22 @@ function FollowUpCard({ row, info, setEditorJob, setViewOpen, id }: FollowUpCard
     }
   }, [])
 
-  const handleDelete = (id: string) => {
-    return apiFetch(`/jobs/${id}`, {
-      method: "Delete"
-    });
+  const handleFollowedUp = () => {
+    updateField(id, "last_followed_up_at", currentDate.toISOString());
+    setSettingOpen(false);
   }
+
 
   const settingOptions = [
     {
       label: "Mark as followed up",
       icon: IoIosCheckmark,
       textColor: "hover:text-green-500",
-
       event: () => {
-        setSettingOpen(false);
+        handleFollowedUp();
+          /*   
+          TODO: updateField mark as followed up -> followed up means you sent an email -> status? change it to waiting. ? 
+          */
       },
     },
     {
@@ -87,8 +92,14 @@ function FollowUpCard({ row, info, setEditorJob, setViewOpen, id }: FollowUpCard
 
   return (
     <div className="flex flex-col gap-2 bg-white rounded-xl m-2 p-4 z-0">
-      <div className="flex items-center justify-between">
-        <p className="text-sm font-semibold">{info.company}</p>
+      <div className="flex items-center justify-between gap-2">
+        <div className="flex min-w-0 items-center gap-2.5">
+          <CompanyAvatar company={info.company} size="sm" />
+          <div className="min-w-0">
+            <p className="truncate text-sm font-semibold">{info.company}</p>
+            <p className="truncate text-xs text-gray-500">{row.role}</p>
+          </div>
+        </div>
         <div
           className="relative"
           ref={optionRef}
@@ -118,7 +129,6 @@ function FollowUpCard({ row, info, setEditorJob, setViewOpen, id }: FollowUpCard
             : ""}
         </div>
       </div>
-      <p className="text-xs">{row.role}</p>
       <div className="flex ml-2 gap-2 items-center text-xs text-gray-500">
         <p><FaRegCalendarAlt /></p>
         <p>{formatDueDate(info.dueDate)}</p>
