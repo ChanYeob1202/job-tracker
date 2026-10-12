@@ -1,12 +1,12 @@
 "use client"
-import { useState, useRef, useEffect, Dispatch, SetStateAction } from "react"
+import { useState, useRef, useEffect, Dispatch, SetStateAction, useOptimistic} from "react"
 import type { Job } from "@/types/job"
 import { FaRegPaperPlane } from "react-icons/fa";
 import { FaRegCalendarAlt } from "react-icons/fa";
 import { IoIosCheckmark } from "react-icons/io";
 
 import { HiOutlineDotsHorizontal } from "react-icons/hi";
-import { LuPanelRight, LuTrash2 } from "react-icons/lu";
+import { LuPencil, LuTrash2 } from "react-icons/lu";
 import { followUpInfo, formatDueDate, type DueStatus } from "@/lib/followUp";
 import { apiFetch } from "@/lib/api";
 import CompanyAvatar from "./CompanyAvatar";
@@ -28,6 +28,7 @@ const dueStatusColor: Record<DueStatus, string> = {
 
 
 function FollowUpCard({ row, info, setEditorJob, setViewOpen, updateField, id }: FollowUpCardProps) {
+  const [ optimisticFollowedUpDate, setOptimisticFollowedUpDate ] = useOptimistic(row.last_followed_up_at);
   const [settingOpen, setSettingOpen] = useState(false);
   const optionRef = useRef<HTMLDivElement>(null);
   const currentDate = new Date();
@@ -55,10 +56,20 @@ function FollowUpCard({ row, info, setEditorJob, setViewOpen, updateField, id }:
   const handleFollowedUp = () => {
     updateField(id, "last_followed_up_at", currentDate.toISOString());
     setSettingOpen(false);
+    // TODO: implement optimistic update
   }
 
 
   const settingOptions = [
+    {
+      label: "Edit job",
+      icon: LuPencil,
+      textColor: "hover:text-blue-400",
+      event: () => {
+        setEditorJob(row)
+        setSettingOpen(false);
+      },
+    },
     {
       label: "Mark as followed up",
       icon: IoIosCheckmark,
@@ -68,16 +79,6 @@ function FollowUpCard({ row, info, setEditorJob, setViewOpen, updateField, id }:
           /*   
           TODO: updateField mark as followed up -> followed up means you sent an email -> status? change it to waiting. ? 
           */
-      },
-    },
-    {
-      label: "Open job",
-      icon: LuPanelRight,
-      textColor: "hover:text-blue-400",
-
-      event: () => {
-        setEditorJob(row)
-        setSettingOpen(false);
       },
     },
     {
