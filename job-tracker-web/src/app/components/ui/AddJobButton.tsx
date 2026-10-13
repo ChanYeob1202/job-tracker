@@ -11,7 +11,7 @@ function AddJobButton() {
   return (
     <button 
       onClick = {() => router.push("/jobs/new")}
-      className = "rounded-xl text-white font-bold px-4 py-2 bg-blue-600 hover:cursor-pointer">Add Job</button>
+      className = "rounded-xl text-white font-bold px-4 py-2 bg-brand-600 hover:cursor-pointer">Add Job</button>
   )
 }
 

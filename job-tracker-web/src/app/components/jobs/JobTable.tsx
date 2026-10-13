@@ -131,7 +131,7 @@ const tdClass =
 
 function JobTable({ rows, jobLoadingStatus, setEditorJob, updateField }: JobTableProps) {
   return (
-    <div className="mt-2 overflow-x-auto rounded-2xl bg-gray-50 p-2 md:p-3">
+    <div className="mt-2 overflow-x-auto rounded-2xl bg-black/[0.03] p-2 md:p-3">
       <table className="w-full min-w-max table-auto border-separate border-spacing-y-1.5">
         <thead>
           <tr>

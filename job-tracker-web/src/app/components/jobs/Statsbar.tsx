@@ -23,7 +23,7 @@ function Statsbar({ apps }: StatsbarProps) {
         const rejected = apps.filter((a) => a.status === "rejected").length
 
         return [
-            { icon: <LuFileText />, label: "Applied", value: total, iconClass: "bg-blue-50 text-blue-500" },
+            { icon: <LuFileText />, label: "Applied", value: total, iconClass: "bg-brand-50 text-brand-500" },
             { icon: <LuMessageSquare />, label: "Interviewing", value: interviewing, iconClass: "bg-violet-50 text-violet-500" },
             { icon: <LuPartyPopper />, label: "Offers", value: offers, iconClass: "bg-emerald-50 text-emerald-500" },
            { icon: <LuCircleX />, label: "Rejected", value: rejected, iconClass: "bg-rose-50 text-rose-500" }

@@ -59,12 +59,11 @@ function FollowUpCard({ row, info, setEditorJob, setViewOpen, updateField, id }:
     // TODO: implement optimistic update
   }
 
-
   const settingOptions = [
     {
       label: "Edit job",
       icon: LuPencil,
-      textColor: "hover:text-blue-400",
+      textColor: "hover:text-brand-500",
       event: () => {
         setEditorJob(row)
         setSettingOpen(false);
@@ -140,7 +139,7 @@ function FollowUpCard({ row, info, setEditorJob, setViewOpen, updateField, id }:
         <button
           // TODO: click => sending email 하나의 포맷을정해서 메일을 오픈해서 회사명만 바꾸기??
           disabled
-          className="w-full py-1 text-xs flex gap-1 items-center justify-center rounded-xl bg-blue-400 font-bold text-white disabled:opacity-50 disabled:pointer-events-none"
+          className="w-full py-1 text-xs flex gap-1 items-center justify-center rounded-xl bg-brand-500 font-bold text-white disabled:opacity-50 disabled:pointer-events-none"
         >
           <span><FaRegPaperPlane /></span>
           <span>Follow Up</span>

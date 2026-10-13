@@ -89,7 +89,7 @@ function EditableCell({
   }
 
   const inputClass =
-    "border border-blue-400 rounded px-1 py-0.5 text-sm w-full focus:outline-none focus:ring-2 focus:ring-blue-500/30";
+    "border border-brand-400 rounded px-1 py-0.5 text-sm w-full focus:outline-none focus:ring-2 focus:ring-brand-500/30";
 
   if (type === "select" && options) {
     return (

@@ -31,14 +31,14 @@ function FollowUp({ initialRows, jobLoadingStatus, setEditorJob, updateField }: 
 
   return (
     //여기서 return 해야 할 것은, follow up cards containing compnay name, follow up date, and follow up button.
-    <section className="w-full mt-2 rounded-2xl border border-blue-100 bg-blue-50/50 p-5">
+    <section className="w-full mt-2 rounded-2xl border border-black/5 bg-black/[0.03] p-5">
       {/* first header row */}
       <div className="flex items-start justify-between">
         <div>
           {/* icon */}
           <div className="flex gap-2 items-center">
             <div className="font-bold text-sm">Follow Ups</div>
-            <div className="text-sm px-2  bg-blue-400 rounded-xl font-semibold text-white">{sortedQueueLength}</div>
+            <div className="text-sm px-2  bg-brand-500 rounded-xl font-semibold text-white">{sortedQueueLength}</div>
           </div>
           <p className="mt-1 font-extralight text-xs text-gray-600 ">
             Jobs show up here {FOLLOW_UP_NOTICE_DAYS} days before a follow-up is due — {FOLLOW_UP_INTERVAL_DAYS} days after your last update.
@@ -48,7 +48,7 @@ function FollowUp({ initialRows, jobLoadingStatus, setEditorJob, updateField }: 
           onClick={() => {
             setViewOpen((prev) => !prev);
           }}
-          className="text-x underline  text-blue-400 hover:cursor-pointer hover:transition-transform hover:font-bold duration-200">
+          className="text-x underline  text-brand-500 hover:cursor-pointer hover:transition-transform hover:font-bold duration-200">
           {viewOpen ? "show less ←" : "view all →"}
         </div>
       </div>

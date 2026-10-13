@@ -29,7 +29,7 @@ export default function JobPageNav() {
     "rounded-lg bg-brand-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:cursor-pointer hover:bg-brand-700"
 
   return (
-    <nav className="sticky top-0 z-10 flex flex-wrap items-center justify-between gap-4 border-b border-gray-100 bg-white/80 px-6 py-3 backdrop-blur-md">
+    <nav className="sticky top-0 z-10 flex flex-wrap items-center justify-between gap-4 border-b border-black/5 bg-(--background)/80 px-6 py-3 backdrop-blur-md">
         <div className="flex items-center gap-3">
           <h1
             onClick={() => router.push("/")}

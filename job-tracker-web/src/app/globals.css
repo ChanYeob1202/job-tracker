@@ -1,17 +1,18 @@
 @import "tailwindcss";
 
-/* Brand palette — Facebook-style blue (#1877F2 = brand-500).
+/* Brand palette — deep blue (#1F5FD1 = brand-500), toned down from
+   Facebook blue (#1877F2) so it sits better on the warm beige background.
    Defining it in @theme makes `bg-brand-500`, `text-brand-600`, etc.
    available as real Tailwind utilities. Change these to re-theme the app. */
 @theme {
-  --color-brand-50: #eef5ff;
-  --color-brand-100: #d9e8ff;
-  --color-brand-200: #b3d1ff;
-  --color-brand-300: #80b3fb;
-  --color-brand-400: #4d94f7;
-  --color-brand-500: #1877f2;
-  --color-brand-600: #1466d0;
-  --color-brand-700: #0f4fa3;
+  --color-brand-50: #eef3fb;
+  --color-brand-100: #dae4f6;
+  --color-brand-200: #b6c9ee;
+  --color-brand-300: #8aaae2;
+  --color-brand-400: #5585d8;
+  --color-brand-500: #1f5fd1;
+  --color-brand-600: #1a50b2;
+  --color-brand-700: #143e8a;
 
   /* Accent — purple/violet, used as the second stop in brand gradients. */
   --color-accent-200: #ddd6fe;
@@ -46,14 +47,15 @@
   }
 }
 
+/* Warm light-beige page background; white cards sit on top of it. */
 :root {
-  --background: #ffffff;
+  --background: #f6f4ef;
   --foreground: #171717;
 }
 
 
 body {
-  background: #ffffff;
+  background: var(--background);
   color: #171717;
   font-family: var(--font-dm-sans), sans-serif;
 }
