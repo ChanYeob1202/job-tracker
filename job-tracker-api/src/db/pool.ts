@@ -9,6 +9,8 @@ dotenv.config();
 // 004). That fabricated time then shifts the day for any client in a different
 // timezone than the server. Columns that are real instants (created_at etc.) are
 // timestamptz and keep the default Date parsing.
+
+
 pg.types.setTypeParser(1082, (value) => value);
 
 const url = process.env.DATABASE_URL;

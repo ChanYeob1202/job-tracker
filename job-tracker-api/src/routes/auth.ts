@@ -110,6 +110,7 @@ function getDemoPasswordHash() {
   return demoPasswordHashPromise;
 }
 
+
 type DemoJob = {
   company: string;
   role: string;
@@ -321,6 +322,7 @@ router.post("/logout", async (_req: Request, res: Response) => {
   res.clearCookie(REFRESH_COOKIE, refreshCookieOptions);
   return res.status(200).json({ message: "logged out" });
 });
+
 
 router.get("/me", authMiddleWare, async (req: Request, res: Response) => {
   const userID = (req.user as { userID: string }).userID;

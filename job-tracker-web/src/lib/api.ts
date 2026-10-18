@@ -78,6 +78,6 @@ export const apiFetch = async (
 
     return response;
   } catch (error) {
-    console.error(`An error occured during request ${error} `);
+    console.error(`An error occured during request ${error}`);
   }
 };

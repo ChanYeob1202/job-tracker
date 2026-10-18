@@ -1,5 +1,5 @@
 "use client"
-import { useState, useRef, useEffect, Dispatch, SetStateAction, useOptimistic} from "react"
+import { useState, useRef, useEffect, Dispatch, SetStateAction, useOptimistic, startTransition } from "react"
 import type { Job } from "@/types/job"
 import { FaRegPaperPlane } from "react-icons/fa";
 import { FaRegCalendarAlt } from "react-icons/fa";
@@ -28,7 +28,15 @@ const dueStatusColor: Record<DueStatus, string> = {
 
 
 function FollowUpCard({ row, info, setEditorJob, setViewOpen, updateField, id }: FollowUpCardProps) {
-  const [ optimisticFollowedUpDate, setOptimisticFollowedUpDate ] = useOptimistic(row.last_followed_up_at);
+
+  /* 
+    useOptimistic(initialRows, reducer) => The base is the real rows. The reducer says how one pending action changes the list. This is where your first quesion about the reducer shows up. 
+  
+  */
+  const [optimisticRow, setOptimisticRow] = useOptimistic(
+    row,
+
+  );
   const [settingOpen, setSettingOpen] = useState(false);
   const optionRef = useRef<HTMLDivElement>(null);
   const currentDate = new Date();
@@ -57,6 +65,7 @@ function FollowUpCard({ row, info, setEditorJob, setViewOpen, updateField, id }:
     updateField(id, "last_followed_up_at", currentDate.toISOString());
     setSettingOpen(false);
     // TODO: implement optimistic update
+
   }
 
   const settingOptions = [
@@ -75,9 +84,9 @@ function FollowUpCard({ row, info, setEditorJob, setViewOpen, updateField, id }:
       textColor: "hover:text-green-500",
       event: () => {
         handleFollowedUp();
-          /*   
-          TODO: updateField mark as followed up -> followed up means you sent an email -> status? change it to waiting. ? 
-          */
+        /*   
+        TODO: updateField mark as followed up -> followed up means you sent an emailstatus? change it to waiting. ? 
+        */
       },
     },
     {
@@ -108,7 +117,7 @@ function FollowUpCard({ row, info, setEditorJob, setViewOpen, updateField, id }:
             className="hover:cursor-pointer z-30"
             onClick={() => { setSettingOpen((prev => !prev)) }}
           />
-          {/* options */}
+          {/* options */} 
           {settingOpen ?
             (
               <ul

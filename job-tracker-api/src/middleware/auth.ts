@@ -42,7 +42,10 @@ export default function authMiddleWare(
 
     // req.user 주입
     req.user = decoded;
+
+    // TODO: I have to delete it later, debug study, if I remove next() it won't move to the next function? it can't verify if it's the valid user that signed in
     next();
+
   } catch (error) {
     if( error instanceof jwt.TokenExpiredError ){ 
       return res.status(401).json({ error: "token_expired. Browser will navigate to sign in page."})

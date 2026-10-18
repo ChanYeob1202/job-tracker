@@ -7,7 +7,6 @@ import jobsRouter from "./routes/jobs.js";
 import authRouter from "./routes/auth.js";
 import authMiddleWare from "./middleware/auth.js";
 
-
 dotenv.config();
 
 const app = express();
@@ -19,6 +18,7 @@ const app = express();
 // read the client IP from that header. We only enable it in production; setting
 // it to `true` blindly would let a client spoof `X-Forwarded-For` to dodge the
 // limiter.
+
 if (process.env.NODE_ENV === "production") {
   app.set("trust proxy", 1);
 }

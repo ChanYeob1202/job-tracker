@@ -52,6 +52,12 @@
   - 저장 위치: `users`에 컬럼(`follow_up_notice_days INT DEFAULT 5`) vs 별도 `user_settings` 테이블. UI는 Settings 페이지.
   - 확장 후보: 팔로업 주기(현재 14일, `followUp.ts`)도 같이 설정 가능하게.
 
+- `[raw]` **Job panel 열 때 상세 요약** (2026-10-14) — job panel을 열면 폼 필드를 일일이 읽지 않아도 한눈에 파악되는 요약 영역을 맨 위에 표시.
+  - 요약 후보: 한 줄 헤드라인(`role @ company · location`), 현재 status + 지원 후 경과일, 다음 행동(팔로업 due/overdue 여부 — `followUpInfo` 재사용), salary, 메모 핵심.
+  - 데이터는 이미 `"Jobs"` row에 있음 → 새 API 불필요, 기존 값으로 파생 계산만 하면 됨(룰 기반).
+  - 결정 포인트: **룰 기반 요약 vs AI 요약** — 룰 기반은 즉시·무료·예측 가능. AI(LLM)는 긴 공고 설명/메모를 자연어로 압축할 때만 의미 있음 → 아래 AI 섹션의 URL 자동 채우기와 같은 LLM 파이프라인 공유 가능. MVP는 룰 기반, 공고 본문 저장 기능이 생기면 AI 요약 검토.
+  - 결정 포인트: 요약 영역을 읽기 전용 헤더로 둘지, 편집 폼 위에 접기/펼치기로 둘지.
+
 
 ## Account / Settings
 
