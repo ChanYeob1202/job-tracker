@@ -91,7 +91,7 @@ job title · company name · salary · location · website · source · JD (job 
 - **No data move needed, but schema changes are.** The new backend uses the same Neon DB, so the rows stay where they are. New fields (e.g. contact email) or new status values (e.g. "no response") need a *schema migration*: change the table, and existing rows get an empty or default value.
 - ⚠️ **Risk:** local development currently points at the same Neon DB as production, so a buggy query written while learning could hit real users' data.
   - **Decision: a separate practice database with mock data for development.** The laptop's `.env` points only at the practice DB; the real DB is used only by the deployed app on Render. **Chosen: a Neon branch** (a full copy of the live DB). The copy has the **same table names** (`users`, `jobs`). The laptop and the live app are kept apart by *which address is in `DATABASE_URL`*, not by renaming tables.
-  - **A Neon branch lives in Neon's cloud, not in git.** It's a snapshot of `main` from the moment it's created. New live signups don't appear in it; use "reset from parent" in the Neon dashboard to refresh it. Deleting `dev` only loses the practice copy. Not created yet.
+  - **A Neon branch lives in Neon's cloud, not in git.** It's a snapshot of `main` from the moment it's created. New live signups don't appear in it; use "reset from parent" in the Neon dashboard to refresh it. Deleting `dev` only loses the practice copy. ✅ **Created 2026-10-30:** name `dev`, parent `production` (Neon's name for the live branch), option **"Branch schema only"** (beta). So `dev` has the `users` and `Jobs` tables but **no rows**: no real user data is on the laptop, and the mock data is added by the seed (task 8) or by the app itself. *To check: that the `trg_update_status_change` trigger came along.*
   - **A git branch does NOT protect data.** It separates code only. Safety comes from 2 settings on the laptop:
     1. `job-tracker-api/.env` → `DATABASE_URL` = Neon **dev** branch
     2. `job-tracker-web` → `NEXT_PUBLIC_API_URL` = **local** API (`localhost:3001`), not the live Render API. *Checked 2026-10-22: the web app has no `.env` file, so `src/lib/api.ts` falls back to `http://localhost:3001`. Already safe.*
@@ -335,7 +335,7 @@ job-tracker-api/src/
 
 ## Risks and open questions (part 6, DRAFT by Claude for the user to review)
 **Before any code (do first):**
-1. 🔴 **The laptop's `.env` still points at the live database.** Create the Neon `dev` branch and switch `DATABASE_URL` before writing a single query. (Not created yet.)
+1. 🔴 **The laptop's `.env` still points at the live database.** Create the Neon `dev` branch and switch `DATABASE_URL` before writing a single query. (✅ Done 2026-10-30: `dev` created as schema-only and `.env` now points at it.)
 2. 🔴 **Demo cleanup + `ON DELETE CASCADE`.** Since deleting a user deletes their jobs, a cleanup condition missing `is_demo = true` would wipe real users' jobs. The condition must be `is_demo = true AND created_at older than 1 hour`, tested on `dev` first.
 3. 🟠 **The old `schema.sql` was verified on 2026-09-12.** Re-check the live tables in Neon before running any migration.
 
@@ -384,8 +384,8 @@ Working rules (from the rebuild path): the user researches the official docs and
 
 ### Progress checklist (tick as each task meets its "Done when")
 - [x] Plan: requirements, constraints, data model, API contract, architecture, risks, tasks (drafted)
-- [ ] 0. Neon `dev` branch created; `.env` points at it; frontend on `localhost:3001`
-- [ ] 1. `index.ts` + `app.ts`; `GET /health` answers 200
+- [x] 0. Neon `dev` branch created; `.env` points at it; frontend on `localhost:3001` *(done 2026-10-30; still to prove in task 2 that the pool really connects to `dev`)*
+- [x] 1. `index.ts` + `app.ts`; `GET /health` answers 200
 - [ ] 2. `db/pool.ts`; `/health` checks the database
 - [ ] 3. Migrations 006 + 007 on `dev` (file first); `schema.sql` updated
 - [ ] 4. `POST /auth/register` + `POST /auth/login`
