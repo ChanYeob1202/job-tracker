@@ -384,10 +384,10 @@ Working rules (from the rebuild path): the user researches the official docs and
 
 ### Progress checklist (tick as each task meets its "Done when")
 - [x] Plan: requirements, constraints, data model, API contract, architecture, risks, tasks (drafted)
-- [x] 0. Neon `dev` branch created; `.env` points at it; frontend on `localhost:3001` *(done 2026-10-30; still to prove in task 2 that the pool really connects to `dev`)*
+- [x] 0. Neon `dev` branch created; `.env` points at it; frontend on `localhost:3001` *(done 2026-xx10-30; still to prove in task 2 that the pool really connects to `dev`)*
 - [x] 1. `index.ts` + `app.ts`; `GET /health` answers 200
 - [x] 2. `db/pool.ts`; `/health` checks the database
-- [ ] 3. Migrations 006 + 007 on `dev` (file first); `schema.sql` updated
+- [x] 3. Migrations 006 + 007 on `dev` ( file first ); `schema.sql` updated
 - [ ] 4. `POST /auth/register` + `POST /auth/login`
 - [ ] 5. `middleware/auth.ts` + `GET /auth/me`
 - [ ] 6. `POST /auth/refresh` + `POST /auth/logout`
