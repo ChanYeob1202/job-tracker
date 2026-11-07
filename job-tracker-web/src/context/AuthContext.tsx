@@ -20,12 +20,10 @@ type AuthContextType = {
     loginDemo: () => Promise<void>;
     logOut: () => void;
 }
-     
+
 const AuthContext = createContext<AuthContextType | null>(null);
 
-// The API returns `error` as either a string ("email and password don't match")
-// or a Zod field-error object ({ email: ["Invalid email"], password: [...] }).
-// Normalize both into a single human-readable message for the UI.
+
 function toErrorMessage(error: unknown, fallback: string): string {
     if (typeof error === "string") return error;
     if (error && typeof error === "object") {
@@ -76,6 +74,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             }
             throw error;
         } finally {
+            router.push("/signin")
             setIsLoading(false);
         }
     }
@@ -84,18 +83,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         const path = "/auth/login"
         const options = {
             method: "POST",
+            // no header apiFetch is already handling it.
             body: JSON.stringify({ email, password })
         }
         try {
             const res = await apiFetch(path, options);
-            // Read the body once — both success (token+user) and failure ({error}) live here.
             const data = await res?.json().catch(() => null);
+            console.log(data.user);
             if (!res || !res.ok) {
-                // Surface the server's actual message (e.g. "user doesn't exist")
-                // instead of a generic "Log in failed" so the UI can show it.
                 throw new Error(toErrorMessage(data?.error, "Log in failed"));
             }
-            
             setUser(data.user);
             persistToken(data.accessToken);
             router.push("/");
@@ -109,9 +106,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         }
     }
 
-    // One-click demo: /auth/demo seeds a fresh demo board and returns the same
-    // token+user shape as /auth/login, so from here on the app behaves exactly
-    // as if a real user signed in.
     const loginDemo = async () => {
         try {
             const res = await apiFetch("/auth/demo", { method: "POST" });
@@ -133,20 +127,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
 
     const logOut = () => {
-        // Revoke the server-side session by clearing the httpOnly refresh
-        // cookie. Fire-and-forget — local state is cleared regardless of the
-        // network result so the UI logs out immediately.
         apiFetch("/auth/logout", { method: "POST" });
         setUser(null);
         clearToken();
         router.push("/");
     }
-
-    // NOTE: the old effect here force-logged-out the user the moment the access
-    // token expired. That's incompatible with refresh tokens — now an expired
-    // access token is recovered silently by apiFetch (POST /auth/refresh), so
-    // the session lives as long as the 7-day refresh token. The user is only
-    // logged out when a refresh actually fails (handled in apiFetch).
 
     return (
         <AuthContext.Provider value={{ user, isLoading, login, loginDemo, setUser, logOut, register }}>

@@ -80,11 +80,9 @@ function Page() {
     setIsSubmitting(true);
     try {
       await register(formData.email, formData.userName,formData.jobTitle,  formData.password)
-      // register only returns { user } (no token), so we can't auto-login.
-      // Send them to /signin to enter their credentials once.
       router.push("/signin")
     } catch (err) {
-      if (err instanceof Error) setServerError(err.message); // e.g. "Email already exists"
+      if (err instanceof Error) setServerError(err.message);
     } finally {
       setIsSubmitting(false);
     }

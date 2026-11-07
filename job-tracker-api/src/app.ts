@@ -6,7 +6,6 @@ import { authRouter } from "./routes/auth.js";
 
 export const app: Express = express();
 const allowedUrl = process.env.ALLOWED_URL?.split(',')
-
 const corsOptions = {
   origin: allowedUrl,
   credentials: true, 
@@ -14,6 +13,8 @@ const corsOptions = {
   allowedHeaders: [ 'Content-Type', 'Authorization'],
 }
 // setting CORS in app.ts where setting apps, and listeing all the requests here. index only decalre the port.
+
+app.use(express.json())
 app.use(cors(corsOptions));
 
 app.get("/health", async (req, res) => {
@@ -21,4 +22,4 @@ app.get("/health", async (req, res) => {
   res.status(200).json({ status: "successful" });
 });
 
-app.use("/auth", authRouter)
+app.use("/auth", authRouter);
