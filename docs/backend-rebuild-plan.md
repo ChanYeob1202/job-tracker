@@ -388,7 +388,7 @@ Working rules (from the rebuild path): the user researches the official docs and
 - [x] 1. `index.ts` + `app.ts`; `GET /health` answers 200
 - [x] 2. `db/pool.ts`; `/health` checks the database
 - [x] 3. Migrations 006 + 007 on `dev` ( file first ); `schema.sql` updated
-- [ ] 4. `POST /auth/register` + `POST /auth/login`
+- [x] 4. `POST /auth/register` + `POST /auth/login`
 - [ ] 5. `middleware/auth.ts` + `GET /auth/me`
 - [ ] 6. `POST /auth/refresh` + `POST /auth/logout`
 - [ ] 7a. `GET /jobs`
