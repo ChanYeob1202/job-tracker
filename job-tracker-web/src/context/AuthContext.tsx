@@ -1,11 +1,11 @@
 "use client"
 import { createContext, useState, useEffect, useContext, ReactNode } from "react";
 import { useRouter } from "next/navigation";
-import { getToken, setToken as persistToken, clearToken } from "@/lib/auth";
 import { apiFetch } from "@/lib/api";
 
 type UserType = {
-    id: string,
+    sub: string, 
+    // userID
     email: string,
     userName: string,
     jobTitle: string,
@@ -41,11 +41,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     useEffect(() => {
         (async () => {
             try {
-                const token = getToken();
-                if (!token) return;
                 const res = await apiFetch("/auth/me")
                 if (!res) {
-                    clearToken();
                     return;
                 }
                 const data = await res.json();
@@ -54,7 +51,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
                 setIsLoading(false);
             }
         })()
-    }, [])
+    }, []);
 
     const register = async (email: string, userName: string, jobTitle: string, password: string) => {
         const path = "/auth/register"
@@ -80,6 +77,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
 
     const login = async (email: string, password: string) => {
+        // TODO: even thouh token last only 15 min, storing access token in local storage is not safe. 
+
         const path = "/auth/login"
         const options = {
             method: "POST",
@@ -88,13 +87,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         }
         try {
             const res = await apiFetch(path, options);
-            const data = await res?.json().catch(() => null);
-            console.log(data.user);
+            const userData = await res?.json().catch(() => null);
             if (!res || !res.ok) {
-                throw new Error(toErrorMessage(data?.error, "Log in failed"));
+                throw new Error(toErrorMessage(userData?.error, "Log in failed"));
             }
-            setUser(data.user);
-            persistToken(data.accessToken);
+            setUser(userData.user);
             router.push("/");
         } catch (error) {
             if (error instanceof Error) {
@@ -114,7 +111,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
                 throw new Error(toErrorMessage(data?.error, "Could not start demo"));
             }
             setUser(data.user);
-            persistToken(data.accessToken);
             router.push("/");
         } catch (error) {
             if (error instanceof Error) {
@@ -129,7 +125,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const logOut = () => {
         apiFetch("/auth/logout", { method: "POST" });
         setUser(null);
-        clearToken();
         router.push("/");
     }
 
