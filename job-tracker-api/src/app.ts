@@ -3,6 +3,7 @@ import cors from 'cors';
 import "dotenv/config";
 import { pool } from "./db/pool.js";
 import { authRouter } from "./routes/auth.js";
+import cookieParser from "cookie-parser";
 
 export const app: Express = express();
 const allowedUrl = process.env.ALLOWED_URL?.split(',')
@@ -15,6 +16,7 @@ const corsOptions = {
 // setting CORS in app.ts where setting apps, and listeing all the requests here. index only decalre the port.
 
 app.use(express.json())
+app.use(cookieParser())
 app.use(cors(corsOptions));
 
 app.get("/health", async (req, res) => {
