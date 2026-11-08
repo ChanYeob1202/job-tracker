@@ -14,7 +14,6 @@ export const pool = new Pool ({
     receive results
     manage connections using a pool
 
-    TODO - checks the database
 
 */
 
