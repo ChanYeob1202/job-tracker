@@ -14,15 +14,15 @@ export default function Page() {
   const { rows, loadJobs, isLoading: isLoadingJobs, updateField } = useJobs();
   const [editorJob, setEditorJob] = useState<Job | "new" | null>(null);
 
-  // TODO: follow-up update -> follow up mark up as followed up
-
   // called after a save: close the panel, then re-fetch so the new job appears
   const handleSaved = () => {
     setEditorJob(null);
     loadJobs();
   }
 
+
   if (authLoading) return <Spinner size="lg" label="loading" />
+
   if (!user) return <LandingPage />
   const today = new Date().toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" });
 
