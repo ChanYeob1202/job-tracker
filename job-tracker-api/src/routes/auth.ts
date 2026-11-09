@@ -3,13 +3,14 @@ import "dotenv/config";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
 import { pool } from "../db/pool.js";
+import { requireAuth } from "../middleware/auth.js";
 
 export const authRouter: Router = Router();
 
 authRouter.post("/login", async (req, res) => {
   const { email, password } = req.body;
   if (!email || !password) {
-    return res.status(401).json({ error: `Email and Password are required` });
+    return res.status(400).json({ error: `Email and Password are required` });
   }
   try {
     const result = await pool.query(`SELECT * FROM users WHERE email = $1`, [
@@ -53,12 +54,12 @@ authRouter.post("/login", async (req, res) => {
         });
       } else {
         return res
-          .status(401)
+          .status(400)
           .json({ error: `Incorrect Email or Password. Try again` });
       }
     } else {
       return res
-        .status(401)
+        .status(400)
         .json({ error: `Incorrect Email or Password. Try again` });
     }
   } catch (error) {
@@ -104,41 +105,15 @@ VALUES (value1, value2, value3);
   }
 });
 
-authRouter.get("/me", async (req, res) => {
-  // need to send out the user data
 
-  const token = req.cookies.token;
-  
-  if(!token){
-    return res.status(401).json({ error: `user not found`});
-  }
-
+authRouter.get("/me", requireAuth, async(req, res) => {
+  if(!req.user)  {
+    return res.status(401).json({ error: "Invalid Authorization"})
+  } 
   try {
-    const secretKey = process.env.JWT_SECRET;
-    if(!secretKey){
-      return res.status(500).json({error : "Something happen on our end, please try again later"})
-    } 
-    
-    
-    const payload = jwt.verify(token, secretKey);
-
-    if( payload && typeof payload === "object"){
-        return res
-          .status(200)
-          .json({
-            user: {
-              sub: payload.sub,
-              email: payload.email,
-              userName: payload.userName,
-              jobTitle: payload.jobTitle,
-            }
-          })
-    } else return res.status(401).json({ error: "Invalid data format"})
-    
-  } catch(error){
-    return res.status(401).json({ error: "Invalid user information"});
+    const { sub, email, userName, jobTitle } = req.user;
+    return res.status(200).json({ user: { sub, email, userName, jobTitle }})
+  } catch (error: unknown){
+    return res.status(500).json ({ error: "Something happend on our end try agian later."})
   }
 })
-
-
-
