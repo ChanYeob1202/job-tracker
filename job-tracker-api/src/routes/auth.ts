@@ -45,9 +45,9 @@ authRouter.post("/login", async (req, res) => {
         return res
           .cookie("token", token, {
             httpOnly: true,
-            sameSite: 'strict',
+            sameSite: 'none',
             maxAge: 15 * 60 * 1000, 
-            secure: process.env.NODE_ENV === 'production', 
+            secure: true,
           })
           .json({ 
           user: { sub, email, userName, jobTitle },
