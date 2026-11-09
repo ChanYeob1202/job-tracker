@@ -18,6 +18,13 @@ const signInZodSchema = z.object({
   password: z.string().min(8, { message: "Password should be longer than 8" }),
 });
 
+const signUpZodSchema = z.object({
+  email: z.email({ message: "Invalid email address" }),
+  password: z.string().min(8, { message: "Password should be longer than 8" }),
+  userName: z.string().trim().min(1).max(10),
+  jobTitle: z.string().trim().min(1).max(20),
+});
+
 authRouter.post("/login", async (req, res) => {
   // 1. Check the body. safeParse never throws: it returns { success, data } or { success, error }.
   const parsed = signInZodSchema.safeParse(req.body);
@@ -87,29 +94,13 @@ authRouter.post("/login", async (req, res) => {
 });
 
 authRouter.post("/register", async (req, res) => {
-  const { email, password, jobTitle, userName } = req.body;
+  const parsed = signUpZodSchema.safeParse(req.body);
 
-  const signUpZodSchema = z.object({
-    email: z.email({ message: "Invalid email address" }),
-    password: z
-      .string()
-      .min(8, { message: "Password should be longer than 8" }),
-  });
-
-  // TODO (zod): validate the register body with a Zod schema (frontend checks can be skipped with curl)
-  //   Rule of thumb: the backend validates what it STORES.
-  //   - email:    z.email()  (replaces deprecated z.string().email(); empty "" is already rejected, no .min needed)
-  //   - password: z.string().min(8)
-  //   - userName: z.string().trim().min(1).max(?)  <- pick a max; plain z.string() accepts ""
-  //   - jobTitle: z.string().trim().min(1).max(?)  <- same
-  //   - confirmPassword: NOT in the schema (frontend-only typo check, never stored)
-  //   On failure: stop and return 400 (not 401/500) before touching the DB.
-
-  /* 
-    INSERT INTO table_name (column1, column2, column3)
-VALUES (value1, value2, value3);
-  */
-
+  if (!parsed.success) {
+    return res.status(400).json({ error: parsed.error.issues[0]?.message})
+  }
+  
+  const { email, password, jobTitle, userName } = parsed.data;
   if (!email || !password || !jobTitle || !userName) {
     return res.status(401).json({ error: "missing fields" });
   }
@@ -132,11 +123,9 @@ VALUES (value1, value2, value3);
       }
     }
     console.error("Sign up failed. Error: ", error);
-    return res
-      .status(500)
-      .json({
-        error: "Something went wrong on our end. Please try again later",
-      });
+    return res.status(500).json({
+      error: "Something went wrong on our end. Please try again later",
+    });
   }
 });
 
