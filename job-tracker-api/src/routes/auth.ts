@@ -129,10 +129,6 @@ authRouter.post("/register", async (req, res) => {
 });
 
 authRouter.get("/me", requireAuth, async (req, res) => {
-  /* 
-  
-  [ ] /me trusts the token, not the database. A deleted user, or a changed job title, still shows up for up to 15 minutes. The contract says /me returns 404 when the user no longer exists, and only a database lookup can do that. Pick one approach and be ready to explain why.
-  */
 
   const userId = req?.user?.userId;
   if (!userId) {
@@ -159,3 +155,4 @@ authRouter.get("/me", requireAuth, async (req, res) => {
       .json({ error: "Something happend on our end try agian later." });
   }
 });
+
