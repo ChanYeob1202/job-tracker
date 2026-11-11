@@ -275,12 +275,13 @@ Common to all signed-in endpoints: `401` for a missing, bad or expired token (th
 #### POST /auth/register  (S2)
 - **Public.** Rate limited.
 - **In:** `{ email, userName, jobTitle, password }`. Checked: valid email, userName and jobTitle not empty, password 8+ characters.
-- **Out:** `201` `{ user: {...} }`. (The frontend does not sign the user in after this.)
-- **Codes:** `201`, `400` (`{ error: { field: [messages] } }`), `409` (email already exists), `500`.
+- **Out:** `201` `{ message: "Registration successful" }`. (The frontend does not sign the user in after this.)
+- **Codes:** `201`, `400` (`{ error: "<first Zod message>" }`), `409` (email already exists), `500`.
+- ✅ **Decision (user): `400` sends only the first Zod message as a string.** The frontend's `toErrorMessage` (AuthContext.tsx) accepts both a string and a `{ field: [messages] }` object, so either shape works.
 
 #### POST /auth/login  (S2)
 - **Public.** Rate limited. **In:** `{ email, password }`.
-- **Out:** `200` `{ accessToken, user: { id, email, userName, jobTitle } }` and sets the refresh cookie.
+- **Out:** `200` `{ user: { sub, email, userName, jobTitle } }` and sets the `token` cookie (httpOnly, 15 min). The refresh cookie comes with task 6.
 - **Codes:** `200`, `400`, `401`, `500`.
 - ✅ **Decision (user): one message for both login failures, `"Email or password is incorrect"`, status `401`.** The old code returned two different messages ("user doesn't exist" vs "email and password don't match"), which tells a guesser which emails have accounts.
 - *Risk list:* `POST /auth/register` still answers `409` ("email already exists"), which also reveals that an email has an account. Accepted for now because the signup form needs to tell people.
@@ -289,7 +290,9 @@ Common to all signed-in endpoints: `401` for a missing, bad or expired token (th
 - **Public, but needs the refresh cookie.** **Out:** `200` `{ accessToken }`. **Codes:** `200`, `401` (no cookie, or an invalid or expired one).
 
 #### GET /auth/me
-- **Signed in.** **Out:** `200` `{ user: { id, email, userName, jobTitle } }`. **Codes:** `200`, `401`, `404` (user no longer exists).
+- **Signed in.** **Out:** `200` `{ user: { sub, email, userName, jobTitle } }`. **Codes:** `200`, `401`, `404` (user no longer exists), `500`.
+- ✅ **Decision (user): the token is trusted for identity only; `/me` reads the current user from the DB by id.** Profile fields in the token are a login-time snapshot and can be stale for 15 minutes, and a deleted user's token still verifies, so only a DB lookup can return the `404`.
+- ✅ **Decision (user): keep the name `sub` (standard JWT claim) in the response,** so `/login`, `/me` and the frontend `UserType` all use the same shape. The DB `id` is mapped to `sub` when destructuring.
 
 #### POST /auth/logout
 - **Out:** `200` `{ message }` and clears the refresh cookie (must use the same cookie options it was set with).

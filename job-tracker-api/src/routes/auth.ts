@@ -76,12 +76,12 @@ authRouter.post("/login", async (req, res) => {
           });
       } else {
         return res
-          .status(400)
+          .status(401)
           .json({ error: `Incorrect Email or Password. Try again` });
       }
     } else {
       return res
-        .status(400)
+        .status(401)
         .json({ error: `Incorrect Email or Password. Try again` });
     }
   } catch (error) {
@@ -101,7 +101,7 @@ authRouter.post("/register", async (req, res) => {
 
   const { email, password, jobTitle, userName } = parsed.data;
   if (!email || !password || !jobTitle || !userName) {
-    return res.status(401).json({ error: "missing fields" });
+    return res.status(400).json({ error: "missing fields" });
   }
 
   const saltRounds = 12;
@@ -116,7 +116,7 @@ authRouter.post("/register", async (req, res) => {
   } catch (error: unknown) {
     if (error && typeof error === "object" && "code" in error) {
       if (error.code === `23505`) {
-        return res.status(400).json({
+        return res.status(409).json({
           error: "Email is already registered",
         });
       }
@@ -156,7 +156,6 @@ authRouter.get("/me", requireAuth, async (req, res) => {
     console.error("GET /me failed: ", error )
     return res
       .status(500)
-      
       .json({ error: "Something happend on our end try agian later." });
   }
 });
