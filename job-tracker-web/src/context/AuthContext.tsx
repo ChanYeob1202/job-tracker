@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 import { apiFetch } from "@/lib/api";
 
 type UserType = {
-    sub: string, 
+    sub: number,
     // userID
     email: string,
     userName: string,

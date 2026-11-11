@@ -1,5 +1,4 @@
 import { Router } from "express";
-import "dotenv/config";
 import * as z from "zod";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
@@ -97,9 +96,9 @@ authRouter.post("/register", async (req, res) => {
   const parsed = signUpZodSchema.safeParse(req.body);
 
   if (!parsed.success) {
-    return res.status(400).json({ error: parsed.error.issues[0]?.message})
+    return res.status(400).json({ error: parsed.error.issues[0]?.message });
   }
-  
+
   const { email, password, jobTitle, userName } = parsed.data;
   if (!email || !password || !jobTitle || !userName) {
     return res.status(401).json({ error: "missing fields" });
@@ -130,15 +129,34 @@ authRouter.post("/register", async (req, res) => {
 });
 
 authRouter.get("/me", requireAuth, async (req, res) => {
-  if (!req.user) {
+  /* 
+  
+  [ ] /me trusts the token, not the database. A deleted user, or a changed job title, still shows up for up to 15 minutes. The contract says /me returns 404 when the user no longer exists, and only a database lookup can do that. Pick one approach and be ready to explain why.
+  */
+
+  const userId = req?.user?.userId;
+  if (!userId) {
     return res.status(401).json({ error: "Invalid Authorization" });
   }
+
   try {
-    const { sub, email, userName, jobTitle } = req.user;
+    const result = await pool.query(
+      `SELECT id, email, username, job_title FROM users WHERE id = $1`,
+      [userId],
+    );
+
+    if (result.rowCount === 0) {
+      return res.status(404).json({ error: "Couldn't find a user" });
+    }
+    
+    const row = result.rows[0];
+    const { id:sub, email, username: userName, job_title: jobTitle } = row;
     return res.status(200).json({ user: { sub, email, userName, jobTitle } });
   } catch (error: unknown) {
+    console.error("GET /me failed: ", error )
     return res
       .status(500)
+      
       .json({ error: "Something happend on our end try agian later." });
   }
 });
