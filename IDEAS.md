@@ -59,6 +59,17 @@
   - 결정 포인트: 요약 영역을 읽기 전용 헤더로 둘지, 편집 폼 위에 접기/펼치기로 둘지.
 
 
+## Reviewer feedback (2026-11-13)
+
+외부 피드백 원문 요약 + 우리 판단. backend rebuild(learn/backend-rebuild) 끝낸 뒤 착수.
+
+- `[next]` **Smarter follow-ups** — 리뷰어: "build 할 가치 있음". 실제 문제(45개 flagged → alarm fatigue)를 풀고, 백엔드 스토리도 좋음("date query + scheduled job").
+  - 위 "Follow-up 큐 — 남은 작업" ④(오래된 overdue 정리)와 같은 문제 → 같이 설계.
+  - 주의: scheduled job은 **실행 장소**가 필요. Render 무료 티어는 슬립하므로 in-process 타이머는 안 돎 → Render cron job 또는 외부 트리거 검토. 알림을 보내려면 채널(이메일 등)도 정해야 함.
+- `[next]` **Screening stage** — 리뷰어: "유지, 근데 작음". stage 리스트에 값 하나 추가하는 수준. 쌓아두지 말고 틈날 때 바로.
+- `[deferred]` **Weekly goal** — 리뷰어: "nice to have, 나중에". 위 Features의 Badge/ranking(streak, 주간 목표)과 같은 묶음으로 보류.
+- `[dropped]` **Read-only export** — 리뷰어: "스킵. 유저보다 나(리뷰어)한테 도움". 동의, 안 함.
+
 ## Account / Settings
 
 - `[deferred]` **Delete account** — 유저가 본인 계정 삭제 (개인정보 삭제권 스토리 + 회원관리 CRUD 어필용). 배포/UX 다음 단계.
